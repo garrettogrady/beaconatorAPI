@@ -1,0 +1,16 @@
+{
+  "boss": true,
+  "browser": true,
+  "devel": true,
+  "curly": true,
+  "eqnull": true,
+  "esnext": true,
+  "jquery": true,
+  "latedef": true,
+  "maxparams": 4,
+  "noarg": true,
+  "undef": true,
+  "validthis": false,
+  "predef": [ "-Promise" ],
+  "node": true
+}

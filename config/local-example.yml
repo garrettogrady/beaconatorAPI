@@ -1,0 +1,5 @@
+devMode: true
+browserSync:
+  server: false
+  proxy:
+    target: 'http://edwards.dev'
