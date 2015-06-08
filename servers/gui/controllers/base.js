@@ -27,61 +27,15 @@ module.exports = {
       strategy: 'session'
     }
   },
-  page: {
-    handler: function(request, reply){
-      var page = request.params.path;
-      // Custom page specific scripts
-      var scripts = {
-        'chat': [
-          '<script src="js/chat.js"></script>',
-        ],
-        'watable': [
-          '<link rel="stylesheet" href="js/watable/watable.css" type="text/css" />',
-          '<script src="js/watable/jquery.watable.js"></script>',
-          '<script src="js/watable/demo.watable.js"></script>',
-        ],
-        'gallery': [
-          '<link rel="stylesheet" href="js/fancybox2/jquery.fancybox.css" type="text/css" media="screen" />',
-          '<script src="js/fancybox2/jquery.fancybox.pack.js"></script>',
-          '<script>$(document).ready(function() { $(".fancybox").fancybox(); });</script>',
-        ],
-        'chartjs': [
-          '<script src="js/chartjs-conf.js"></script>',
-        ],
-        'morris': [
-          '<link rel="stylesheet" href="http://cdn.oesmith.co.uk/morris-0.4.3.min.css">',
-          '<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>',
-          '<script src="http://cdn.oesmith.co.uk/morris-0.4.3.min.js"></script>',
-          '<script src="js/morris-conf.js"></script>',
-        ],
-        'form-components': [
-          '<script src="js/bootstrap-switch.js"></script>',
-          '<script src="js/jquery.tagsinput.js"></script>',
-          '<script src="js/form-component.js"></script> ',
-        ],
-        'to-do': [
-          '<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>',
-          '<script src="js/tasks.js"></script>',
-          '<script>jQuery(document).ready(function() { TaskList.initTaskWidget(); }); $(function() { $( "#sortable" ).sortable(); $( "#sortable" ).disableSelection(); }); </script>',
-        ],
-        'panels': [
-          '<script src="js/jquery.sparkline.js"></script>',
-          '<script src="js/sparkline-chart.js"></script>',
-        ],
-        'calendar': [
-          '<script src="js/calendar-conf-events.js"></script>\'',
-        ],
-        'default': [
-          '<script>$(function(){$(\'select.styled\').customSelect();});</script>',
-        ]
-      };
 
-      var scriptSet = (scripts[page] || scripts.default).join('\n');
+  page: {
+    handler: function(request, reply) {
+      var page = request.params.path;
 
       if (fs.existsSync(__dirname + '/../views/' + page + '.html')) {
         reply.view(page, {
           title: config.app.name + ' Dashboard',
-          scripts: scriptSet,
+          scripts: '',
           page: page
         });
       } else {
@@ -90,9 +44,8 @@ module.exports = {
         }).code(404);
       }
     },
-    app: {
-      name: 'about'
-    },
+    id: 'page',
+
     auth: {
       strategy: 'session'
     }

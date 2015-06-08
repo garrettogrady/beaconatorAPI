@@ -32,7 +32,7 @@
                           </div>
                           <button class="btn btn-theme" id="sendMessage">Send</button>
                       </footer>
-                  </aside>                  
+                  </aside>
                   <aside class="right-side">
                       <div class="user-head">
                           <!-- <a href="##" class="chat-tools btn-theme"><i class="fa fa-cog"></i> </a>
@@ -44,16 +44,18 @@
                           <a href="#" class="btn btn-theme04 pull-right" id="join">+ Join</a>
                       </div>
                       <ul class="chat-available-user">
-                        
+
                       </ul>
                   </aside>
               </div>
-              <!-- page end-->			
-		</section><! --/wrapper -->
-      </section><!-- /MAIN CONTENT -->
+              <!-- page end-->
+		</section><!-- /wrapper -->
+  </section><!-- /MAIN CONTENT -->
 
       <!--main content end-->
 
-    
+
 {% endblock %}
-{% block scripts %}{% autoescape false %}{{ scripts }}{% endautoescape %}{% endblock %}
+{% block scripts %}{% autoescape false %}
+  <script src="js/chat.js"></script>
+{% endautoescape %}{% endblock %}

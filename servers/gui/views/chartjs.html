@@ -68,10 +68,12 @@
                   </div>
               </div>
               <!-- page end-->
-          </section>          
+          </section>
       </section><!-- /MAIN CONTENT -->
 
       <!--main content end-->
-    
+
 {% endblock %}
-{% block scripts %}{% autoescape false %}{{ scripts }}{% endautoescape %}{% endblock %}
+{% block scripts %}{% autoescape false %}
+  <script src="js/chartjs-conf.js"></script>
+{% endautoescape %}{% endblock %}

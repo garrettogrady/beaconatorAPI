@@ -3,6 +3,8 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+<section id="main-content">
+  <section class="wrapper site-min-height">
     <ul class="menu">
         <li><a href="{{path.index}}">Home</a></li>
         <li><a href="{{path.about}}">About</a></li>
@@ -10,4 +12,6 @@
 
     <h1>{{title}}</h1>
     <p>This is an about page. Have a look around.</p>
+  </section>
+</section>
 {% endblock %}

@@ -15,11 +15,11 @@
 		</div>
 	</div>
 	{% include "../includes/foot.html" %}
-	<script type="text/javascript" src="/js/auth.js"></script>
-	<script type="text/javascript" src="/js/jquery.backstretch.min.js"></script>
+	<script src="/js/lib/auth.js"></script>
+	<script src="/js/lib/jquery.backstretch.min.js"></script>
 	<script>
-        $.backstretch("/img/login-bg.jpg", {speed: 500});
-    </script>
+    $.backstretch('/img/login-bg.jpg', {speed: 500});
+  </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
