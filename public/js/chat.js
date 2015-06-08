@@ -1,7 +1,7 @@
 $( document ).ready(function() {
 	var TYPING_TIMER_LENGTH = 400;
 
-	var socket = io.connect('http://localhost:3020');
+	var socket = io.connect('http://localhost:3030');
 	// Initialize varibles
 	var $window = $(window);
 	var $usernameInput = $('input#username'); // Input for username
@@ -22,9 +22,9 @@ $( document ).ready(function() {
 	function addParticipantsMessage(data) {
 		var message = '';
 	    if (data.numUsers === 1) {
-	      message += "there's 1 participant";
+	      message += 'there is 1 participant';
 	    } else {
-	      message += "there're " + data.numUsers + " participants";
+	      message += 'there are ' + data.numUsers + ' participants';
 	    }
 	    log(message);
 	}
@@ -33,17 +33,17 @@ $( document ).ready(function() {
 
 		var ts = new Date();
 
-		var time = ts.toTimeString().substring(0,5); 
-		var $first = $('<div>').addClass('first-part').addClass('odd').text(data.username)
-		var $second = $('<div>').addClass('second-part').text(data.message)
-		var $third = $('<div>').addClass('third-part').text(time)
+		var time = ts.toTimeString().substring(0,5);
+		var $first = $('<div>').addClass('first-part').addClass('odd').text(data.username);
+		var $second = $('<div>').addClass('second-part').text(data.message);
+		var $third = $('<div>').addClass('third-part').text(time);
 
 		var $el = $('<div>').addClass('group-rom');
 		$el.append($first);
 		$el.append($second);
 		$el.append($third);
 
-		addMessageElement($el)
+		addMessageElement($el);
 	}
 
 	function addChatTyping(data) {
@@ -109,10 +109,10 @@ $( document ).ready(function() {
 	function log (message) {
 		var ts = new Date();
 
-		var time = ts.toTimeString().substring(0,5); 
-		var $first = $('<div>').addClass('first-part')
-		var $second = $('<div>').addClass('second-part').text(message)
-		var $third = $('<div>').addClass('third-part').text(time)
+		var time = ts.toTimeString().substring(0,5);
+		var $first = $('<div>').addClass('first-part');
+		var $second = $('<div>').addClass('second-part').text(message);
+		var $third = $('<div>').addClass('third-part').text(time);
 
 		var $el = $('<div>').addClass('group-rom');
 		$el.append($first);
@@ -162,11 +162,11 @@ $( document ).ready(function() {
 	  // Whenever the server emits 'login', log the login message
 	  socket.on('login', function (data) {
 	    connected = true;
-	    $inputMessage.removeAttr('disabled')
-	    $inputMessage.attr('placeholder', 'Type message...')
-	    $join.attr('disabled', 'disabled')
+	    $inputMessage.removeAttr('disabled');
+	    $inputMessage.attr('placeholder', 'Type message...');
+	    $join.attr('disabled', 'disabled');
 	    // Display the welcome message
-	    var message = "Welcome to the Chat Room ";
+	    var message = 'Welcome to the Chat Room ';
 	    log(message);
 	    // addParticipantsMessage(data);
 	  });
@@ -185,12 +185,12 @@ $( document ).ready(function() {
 	  	$users.html('');
 	  	var userCounter = 0;
 	  	$.each(data, function(index,value) {
-	  		$li = $('<li>').html('<span data-user="'+value+'"><strong>'+value+'</strong><small></small></span>')
-	  		$users.append($li)
+	  		$li = $('<li>').html('<span data-user="'+value+'"><strong>'+value+'</strong><small></small></span>');
+	  		$users.append($li);
 	  		userCounter++;
-	  	})
-	  	$participants.text(userCounter)
-	    
+	  	});
+	  	$participants.text(userCounter);
+
 	  });
 
 	  // Whenever the server emits 'user left', log it in the chat body
@@ -208,4 +208,4 @@ $( document ).ready(function() {
 	  socket.on('stop typing', function (data) {
 	    removeChatTyping(data);
 	  });
-})
+});

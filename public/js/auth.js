@@ -25,8 +25,7 @@ $('form#login').submit(function (e) {
 $('#register').submit(function (e) {
   e.preventDefault();
 
-  // var url = '/register';
-  var url = '/api/user';
+  var url = '/register';
 
   var payload = {
     fname: $('#fname').val(),

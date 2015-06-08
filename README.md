@@ -6,8 +6,8 @@ Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://g
 ## TODO:
 
 * /servers/gui/config/plugins.js : change server.auth.strategy settings for hapi-auth-cookie
-* /public/js/auth.js : ensure url is correct (lines 28-29. was /register, no /api/user)
 * /servers/api/server.js & /servers/gui/config/plugins.js : set up process monitoring with `good` module?
+* /servers/gui/auth/index.js : generate jwtSecret & forgotSecret?
 
 
 
@@ -101,20 +101,20 @@ module.exports = {
 To simply start both servers:
 
 ```bash
-$ node servers/api/server.js
-$ node servers/gui/server.js
+$ node servers/api/server
+$ node servers/gui/server
 ```
 
-There are a few approaches to robustly starting the app. The recommended way to sart the servers is using `pm2`. It is a node process mananger that will take care of running your process like services. It is very powerful and straight foward to use.
+There are a few approaches to robustly starting the app. The recommended way to sart the servers is using `pm2`. It is a node process mananger that will take care of running processes like services. It is very powerful and straight foward to use.
 
-To install run:
+To install it, run:
 ```bash
 $ npm install -g pm2
 ```
 
-Once this is installed we can start both the API and GUI using the start script `start.js`:
+Once this is installed we can start both the API and GUI using the start script:
 ```bash
-$ node bin/start.js
+$ npm start
 ```
 
 This will produce the following output:
@@ -123,8 +123,15 @@ This will produce the following output:
 
 To stop the pm2 processes you can run:
 ```bash
-$ node bin/stop.js
+$ npm stop
 ```
+
+And to restart the pm2 processes you can run:
+```bash
+$ npm run restart
+```
+
+** Notice the `run` after `npm` there.** That's because "restart" isn't one of the default npm scripts.
 
 ####Production
 Before going into production you will want to concatenate and minify your assets. This will increase performance for your user. We will use Gulp for this.
@@ -153,7 +160,7 @@ There is separate authentication for the different servers in the app. Once a us
 
 ###API
 
-The API uses [Hawk](https://github.com/hapijs/hapi-auth-hawk) authentication. There are two auth strategies pre-configured, 'core' and 'web'. Core is for core functionality, ie internal API endpoints. Core credentials are hardcoded and should be changed before deployment. Web is for web facing endpoints, ie for registered users. Core credentials will work for web routes.
+The API uses [Hawk](https://github.com/hapijs/hapi-auth-hawk) authentication. There are two auth strategies pre-configured, 'core' and 'web'. Core is for core functionality, i.e. internal API endpoints. Core credentials are hardcoded and should be changed before deployment. Web is for web-facing endpoints, i.e. for registered users. Core credentials will work for web routes.
 
 ```javascript
 // EXAMPLE

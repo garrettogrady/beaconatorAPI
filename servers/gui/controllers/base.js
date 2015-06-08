@@ -1,5 +1,6 @@
 var fs = require('fs');
 var marked = require('marked');
+var config = require('../../../config');
 
 // This is the base controller.
 // Used for base routes, such as the default index/root path, 404 error pages, and others.
@@ -13,7 +14,7 @@ module.exports = {
 
       // Render the view with the custom greeting
       reply.view('index', {
-        title: 'Hapi Dash - Boiler Plate Dashboard',
+        title: config.app.name + ' Dashboard',
         scripts: scripts,
         page: page,
         text: marked(markdown)
@@ -42,7 +43,7 @@ module.exports = {
         'gallery': [
           '<link rel="stylesheet" href="js/fancybox2/jquery.fancybox.css" type="text/css" media="screen" />',
           '<script src="js/fancybox2/jquery.fancybox.pack.js"></script>',
-          '<script>$(document).ready(function() { $(".fancybox").fancybox(), }),</script>',
+          '<script>$(document).ready(function() { $(".fancybox").fancybox(); });</script>',
         ],
         'chartjs': [
           '<script src="js/chartjs-conf.js"></script>',
@@ -79,7 +80,7 @@ module.exports = {
 
       if (fs.existsSync(__dirname + '/../views/' + page + '.html')) {
         reply.view(page, {
-          title: 'Beaconator Dashboard',
+          title: config.app.name + ' Dashboard',
           scripts: scriptSet,
           page: page
         });

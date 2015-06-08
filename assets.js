@@ -2,17 +2,7 @@
 module.exports = {
   development: {
     js: [
-      'js/jquery.js',
-      'js/bootstrap.min.js',
-      'js/jquery-ui-1.9.2.custom.min.js',
-      'js/bootstrap-datepicker.js',
-      'js/fullcalendar/fullcalendar.min.js',
-      'js/jquery.ui.touch-punch.min.js',
-      'js/jquery.dcjqaccordion.2.7.js',
-      'js/jquery.scrollTo.min.js',
-      'js/jquery.nicescroll.js',
-      'js/jquery.notify.js',
-      'js/common-scripts.js'
+      'js/bndl/tail.js'
     ],
     css: [
       'css/bootstrap.css',
@@ -26,7 +16,7 @@ module.exports = {
     ]
   },
   production: {
-    js: ['js/scripts.js'],
+    js: ['js/bndl/tail.min.js'],
     css: ['css/styles.css']
   }
 };

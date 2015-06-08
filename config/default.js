@@ -7,13 +7,13 @@ var pkg = require(path.join(rootPath, 'package.json'));
 // Set process.NODE_ENV from cli args
 bs.setEnv();
 
-module.exports = {
+var defaults = {
   env: bs.getEnv(),
-  devMode: bs.getEnv() != 'production',
+  devMode: bs.getEnv() !== 'production',
   pkg: pkg,
   paths: {
     root: rootPath,
-    src: path.join(rootPath, 'app'),
+    src: path.join(rootPath, 'public'),
     dest: path.join(rootPath, 'public'),
   },
   shipit: require('./shipit'),
@@ -25,3 +25,9 @@ module.exports = {
     },
   },
 };
+
+defaults.paths.srcAssets = defaults.paths.src;
+defaults.paths.destAssets = defaults.paths.dest;
+
+
+module.exports = defaults;

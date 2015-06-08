@@ -5,28 +5,30 @@
 var Joi = require('joi');
 var Bcrypt = require('bcryptjs');
 var Jwt = require('jsonwebtoken');
-var nodemailer = require('nodemailer');
-var Nipple = require('nipple');
+var Nodemailer = require('Nodemailer');
+// var Wreck = require('wreck');
+var request = require('request');
 var Hawk = require('hawk');
-
+var extend = require('extend');
+var config = require('../../../config');
 
 var jwtSecret = 'MY super secure server side secret';
 var forgotSecret = 'MY super secure different server side secret';
 
-
-
 exports.register = function(plugin, options, next) {
 
   // Setup things from config
-  var transporter = nodemailer.createTransport(options.email);
+  var transporter = Nodemailer.createTransport(options.email);
 
   var API = {
-    call: function(opts) {
-      var url = 'http://'+options.apiIP+opts.url;
+    send: function(opts) {
+      var url = 'http://' + options.apiIP + opts.url;
       var requestOptions = {
+        // json: true,
         headers: { 'content-type':'application/json'}
       };
 
+      console.log(url);
       // Add payload
       if (opts.payload) {
         requestOptions.payload = JSON.stringify(opts.payload);
@@ -37,20 +39,28 @@ exports.register = function(plugin, options, next) {
       requestOptions.headers.Authorization = header.field;
 
       // Make call
-      if (opts.method === 'POST') {
-        Nipple.post(url, requestOptions, opts.callback);
-      } else if (opts.method === 'PUT') {
-        Nipple.put(url, requestOptions, opts.callback);
-      } else {
-        Nipple.get(url, requestOptions, opts.callback);
-      }
+      // if (opts.method === 'POST') {
+      //   Wreck.post(url, requestOptions, opts.callback);
+      // } else if (opts.method === 'PUT') {
+      //   Wreck.put(url, requestOptions, opts.callback);
+      // } else {
+      //   Wreck.get(url, requestOptions, opts.callback);
+      // }
+      requestOptions = extend(requestOptions, {
+        payload: opts.payload,
+        form: opts.payload,
+        url: url,
+        method: opts.method
+      });
+
+      request(requestOptions, opts.callback);
     }
   };
 
   // Get DB connection from plugin options
   var db = options.db;
 
-  var from = options.app.name + " <"+options.email.auth.user+">";
+  var from = options.app.name + ' <' + options.email.auth.user + '>';
 
   var forgot = function (plugin, next) {
 
@@ -70,7 +80,7 @@ exports.register = function(plugin, options, next) {
             next({error: true, details: 'Incorrect email'}).type('application/json');
           } else {
             var collection = db.collection('users');
-            collection.findOne({"email": uDeets.email}, function(err, user) {
+            collection.findOne({email: uDeets.email}, function(err, user) {
               if (err) {
                 throw err;
               }
@@ -89,7 +99,7 @@ exports.register = function(plugin, options, next) {
                 };
 
 
-                API.call({
+                API.send({
                   method: 'PUT',
                   url: '/api/user/'+user._id,
                   payload: {
@@ -99,15 +109,15 @@ exports.register = function(plugin, options, next) {
                   callback: function (err, res, payload) {
 
                     // Update user to be
-                    var link = options.app.url+"/reset/"+token;
+                    var link = options.app.url + '/reset/' + token;
 
                     // setup e-mail data with unicode symbols
                     var mailOptions = {
                       from: from, // sender address
                       to: user.email, // list of receivers
-                      subject: "Reset Password", // Subject line
-                      text: "Hi "+user.fname+",\nHere is your password reset link:\n\n"+link+"\n\nThis token will expire in 1 hour.\n\nThe Team", // plaintext body
-                      html: "<p>Hi "+user.fname+",</br>Click the link below to reset your password:</p><a href='"+link+"'><h3>Reset Password</h3></a><p>This token will expire in 1 hour.</p><p>The Team</p>" // html body
+                      subject: 'Reset Password', // Subject line
+                      text: 'Hi '+user.fname+',\nHere is your password reset link:\n\n'+link+'\n\nThis token will expire in 1 hour.\n\nThe Team', // plaintext body
+                      html: '<p>Hi '+user.fname+',</br>Click the link below to reset your password:</p><a href="'+link+'"><h3>Reset Password</h3></a><p>This token will expire in 1 hour.</p><p>The Team</p>' // html body
                     };
 
                     // send mail with defined transport object
@@ -115,7 +125,7 @@ exports.register = function(plugin, options, next) {
                       if (error) {
                         console.log(error);
                       } else {
-                        console.log("Password reset message sent: " + response.message);
+                        console.log('Password reset message sent: ' + response.message);
                       }
 
                     // if you don't want to use this transport object anymore, uncomment following line
@@ -139,7 +149,7 @@ exports.register = function(plugin, options, next) {
     };
   };
 
-  var register = function (plugin, next) {
+  var register = function (server, next) {
 
     return {
       handler: function(request, next) {
@@ -160,10 +170,9 @@ exports.register = function(plugin, options, next) {
             console.log(err);
 
             var message = '';
-            for(var i = 0; i < err.details.length; i++)
-            {
+            for(var i = 0; i < err.details.length; i++) {
               var _message = err.details[i].message;
-              if (err.details[i].path == 'password2') {
+              if (err.details[i].path === 'password2') {
                 message += 'Passwords must match. ';
               } else {
                 message += _message.substr(0, 1).toUpperCase() + _message.substr(1) +'. ';
@@ -174,7 +183,7 @@ exports.register = function(plugin, options, next) {
           } else {
             delete newUser.password2;
 
-            API.call({
+            API.send({
               method: 'POST',
               url: '/api/user',
               payload: newUser,
@@ -184,21 +193,33 @@ exports.register = function(plugin, options, next) {
                   throw err;
                 }
 
-                var response = JSON.parse(payload);
+                var response;
+
+                if (!payload) {
+                  response = {
+                    error: true,
+                    message: ['No payload:', typeof payload, payload].join(' ')
+                  };
+                } else if (typeof payload === 'string') {
+                  response = JSON.parse(payload);
+                } else {
+                  response = payload;
+                }
 
                 if (response.error) {
-                  return next({error: true, details: 'Error registering.'}).type('application/json');
+                  return next({error: true, details: 'Error registering. ' + (response.message || '')}).type('application/json');
                 } else {
+
                   var token = Jwt.sign({id:response._id}, forgotSecret);
-                  var link = options.app.url+"/activate/"+token;
+                  var link = options.app.url+'/activate/'+token;
 
                   // setup e-mail data with unicode symbols
                   var mailOptions = {
                     from: from, // sender address
                     to: response.email, // list of receivers
-                    subject: "Activate your Account", // Subject line
-                    text: "Hi "+response.fname+",\nThank you for registering. Use the following link to activate your account:\n\n"+link+"\n\nThanks for your cooperation.\n\nThe Team", // plaintext body
-                    html: "<p>Hi "+response.fname+",</p><p>Thank you for registering. Please click the following link to activate your account:</p><a href='"+link+"'><h3>Activate account</h3></a><p>Thanks for your cooperation.</p><p>The Team</p>" // html body
+                    subject: 'Activate your Account', // Subject line
+                    text: 'Hi ' + response.fname + ',\nThank you for registering. Use the following link to activate your account:\n\n'+link+'\n\nThanks for your cooperation.\n\nThe Team', // plaintext body
+                    html: '<p>Hi ' + response.fname + ',</p><p>Thank you for registering. Please click the following link to activate your account:</p><a href="'+link+'"><h3>Activate account</h3></a><p>Thanks for your cooperation.</p><p>The Team</p>' // html body
                   };
 
                   // send mail with defined transport object
@@ -238,7 +259,7 @@ exports.register = function(plugin, options, next) {
             var message = '';
             for(var i=0; i < err.details.length; i++) {
               var _message = err.details[i].message;
-              if (err.details[i].path == 'password2') {
+              if (err.details[i].path === 'password2') {
                 message += 'Passwords must match. ';
               } else {
                 message += _message.substr(0, 1).toUpperCase() + _message.substr(1) +'. ';
@@ -249,7 +270,7 @@ exports.register = function(plugin, options, next) {
           } else {
 
             var collection = db.collection('users');
-            collection.findOne({"email": changePass.email}, function(err, user) {
+            collection.findOne({email: changePass.email}, function(err, user) {
               if (err) {
                 throw err;
               }
@@ -268,7 +289,7 @@ exports.register = function(plugin, options, next) {
 
                     console.log(payload);
 
-                    API.call({
+                    API.send({
                       method: 'PUT',
                       url: '/api/user/'+user._id,
                       payload: payload,
@@ -307,7 +328,7 @@ exports.register = function(plugin, options, next) {
     } else {
       var collection = db.collection('users');
 
-      collection.findOne({"email": request.payload.email}, function(err, user) {
+      collection.findOne({email: request.payload.email}, function(err, user) {
         if (err) {
           throw err;
         }
@@ -345,7 +366,7 @@ exports.register = function(plugin, options, next) {
         throw err;
       } else {
 
-        API.call({
+        API.send({
           method: 'PUT',
           url: '/api/user/'+decoded.id,
           payload: {activated: true},
@@ -393,8 +414,8 @@ exports.register = function(plugin, options, next) {
 
     // Handles new user activation
     plugin.route({
-      method: 'GET',
       path: '/activate/{token}',
+      method: 'GET',
       config: {
         handler: activate
       }
@@ -402,45 +423,45 @@ exports.register = function(plugin, options, next) {
 
     // Handles forgot password
     plugin.route({
-      path: "/forgot",
-      method: "POST",
+      path: '/forgot',
+      method: 'POST',
       config: forgot()
     });
 
     // Handles reset attempt
     plugin.route({
-      path: "/reset",
-      method: "POST",
+      path: '/reset',
+      method: 'POST',
       config: resetPass()
     });
 
     // Handles registration attempt
     plugin.route({
-      path: "/register",
-      method: "POST",
+      path: '/register',
+      method: 'POST',
       config: register()
     });
 
     // FRONTEND FORM ROUTES
     plugin.route({
-      method: 'GET',
       path: '/register',
+      method: 'GET',
       config: {
         handler: function (request, reply) {
           return reply.view('register', {
-            title: 'Hapi Dash - Register'
+            title: config.app.name + ' - Register'
           });
         }
       }
     });
 
     plugin.route({
-      path: "/reset/{token}",
-      method: "GET",
+      path: '/reset/{token}',
+      method: 'GET',
       config: {
         handler: function(request, reply) {
           return reply.view('reset', {
-            title: 'Hapi Dash - Reset Password',
+            title: config.app.name + ' - Reset Password',
             token: request.params.token
           });
         }
@@ -448,8 +469,8 @@ exports.register = function(plugin, options, next) {
     });
 
     plugin.route({
-      path: "/login/{activated?}",
-      method: "GET",
+      path: '/login/{activated?}',
+      method: 'GET',
       config: {
         handler: function(request, reply){
           if (request.auth.isAuthenticated) {
@@ -462,7 +483,7 @@ exports.register = function(plugin, options, next) {
           }
 
           reply.view('login', {
-            title: 'Hapi Dash - Login',
+            title: config.app.name + ' - Login',
             scripts: scripts
           });
         },

@@ -13,11 +13,14 @@ var mongoServer = new Server(config.db.host, config.db.port, {'auto_reconnect': 
 var db = new MongoDB(config.db.name, mongoServer, {w: 1});
 
 apiServer.connection({
-  host: config.gui.host,
-  port: config.gui.port,
+  host: config.api.host,
+  port: config.api.port,
 });
 
 db.open(function(e, d) {
+  var date = new Date().toString();
+  date = date.split(/\s+/).slice(0, 5).join(' ');
+
   if (e) {
     console.log(e);
   } else if (config.db.un && config.db.pw) {
@@ -32,7 +35,7 @@ db.open(function(e, d) {
     connected = true;
   }
   if (connected) {
-    console.log('connected to database :: ' + config.db.name);
+    console.log('connected to database :: ' + config.db.name + ' at ' + date);
   }
 });
 

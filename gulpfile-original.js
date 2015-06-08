@@ -1,5 +1,5 @@
 
-var gulp = require("gulp");
+var gulp = require('gulp');
 var util = require('gulp-util');
 var concat = require('gulp-concat');
 var minifycss = require('gulp-minify-css');
@@ -17,17 +17,17 @@ process.chdir(gulpFileCwd);
 util.log('Working directory changed to', util.colors.magenta(gulpFileCwd));
 
 // the build task
-gulp.task('build', function(){
+gulp.task('build', function() {
 
   // concat and minify your css
   gulp.src(assets.development.css)
-  .pipe(concat("styles.css"))
+  .pipe(concat('styles.css'))
   .pipe(minifycss())
   .pipe(gulp.dest('./css/'));
 
   // concat and minify your js
   gulp.src(assets.development.js)
-  .pipe(concat("scripts.js"))
+  .pipe(concat('scripts.js'))
   .pipe(uglify())
   .pipe(gulp.dest('./js/'));
 

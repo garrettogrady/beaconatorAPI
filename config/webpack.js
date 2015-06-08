@@ -11,18 +11,18 @@ module.exports = defer(function(config) {
   require('babel-loader');
   var webpackConfig = {
     entry: {
-      'head': [path.join(config.paths.src, 'assets/js/head.js')],
-      'tail': [path.join(config.paths.src, 'assets/js/tail.js')]
+      'head': [path.join(config.paths.src, 'js/head.js')],
+      'tail': [path.join(config.paths.src, 'js/tail.js')]
     },
     output: {
       filename: '[name].js',
       chunkFilename: '[name].js',
-      path: path.join(config.paths.dest, 'assets/js'),
+      path: path.join(config.paths.dest, 'js/bndl'),
     },
     resolve: {
       modulesDirectories: [
         'node_modules',
-        path.join(config.paths.src, 'assets/js'),
+        path.join(config.paths.src, 'js'),
       ],
     },
     module: {
@@ -34,6 +34,7 @@ module.exports = defer(function(config) {
 
           // query is for babel options (https://babeljs.io/docs/usage/options/)
           query: {
+            stage: 1,
             // compact: false,
             // sourceMaps: 'inline'
           }
@@ -47,7 +48,9 @@ module.exports = defer(function(config) {
     plugins: [
       new webpack.ProvidePlugin({
         jQuery: 'jquery',
-        $: 'jquery'
+        $: 'jquery',
+        'window.jQuery': 'jquery',
+
       }),
       new webpack.BannerPlugin('Built by Fusionary (fusionary.com)', {
         entryOnly: true
@@ -59,6 +62,9 @@ module.exports = defer(function(config) {
     webpackConfig.devtool = 'sourcemap';
     webpackConfig.debug = true;
   } else {
+    webpackConfig.output.filename = '[name].min.js';
+    webpackConfig.output.chunkFilename = '[name].min.js';
+
     webpackConfig.plugins = webpackConfig.plugins.concat(
       new webpack.DefinePlugin({
         'process.env': {
@@ -68,7 +74,7 @@ module.exports = defer(function(config) {
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
-          drop_console: true
+          'drop_console': true
         }
       })
     );

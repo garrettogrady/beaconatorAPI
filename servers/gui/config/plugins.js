@@ -8,6 +8,9 @@ module.exports = function(server, config) {
   var connected = false;
 
   db.open(function(e, d) {
+    var date = new Date().toString();
+    date = date.split(/\s+/).slice(0, 5).join(' ');
+
     if (e) {
       console.log(e);
     } else if (config.db.un && config.db.pw) {
@@ -22,7 +25,7 @@ module.exports = function(server, config) {
       connected = true;
     }
     if (connected) {
-      console.log('connected to database :: '+config.db.name);
+      console.log('connected to database :: ' + config.db.name + ' :: ' + date);
     }
   });
 
@@ -45,7 +48,7 @@ module.exports = function(server, config) {
     // TODO: cf. https://github.com/hapijs/good
   };
 
-  // The Assets Configuaration Options
+  // The Assets Configuration Options
   var assetOptions = require('../../../assets');
 
   // Register plugins
@@ -71,7 +74,7 @@ module.exports = function(server, config) {
       options: {
         db: db,
         email: config.email,
-        apiIP: config.api.host + ':' + config.api.port,
+        apiIP: [config.api.host, config.api.port].join(':'),
         app: config.app,
         coreCreds: config.coreCreds
       }
