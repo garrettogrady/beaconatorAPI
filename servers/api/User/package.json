@@ -1,11 +1,11 @@
 {
   "name": "User",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Controls user stuff",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "smaxwellstewart",
+  "author": "karl@fusionary.com",
   "license": "ISC"
 }

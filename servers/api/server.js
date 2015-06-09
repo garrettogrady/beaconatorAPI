@@ -17,12 +17,12 @@ apiServer.connection({
   port: config.api.port,
 });
 
-db.open(function(e, d) {
+db.open(function(err, d) {
   var date = new Date().toString();
   date = date.split(/\s+/).slice(0, 5).join(' ');
 
-  if (e) {
-    console.log(e);
+  if (err) {
+    console.log(err);
   } else if (config.db.un && config.db.pw) {
     db.authenticate(config.db.un, config.db.pw, function(err, result){
       if (err) {
@@ -34,6 +34,7 @@ db.open(function(e, d) {
   } else {
     connected = true;
   }
+
   if (connected) {
     console.log('connected to database :: ' + config.db.name + ' at ' + date);
   }
@@ -66,8 +67,8 @@ var getCredentials = function (id, callback) {
   var credentials = config.coreCreds;
 
   // Just return with core creds if supplied
-  if(credentials[id] !== undefined) {
-    console.log('Web auth lookup: '+id+ ' >> valid as core');
+  if (credentials[id] !== undefined) {
+    console.log('Web auth lookup: ' + id + ' >> valid as core');
     return callback(null, credentials[id]);
   } else {
 
@@ -79,19 +80,20 @@ var getCredentials = function (id, callback) {
       }
 
       var credentials = null;
-      if(user) {
-       console.log('Web auth lookup: '+id+ ' >> valid as '+user.access);
-       credentials = {
-        key: user.apiToken,
-        access: user.access,
-        algorithm: 'sha256'
-      };
-    } else {
-     console.log('Web auth lookup: '+id+ ' >> invalid');
-   }
+      if (user) {
+        console.log('Web auth lookup: ' + id + ' >> valid as '+user.access);
 
-   return callback(null, credentials);
- });
+        credentials = {
+          key: user.apiToken,
+          access: user.access,
+          algorithm: 'sha256'
+        };
+      } else {
+        console.log('Web auth lookup: ' + id + ' >> invalid');
+      }
+
+      return callback(null, credentials);
+    });
   }
 };
 
@@ -123,6 +125,10 @@ apiServer.register([
       // passes the db connection to the plugin
       db: db
     }
+  },
+  {
+    register: require('./Event'),
+    db: db
   }
 ], function(err) {
    if (err) {

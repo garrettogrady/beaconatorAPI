@@ -1,94 +1,98 @@
 $( document ).ready(function() {
 
+  if (!FM.isAuth) {
+    return;
+  }
 
+  $.backstretch('/img/login-bg.jpg', {speed: 500});
 
-// LOGIN
-$('form#login').submit(function (e) {
-  e.preventDefault();
+  // LOGIN
+  $('#login').submit(function (e) {
+    e.preventDefault();
 
-  var payload = {
-    email: $('#email').val(),
-    password: $('#password').val()
-  };
+    var payload = {
+      email: $('#email').val(),
+      password: $('#password').val()
+    };
 
-  $.post('/login', payload).done(function (result) {
-    console.log(result);
-    if(result.error) {
-      $.notify(result.details, 'error');
-    } else {
-      window.location.href = '/';
-    }
-  });
-});
-
-// REGISTER
-$('#register').submit(function (e) {
-  e.preventDefault();
-
-  var url = '/register';
-
-  var payload = {
-    fname: $('#fname').val(),
-    lname: $('#lname').val(),
-    email: $('#email').val(),
-    password: $('#password').val(),
-    password2: $('#password2').val()
-  };
-
-  $.post(url, payload).done(function (result) {
-    console.log(result);
-    if(result.error) {
-
-      $.notify(result.details, 'error');
-    } else {
-      $.notify(result.details, 'success');
-      setTimeout(function(){
+    $.post('/login', payload).done(function (result) {
+      console.log(result);
+      if(result.error) {
+        $.notify(result.details, 'error');
+      } else {
         window.location.href = '/';
-      }, 3000);
-
-    }
+      }
+    });
   });
-});
 
-$('button#forgot-btn').click(function (e) {
-  e.preventDefault();
+  // REGISTER
+  $('#register').submit(function (e) {
+    e.preventDefault();
 
-  var payload = {
-    email: $('#forgot-email').val()
-  };
-  console.log(payload);
+    var url = '/register';
 
-  $.post('/forgot', payload).done(function (result) {
-    console.log(result);
-    if(!result.error) {
-      $.notify('You have been sent a password reset email.', 'success');
-    } else {
-      $.notify(result.details, 'error');
-    }
+    var payload = {
+      fname: $('#fname').val(),
+      lname: $('#lname').val(),
+      email: $('#email').val(),
+      password: $('#password').val(),
+      password2: $('#password2').val()
+    };
+
+    $.post(url, payload).done(function (result) {
+      console.log(result);
+      if(result.error) {
+
+        $.notify(result.details, 'error');
+      } else {
+        $.notify(result.details, 'success');
+        setTimeout(function(){
+          window.location.href = '/';
+        }, 3000);
+
+      }
+    });
   });
-});
 
-$('form#reset').submit(function (e) {
-  e.preventDefault();
+  $('#forgot-btn').click(function (e) {
+    e.preventDefault();
 
-  var payload = {
-    email: $('#email').val(),
-    password: $('#password').val(),
-    password2: $('#password2').val(),
-    token: $('#forgotToken').val()
-  };
-  console.log('Attempting password reset...', payload);
-  $.post('/reset', payload).done(function (result) {
-    console.log(result);
-    if(!result.error) {
-      $.notify('Password reset successfully. Redirecting to login...', 'success');
-      setTimeout(function(){
-        window.location.href = '/login';
-      }, 3000);
-    } else {
-      $.notify(result.details, 'error');
-    }
+    var payload = {
+      email: $('#forgot-email').val()
+    };
+    console.log(payload);
+
+    $.post('/forgot', payload).done(function (result) {
+      console.log(result);
+      if(!result.error) {
+        $.notify('You have been sent a password reset email.', 'success');
+      } else {
+        $.notify(result.details, 'error');
+      }
+    });
   });
-});
+
+  $('#reset').submit(function (e) {
+    e.preventDefault();
+
+    var payload = {
+      email: $('#email').val(),
+      password: $('#password').val(),
+      password2: $('#password2').val(),
+      token: $('#forgotToken').val()
+    };
+    console.log('Attempting password reset...', payload);
+    $.post('/reset', payload).done(function (result) {
+      console.log(result);
+      if(!result.error) {
+        $.notify('Password reset successfully. Redirecting to login...', 'success');
+        setTimeout(function(){
+          window.location.href = '/login';
+        }, 3000);
+      } else {
+        $.notify(result.details, 'error');
+      }
+    });
+  });
 
 });

@@ -101,7 +101,7 @@ exports.register = function(plugin, options, next) {
 
                 API.send({
                   method: 'PUT',
-                  url: '/api/user/'+user._id,
+                  url: '/api/user/' + user._id,
                   payload: {
                     forgotToken: token
                   },
@@ -116,8 +116,8 @@ exports.register = function(plugin, options, next) {
                       from: from, // sender address
                       to: user.email, // list of receivers
                       subject: 'Reset Password', // Subject line
-                      text: 'Hi '+user.fname+',\nHere is your password reset link:\n\n'+link+'\n\nThis token will expire in 1 hour.\n\nThe Team', // plaintext body
-                      html: '<p>Hi '+user.fname+',</br>Click the link below to reset your password:</p><a href="'+link+'"><h3>Reset Password</h3></a><p>This token will expire in 1 hour.</p><p>The Team</p>' // html body
+                      text: 'Hi ' + user.fname + ',\nHere is your password reset link:\n\n'+link+'\n\nThis token will expire in 1 hour.\n\nThe Team', // plaintext body
+                      html: '<p>Hi ' + user.fname + ',</br>Click the link below to reset your password:</p><a href="'+link+'"><h3>Reset Password</h3></a><p>This token will expire in 1 hour.</p><p>The Team</p>' // html body
                     };
 
                     // send mail with defined transport object

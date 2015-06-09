@@ -14,12 +14,10 @@
 		{% block content %}{% endblock %}
 		</div>
 	</div>
-	{% include "../includes/foot.html" %}
-	<script src="/js/lib/auth.js"></script>
-	<script src="/js/lib/jquery.backstretch.min.js"></script>
-	<script>
-    $.backstretch('/img/login-bg.jpg', {speed: 500});
+  <script>
+    FM.isAuth = true;
   </script>
-    {% block scripts %}{% endblock %}
+	{% include "../includes/foot.html" %}
+  {% block scripts %}{% endblock %}
 </body>
 </html>

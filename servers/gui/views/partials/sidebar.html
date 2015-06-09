@@ -23,10 +23,12 @@ MAIN SIDEBAR MENU
                     <span>Sample Pages</span>
                 </a>
                 <ul class="sub">
+                    <li class="{% if page === 'users' %}active{% endif %}"><a  href="/users">Users</a></li>
+                    <li class="{% if page === 'events' %}active{% endif %}"><a  href="/events">Events</a></li>
                     <li class="{% if page === 'blank' %}active{% endif %}"><a  href="/blank">Blank Page</a></li>
                     <li><a  href="/lock-screen">Lock Screen</a></li>
                     <li class="{% if page === 'watable' %}active{% endif %}"><a  href="/watable">Responsive Table</a></li>
-                    <li class="{% if page === 'morris' %}active{% endif %}"><a  href="/morris">Morris Charts</a></li>
+                    <!-- <li class="{% if page === 'morris' %}active{% endif %}"><a  href="/morris">Morris Charts</a></li> -->
                     <li class="{% if page === 'chartjs' %}active{% endif %}"><a  href="/chartjs">Chartjs</a></li>
                 </ul>
             </li>

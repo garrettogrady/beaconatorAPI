@@ -31,10 +31,13 @@ module.exports = {
   page: {
     handler: function(request, reply) {
       var page = request.params.path;
+      var title = page.replace(/\-+/g, ' ');
+      title += ' - ' + config.app.name + ' Dashboard';
+      title = title.slice(0,1).toUpperCase() + title.slice(1);
 
       if (fs.existsSync(__dirname + '/../views/' + page + '.html')) {
         reply.view(page, {
-          title: config.app.name + ' Dashboard',
+          title: title,
           scripts: '',
           page: page
         });

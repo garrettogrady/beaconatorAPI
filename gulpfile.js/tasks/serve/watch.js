@@ -34,7 +34,10 @@ gulp.task('serve:watch', 'Watch files and perform actions on change', function()
     });
 
     npmRun.on('close', function(code) {
-      browserSync.reload();
+      setTimeout(function() {
+        browserSync.reload();
+      }, 200);
+
     });
   });
 

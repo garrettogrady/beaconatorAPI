@@ -1,5 +1,8 @@
 $(document).ready( function() {
 
+  if (!$('#table-con').length) {
+    return;
+  }
         //An example with all options.
          var waTable = $('#table-con').WATable({
             debug:true,                 //Prints some debug info to console

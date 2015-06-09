@@ -9,23 +9,23 @@ upstream hApi {
 
 server {
         listen 80;
- 
+
         server_name localhost;
- 
+
         error_page 400 404 500 502 503 504 /50x.html;
         location  /50x.html {
                 internal;
                 root /usr/share/nginx/www;
         }
-    
+
         # Serve frontend files
         location ~ ^/(landingPage/|images/|img/|javascript/|js/|css/|stylesheets/|flash/|media/|static/|robots.txt|humans.txt|favicon.ico|home/|html|xml|pdf) {
-            root /va/rwww/mediaScanner/public;
+            root /home/fusionary/apps/beaconator/public;
             access_log off;
             expires 0m;
         }
 
-    
+
         # Open up the api. This location limiting to specifc routes
         location ~ ^/(api) {
             proxy_redirect off;
@@ -39,7 +39,7 @@ server {
             proxy_pass         http://hApi;
             proxy_intercept_errors off;
         }
-     
+
         location / {
             proxy_redirect off;
             proxy_set_header   X-Real-IP            $remote_addr;
@@ -54,7 +54,7 @@ server {
         }
 
 
-        
+
 
 }
 
