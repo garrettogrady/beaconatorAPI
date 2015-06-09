@@ -15,6 +15,8 @@ var CRUD = {
       email: Joi.string().required(),
       beaconId: Joi.number().integer(),
       beaconName: Joi.string(),
+
+      // either enter or leave
       eventAction: Joi.string(),
 
       // either beacon or office
