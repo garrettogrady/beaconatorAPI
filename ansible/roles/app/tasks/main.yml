@@ -1,0 +1,11 @@
+---
+
+- name: Disable default server
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Create configuration for nginx
+  template: src="beaconator.j2"
+            dest="/etc/nginx/sites-available/beaconator"
+
+- name: Link the app configuration to nginx
+  file: path=/etc/nginx/sites-enabled/beaconator state=link src=/etc/nginx/sites-available/beaconator

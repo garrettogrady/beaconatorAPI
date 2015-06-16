@@ -1,0 +1,24 @@
+mysql_root_password: fusionary
+rails_env: development
+rails_user: vagrant
+
+sites:
+  - site_name: store
+    user: vagrant
+    group: www-data
+    
+    env:
+      db_name: "xxxx_dev"
+      db_user: "xxxx"
+      db_host: "localhost"
+      db_password: "password"
+    
+    db_import: "/tmp/xxxx-dev-import.sql"
+
+# Tweak these to match your environment
+php_error_reporting: 'E_ALL'
+php_memory_limit: '512MB'
+php_display_errors: 'On'
+php_display_startup_errors: 'On'
+php_track_errors: 'On'
+php_opcache_enable: 0

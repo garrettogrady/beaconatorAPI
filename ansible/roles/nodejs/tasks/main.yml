@@ -1,0 +1,16 @@
+---
+- name: Add apt-key for nodejs
+  apt_key: 
+    id="68576280"
+    state=present
+    keyserver=hkp://keys.gnupg.net:80
+
+- name: Add nodejs repo
+  apt_repository:
+    repo: "deb https://deb.nodesource.com/node_0.10 trusty main"
+    state: present
+
+- name: Install Nodejs
+  apt:
+    pkg: "nodejs"
+    state: present

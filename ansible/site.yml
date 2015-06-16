@@ -1,0 +1,12 @@
+---
+- name: "Install nginx with mondodb and node"
+  hosts: web
+  remote_user: root
+  # sudo: yes
+
+  roles:
+    - { role: common,  tags: [common] }
+    - { role: mongodb, tags: [mongodb] }
+    - { role: nginx,   tags: [nginx] }
+    - { role: nodejs,  tags: [nodejs] }
+    - { role: app,     tags: [app] }

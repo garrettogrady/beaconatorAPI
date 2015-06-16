@@ -1,0 +1,37 @@
+---
+- name: Update Apt
+  apt: update_cache=yes
+
+- name: Checking essentials
+  apt: name="{{ item }}" state=present
+  with_items:
+  - build-essential
+  - python-mysqldb
+  - curl
+  - git-core
+  - ufw
+  - postfix
+  - unzip
+  - ntp
+  - duplicity
+  - python-boto
+
+- name: UFW | Enable Firewall
+  action: shell echo y | sudo ufw enable
+
+- name: UFW | Initialize Default rules
+  action: command ufw allow proto tcp from any to any port 22,80,443
+
+- name: Postfix | Add a main.cf file from template
+  action: template src=main.cf.j2 dest=/etc/postfix/main.cf owner=root group=root mode=0644
+
+# Make backup dirs
+- name: Backup | Create all backup dirs
+  action: shell mkdir -p /backup/mysql && mkdir -p /scripts && mkdir -p /var/log/duplicity
+
+
+- name: Backup | Upload duplicity backup file from template
+  action: template src=backup.j2 dest=/scripts/backup owner=root group=root mode=0700
+
+- name: Backup Cron | Duplicity backup every night at midnight
+  action: cron name="duplicity backup" special_time="daily" job="/scripts/backup >> /var/log/duplicity/backup.log"

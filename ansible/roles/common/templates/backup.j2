@@ -1,0 +1,42 @@
+#!/bin/sh
+
+if [ "$(pgrep duplicity)" ]
+then
+  echo "Duplicity is already running" 1>&2
+  exit 1
+fi
+
+export AWS_ACCESS_KEY_ID='{{ lookup('env','AWS_ACCESS_KEY_ID') }}'
+export AWS_SECRET_ACCESS_KEY='{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}'
+export PASSPHRASE="{{ lookup('env', 'GPG_PASSPHRASE') }}"
+
+SOURCE='/'
+S3BUCKET='s3.amazonaws.com/{{ ansible_fqdn }}-backup/backups'
+MDAY=`date +%0e`
+
+# First day of the month. Remove old incrementals and do a full backup
+if [ $MDAY = "01" ];  then
+        ARGS=" full --force"
+else
+        ARGS=""
+fi
+
+/usr/bin/duplicity $ARGS \
+--include /home \
+--include /backup/mysql \
+--include /etc \
+--exclude '**' \
+--encrypt-key 4234F8CC \
+--sign-key 4234F8CC \
+--volsize 100 \
+$SOURCE http://${S3BUCKET}
+
+# Cleanup old incrementals
+if [ $MDAY = "01" ];  then
+        /usr/bin/duplicity remove-all-but-n-full 1 --force http://${S3BUCKET}
+        /usr/bin/duplicity cleanup --extra-clean --force http://${S3BUCKET}
+fi
+
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+unset PASSPHRASE
