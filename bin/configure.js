@@ -1,3 +1,5 @@
+// jshint ignore: start
+
 var prompt = require('prompt');
 var fs = require('fs');
 // Remove annoying "prompt:"
@@ -13,7 +15,7 @@ var apiGenKey = function(length) {
 }
 
 
-    
+
 
 var messages = {
   app: "Configuring Basic App Info...\n".green,
@@ -160,16 +162,16 @@ prompt.get(schema, function (err, result) {
       if(exists) {
         fs.renameSync(__dirname+'/../config.js', __dirname+'/../config.old.js')
         console.log('Backed up old config to config.old.js');
-      } 
+      }
 
       fs.writeFile(__dirname+'/../config.js', text, function (err) {
         if (err) return console.log(err);
         console.log('Saved configuration: ', config);
       });
-      
+
     });
   } else {
     console.log("\nAborted configuration!")
   }
-  
+
 });

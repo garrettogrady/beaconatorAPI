@@ -35,10 +35,16 @@ module.exports = defer(function(config) {
           // query is for babel options (https://babeljs.io/docs/usage/options/)
           query: {
             stage: 1,
+            optional: ['runtime'],
+            // plugins: ['closure-elimination'],
             // compact: false,
             // sourceMaps: 'inline'
           }
-        }
+        },
+        // {
+        //   test: /deleteme.js/,
+        //   loader: 'imports?$=jquery'
+        // },
       ],
     },
     devServer: {

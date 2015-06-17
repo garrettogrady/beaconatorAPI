@@ -62,7 +62,7 @@ exports.register = function(plugin, options, next) {
 
   var from = options.app.name + ' <' + options.email.auth.user + '>';
 
-  var forgot = function (plugin, next) {
+  var forgot = function forgot(plugin, next) {
 
     return {
       handler: function(request, next) {
@@ -149,7 +149,7 @@ exports.register = function(plugin, options, next) {
     };
   };
 
-  var register = function (server, next) {
+  var register = function register(server, next) {
 
     return {
       handler: function(request, next) {
@@ -241,7 +241,7 @@ exports.register = function(plugin, options, next) {
     };
   };
 
-  var resetPass = function (plugin, next) {
+  var resetPass = function resetPass(plugin, next) {
 
     return {
       handler: function(request, next) {
@@ -313,7 +313,7 @@ exports.register = function(plugin, options, next) {
     };
   };
 
-  var login = function (request, reply) {
+  var login = function login(request, reply) {
 
     if (request.auth.isAuthenticated) {
       return reply.redirect('/');
@@ -352,7 +352,7 @@ exports.register = function(plugin, options, next) {
     }
   };
 
-  var logout = function (request, reply) {
+  var logout = function logout(request, reply) {
 
     request.auth.session.clear();
     return reply.redirect('/login');
@@ -382,6 +382,8 @@ exports.register = function(plugin, options, next) {
       }
     });
   };
+
+  // ROUTES
 
   // Handles login attempt
   plugin.route({

@@ -7,8 +7,8 @@ var config = require('../../config');
 
 // API SERVER
 var apiServer = new Hapi.Server();
-
 var connected = false;
+
 var mongoServer = new Server(config.db.host, config.db.port, {'auto_reconnect': true});
 var db = new MongoDB(config.db.name, mongoServer, {w: 1});
 
@@ -20,24 +20,29 @@ apiServer.connection({
 db.open(function(err, d) {
   var date = new Date().toString();
   date = date.split(/\s+/).slice(0, 5).join(' ');
+  var cb = function(connected) {
+    var pre = connected ? '' : ' NOT';
+    console.log(pre + 'connected to database :: ' + config.db.name + ' at ' + date);
+  };
 
   if (err) {
     console.log(err);
+    cb(connected);
   } else if (config.db.un && config.db.pw) {
     db.authenticate(config.db.un, config.db.pw, function(err, result){
       if (err) {
+        console.log('authentication failed :(');
         console.log(err);
       } else {
         connected = true;
       }
+      cb(connected);
     });
   } else {
     connected = true;
+    cb(connected);
   }
 
-  if (connected) {
-    console.log('connected to database :: ' + config.db.name + ' at ' + date);
-  }
 });
 
 // CORE AUTHENTICATION LOOKUP
@@ -62,7 +67,7 @@ var getCoreCredentials = function (id, callback) {
 
 // WEB AUTHENTICATION LOOKUP
 var getCredentials = function (id, callback) {
-
+  console.log('getting web auth');
   // Core creds
   var credentials = config.coreCreds;
 
@@ -128,7 +133,9 @@ apiServer.register([
   },
   {
     register: require('./Event'),
-    db: db
+    options: {
+      db: db
+    }
   }
 ], function(err) {
    if (err) {

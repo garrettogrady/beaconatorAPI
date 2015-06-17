@@ -1,47 +1,62 @@
- <!--**********************************************************************************************************************************************************
-MAIN SIDEBAR MENU
-*********************************************************************************************************************************************************** -->
+
 <!--sidebar start-->
 <aside>
-    <div id="sidebar"  class="nav-collapse ">
-        <!-- sidebar menu start-->
-        <ul class="sidebar-menu" id="nav-accordion">
+  <div id="sidebar"  class="nav-collapse ">
+    <!-- sidebar menu start-->
+    <ul class="sidebar-menu" id="nav-accordion">
 
-        	  <p class="centered"><a href="#"><img src="img/ui-sam.jpg" class="img-circle" width="60"></a></p>
-        	  <h5 class="centered">Fusionary</h5>
+     <p class="centered"><a href="#"><img src="img/ui-sam.jpg" class="img-circle" width="60"></a></p>
+     <h5 class="centered">Fusionary</h5>
 
-            <li class="mt">
-                <a class="{% if page === 'dashboard' %} active {% endif %}" href="/">
-                    <i class="fa fa-dashboard"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
+     <li class="mt">
+      <a class="{% if page === 'dashboard' %} active {% endif %}" href="/">
+        <i class="fa fa-dashboard"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li>
+      <a class="{% if page === 'users' %} active {% endif %}" href="/users">
+        <i class="fa fa-user"></i>
+        <span>Users</span>
+      </a>
+    </li>
 
-            <li class="sub-menu">
-                <a class="{% if page === 'blank' %}active{% endif %}" href="javascript:;" >
-                    <i class="fa fa-book"></i>
-                    <span>Sample Pages</span>
-                </a>
-                <ul class="sub">
-                    <li class="{% if page === 'users' %}active{% endif %}"><a  href="/users">Users</a></li>
-                    <li class="{% if page === 'events' %}active{% endif %}"><a  href="/events">Events</a></li>
-                    <li class="{% if page === 'blank' %}active{% endif %}"><a  href="/blank">Blank Page</a></li>
-                    <li><a  href="/lock-screen">Lock Screen</a></li>
-                    <li class="{% if page === 'watable' %}active{% endif %}"><a  href="/watable">Responsive Table</a></li>
-                    <!-- <li class="{% if page === 'morris' %}active{% endif %}"><a  href="/morris">Morris Charts</a></li> -->
-                    <li class="{% if page === 'chartjs' %}active{% endif %}"><a  href="/chartjs">Chartjs</a></li>
-                </ul>
-            </li>
+    <li class="{% if page === 'events' %}active{% endif %}">
+      <a href="/events">
+        <i class="fa fa-calendar-o"></i>
+        <span>View Events</span>
+      </a>
+    </li>
+    <li class="{% if page === 'add-new' %}active{% endif %}">
+      <a href="/add-event">
+        <i class="fa fa-plus-circle"></i>
+        <span>Add Event</span>
+      </a>
+    </li>
 
-            <li class="">
-                <a class="{% if page === 'chat' %} active {% endif %}" href="/chat">
-                    <i class="fa fa-comments-o"></i>
-                    <span>Chat</span>
-                </a>
-            </li>
+    <li class="sub-menu">
+      <a class="{% if page === 'blank' %}active{% endif %}" href="javascript:;" >
+        <i class="fa fa-book"></i>
+        <span>Miscellaneous</span>
+      </a>
+      <ul class="sub">
+        <li><a  href="/lock-screen">Lock Screen</a></li>
+        <li class="{% if page === 'general' %}active{% endif %}"><a  href="/general">General Components</a></li>
+        <li class="{% if page === 'form-components' %}active{% endif %}"><a  href="/form-components">Form Components</a></li>
+        <li class="{% if page === 'watable' %}active{% endif %}"><a  href="/watable">Responsive Table</a></li>
+        <li class="{% if page === 'chartjs' %}active{% endif %}"><a  href="/chartjs">Chartjs</a></li>
+      </ul>
+    </li>
 
-        </ul>
-        <!-- sidebar menu end-->
-    </div>
+    <li class="">
+      <a class="{% if page === 'chat' %} active {% endif %}" href="/chat">
+        <i class="fa fa-comments-o"></i>
+        <span>Chat</span>
+      </a>
+    </li>
+
+  </ul>
+  <!-- sidebar menu end-->
+</div>
 </aside>
 <!--sidebar end -->

@@ -23,22 +23,26 @@ gulp.task('serve:watch', 'Watch files and perform actions on change', function()
     path.join(config.get('paths.root'), 'servers', '**/*.js'),
     path.join(config.get('paths.root'), 'servers', 'gui', 'views', '**/*.html'),
   ], function() {
-    var npmRun = spawn('npm', ['run', 'restart']);
-
-    npmRun.stdout.on('data', function(data) {
-      console.log(data.toString());
-    });
-
-    npmRun.stderr.on('data', function(data) {
-      console.log('stderr: ' + data.toString());
-    });
-
-    npmRun.on('close', function(code) {
       setTimeout(function() {
         browserSync.reload();
-      }, 200);
+      }, 1200);
 
-    });
+    // var npmRun = spawn('npm', ['run', 'restart']);
+
+    // npmRun.stdout.on('data', function(data) {
+    //   console.log(data.toString());
+    // });
+
+    // npmRun.stderr.on('data', function(data) {
+    //   console.log('stderr: ' + data.toString());
+    // });
+
+    // npmRun.on('close', function(code) {
+    //   setTimeout(function() {
+    //     browserSync.reload();
+    //   }, 200);
+
+    // });
   });
 
   watch([

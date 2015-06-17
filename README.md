@@ -9,7 +9,22 @@ Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://g
 * /servers/api/server.js & /servers/gui/config/plugins.js : set up process monitoring with `good` module?
 * /servers/gui/auth/index.js : generate jwtSecret & forgotSecret?
 
+### On Server
 
+* in mongo CLI: 
+
+if events collection does NOT exist:
+```bash
+$ use beacon
+$ db.createCollection('events', {capped: true, size: 5242880});
+```
+
+
+if events collection already exists, run
+  ```bash
+  $ use beacon
+  $ db.runCommand({convertToCapped: 'events', size: 5242880});
+  ```
 
 ## The Goal:
 Create a base boilerplate dashboard app, with seperate GUI and API server processes. Quick development of RESTful Resource api endpoints, out the box auth for both API and GUI, and realtime frontend communication.

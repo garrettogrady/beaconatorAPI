@@ -50,6 +50,7 @@ import './watable/jquery.watable';
 import './watable/demo.watable';
 
 import './lib/jquery.backstretch.min';
-import './auth';
+import './tail/auth';
+import './tail/events';
 
-import './common-scripts';
+import './tail/common-scripts';

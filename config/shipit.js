@@ -1,8 +1,8 @@
 var pkg = require('../package.json');
 var util = require('util');
-var app = 'website';
-var user = 'edwards';
-var server = 'edwards.fusionarydev.com';
+var app = 'beaconator';
+var user = 'fusionary';
+var server = 'beaconator.fusionarydev.com';
 var path = require('path');
 var deployTo = util.format('/home/%s/apps/%s/', user, app);
 var utils = require('shipit-fusionary/node_modules/shipit-utils');
@@ -52,7 +52,7 @@ module.exports.init = function(shipit) {
   shipit.initConfig(config);
 
   utils.registerTask(shipit, 'build', function() {
-    return shipit.local('npm install && gulp build', {
+    return shipit.local('NODE_ENV=development npm install && gulp build', {
       cwd: shipit.config.workspace
     });
   });

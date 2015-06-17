@@ -4,15 +4,17 @@
 
  // Packages for validation
 var Joi = require('joi');
+var ObjectId = require('mongodb').ObjectID;
 
 // Internal config stuff
 var CRUD = {
   collection: 'events',
   create: {
-    bcrypt: 'password',
+    // bcrypt: 'password',
     date: 'created',
     payload: Joi.object().keys({
-      email: Joi.string().required(),
+      // email: Joi.string().required(),
+      user: Joi.object(),
       beaconId: Joi.number().integer(),
       beaconName: Joi.string(),
 
@@ -28,16 +30,19 @@ var CRUD = {
     },
   },
   update: {
-    bcrypt: 'password',
+    // bcrypt: 'password',
     date: 'updated',
     payload: Joi.object().keys({
-      password: Joi.string(),
-      fname: Joi.string(),
-      lname: Joi.string(),
-      activated: Joi.boolean(),
-      access: Joi.string(),
-      guiToken: [Joi.string(), Joi.boolean()],
-      forgotToken: [Joi.string(), Joi.boolean()]
+      user: Joi.object(),
+      beaconId: Joi.number().integer(),
+      beaconName: Joi.string(),
+
+      // either enter or leave
+      eventAction: Joi.string(),
+
+      // either beacon or office
+      eventType: Joi.string(),
+      lastBeaconId: Joi.string(),
     })
   },
   validationOpts: {
@@ -54,22 +59,48 @@ exports.register = function(server, options, next) {
   // Require Event functions
   var Event = require('toothache')(CRUD);
 
-  var apiGenKey = function(request, next) {
-    var generate = function(length) {
-      // Just produces random string using these chars
-      var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      var result = '';
-      for (var i = length; i > 0; --i) {
-        result += chars[Math.round(Math.random() * (chars.length - 1))];
+  var getUser = function(request, next) {
+    var email = request.payload.email;
+
+    // We don't want to store email in events collections.
+    delete request.payload.email;
+
+    // Store user as an embedded document
+    var userCollection = options.db
+    .collection('users');
+
+    userCollection.findOne({
+      email: email
+    }, function(err, user) {
+      if (err) {
+        throw err;
       }
-      return result;
-    };
+      var action = request.payload.eventAction;
+      var location = request.payload.beaconName;
+      var update = false;
 
-    var apiKey = generate(64);
+      if (action === 'enter') {
+        update = true;
+      } else if (request.payload.eventType === 'office') {
+        update = true;
+        location = 'away';
+      }
 
-    // Add to payload and return
-    request.payload.apiToken = apiKey;
-    next(apiKey);
+      if (update) {
+        userCollection.update({
+          _id: user._id
+        }, {
+          $set: {
+            location: location,
+            locationUpdated: new Date()
+          }
+        });
+      }
+
+      request.payload.user = user;
+
+      next(user);
+    });
   };
 
   // Create
@@ -77,10 +108,10 @@ exports.register = function(server, options, next) {
     path: '/api/event',
     method: 'POST',
     config: {
-      auth: 'core',
       cors: true,
+      // auth: 'core',
       pre: [
-        { method: apiGenKey, assign: 'apiGenKey' }
+        { method: getUser, assign: 'getUser' }
       ],
       handler: Event.create
     }
@@ -91,7 +122,7 @@ exports.register = function(server, options, next) {
     path: '/api/event/{id}',
     method: 'GET',
     config: {
-      auth: 'core',
+      // auth: 'core',
       cors: true,
       handler: Event.get,
       validate: {
@@ -107,8 +138,9 @@ exports.register = function(server, options, next) {
     path: '/api/event',
     method: 'GET',
     config: {
-      auth: 'core',
+      // auth: 'core',
       cors: true,
+
       handler: Event.find
     }
   });
@@ -118,7 +150,7 @@ exports.register = function(server, options, next) {
     path: '/api/event/{id}',
     method: 'PUT',
     config: {
-      auth: 'core',
+      // auth: 'core',
       cors: true,
       handler: Event.update,
       validate: {
@@ -134,7 +166,7 @@ exports.register = function(server, options, next) {
     path: '/api/event/{id}',
     method: 'DELETE',
     config: {
-      auth: 'core',
+      // auth: 'core',
       cors: true,
       handler: Event.del,
       validate: {

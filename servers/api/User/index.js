@@ -17,7 +17,7 @@ var CRUD = {
       fname: Joi.string().required(),
       lname: Joi.string().required(),
       access: Joi.string(),
-      apiToken: Joi.string().required(),
+      apiToken: Joi.string().required()
     }),
     defaults: {
       access: 'normal',

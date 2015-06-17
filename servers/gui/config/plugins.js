@@ -2,16 +2,21 @@ module.exports = function(server, config) {
 
   // DB Connection
   var MongoDB = require('mongodb').Db;
-  var Server = require('mongodb').Server;
-  var mongoServer = new Server(config.db.host, config.db.port, {'auto_reconnect': true});
+  var MongoDBServer = require('mongodb').Server;
+  var mongoServer = new MongoDBServer(config.db.host, config.db.port, {'auto_reconnect': true});
   var db = new MongoDB(config.db.name, mongoServer, {w: 1});
   var connected = false;
 
   db.open(function(e, d) {
     var date = new Date().toString();
     date = date.split(/\s+/).slice(0, 5).join(' ');
+    var cb = function(connected) {
+      var pre = connected ? '' : ' NOT';
+      console.log(pre + 'connected to database :: ' + config.db.name + ' at ' + date);
+    };
 
     if (e) {
+      cb(connected);
       console.log(e);
     } else if (config.db.un && config.db.pw) {
       db.authenticate(config.db.un, config.db.pw, function(err, result){
@@ -20,13 +25,13 @@ module.exports = function(server, config) {
         } else {
           connected = true;
         }
+        cb(connected);
       });
     } else {
       connected = true;
+      cb(connected);
     }
-    if (connected) {
-      console.log('connected to database :: ' + config.db.name + ' :: ' + date);
-    }
+
   });
 
   server.register(require('hapi-auth-cookie'), function(err) {
@@ -88,4 +93,8 @@ module.exports = function(server, config) {
       throw err;
     }
   });
+
+  return {
+    db: db
+  };
 };

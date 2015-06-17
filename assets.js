@@ -5,14 +5,15 @@ module.exports = {
       'js/bndl/tail.js'
     ],
     css: [
-      'css/bootstrap.css',
-      'css/font-awesome/css/font-awesome.css',
-      'css/datepicker.css',
-      'css/notify.css',
-      'js/fullcalendar/bootstrap-fullcalendar.css',
-      'css/style.css',
-      'css/style-responsive.css',
-      'css/to-do.css'
+      'css/vendor/bootstrap.css',
+      'css/vendor/font-awesome/css/font-awesome.css',
+      'css/vendor/datepicker.css',
+      'css/vendor/notify.css',
+      // 'js/fullcalendar/bootstrap-fullcalendar.css',
+      'css/vendor/style.css',
+      'css/vendor/style-responsive.css',
+      'css/custom.css'
+      // 'css/to-do.css'
     ]
   },
   production: {

@@ -3,7 +3,7 @@
 */
 var requireDirectory = require('require-directory');
 
-module.exports = function(server) {
+module.exports = function(server, db) {
   // Bootstrap controllers so we don't have to load them individually.
   // This loads them all into the controller name space.
   // https://github.com/troygoode/node-require-directory
@@ -16,6 +16,18 @@ module.exports = function(server) {
       path: '/',
       config: controller.base.index
     },
+
+    {
+      method: 'GET',
+      path: '/events',
+      config: controller.base.events(db)
+    },
+    {
+      method: 'GET',
+      path: '/users',
+      config: controller.base.users(db)
+    },
+
     {
       method: 'GET',
       path: '/{path*}',

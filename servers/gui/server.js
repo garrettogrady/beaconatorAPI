@@ -17,10 +17,10 @@ server.views(settings.hapi.views);
 
 // Bootstrap Hapi Server Plugins.
 // Passes the server object to the plugins
-require('./config/plugins')(server, config);
+var plugins = require('./config/plugins')(server, config);
 
 // Require the routes and pass the server object.
-var routes = require('./config/routes')(server);
+var routes = require('./config/routes')(server, plugins.db);
 
 // Add the server routes
 server.route(routes);

@@ -1,0 +1,21 @@
+{% extends './layouts/default.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section id="main-content">
+  <section class="wrapper site-min-height">
+    <h1>{{ title }}</h1>
+    <pre>
+      {{ events | json(2) }}
+    </pre>
+    {% for event in events %}
+        <div>
+          {{ event.email }} {{ event.beaconName }} {{ event.eventAction }} at {{ event.created.toString() }}
+        </div>
+
+    {% endfor %}
+  </section>
+</section>
+
+{% endblock %}
