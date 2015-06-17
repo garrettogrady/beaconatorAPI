@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git@bitbucket.org:fusionary/beaconator-web-app.git"
   },
   "scripts": {
     "start": "node ./bin/pm2 start",
@@ -102,5 +102,10 @@
     "webpack": "^1.9.10",
     "webpack-dev-middleware": "^1.0.11",
     "yargs": "^3.10.0"
+  },
+  "author": {
+    "name": "Fusionary",
+    "email": "info@fusionary.com",
+    "url": "http://fusionary.com/"
   }
 }
