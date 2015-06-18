@@ -5,7 +5,7 @@
 var Joi = require('joi');
 var Bcrypt = require('bcryptjs');
 var Jwt = require('jsonwebtoken');
-var Nodemailer = require('Nodemailer');
+var Nodemailer = require('nodemailer');
 // var Wreck = require('wreck');
 var request = require('request');
 var Hawk = require('hawk');
