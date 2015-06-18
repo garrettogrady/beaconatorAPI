@@ -27,7 +27,7 @@ var config = {
       ],
       files: [
         'config.js',
-        'config.pm2.js',
+        'config.pm2.json',
       ]
     },
     slack: {

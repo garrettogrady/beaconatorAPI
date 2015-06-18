@@ -1,0 +1,32 @@
+{
+  "apps": [
+    {
+      "name"             : "Beaconator API",
+      "script"           : "servers/api/server.js",
+      "error_file"       : "tmp/logs/api-err.log",
+      "out_file"         : "tmp/logs/api.log",
+      "watch"            : true,
+      "ignore_watch"      : ["package.json"],
+      "merge_logs"       : true,
+      "exec_interpreter" : "node",
+      "exec_mode"        : "fork",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name"             : "Beaconator GUI",
+      "script"           : "servers/gui/server.js",
+      "error_file"       : "tmp/logs/gui-err.log",
+      "out_file"         : "tmp/logs/gui.log",
+      "watch"            : true,
+      "ignore_watch"      : ["package.json"],
+      "merge_logs"       : true,
+      "exec_interpreter" : "node",
+      "exec_mode"        : "fork",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}

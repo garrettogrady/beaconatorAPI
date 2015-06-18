@@ -55,11 +55,15 @@
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_jQuery, __webpack_provided_window_dot_$) {'use strict';
 	
-	var _interopRequireDefault = __webpack_require__(6)['default'];
+	var _interopRequireDefault = __webpack_require__(4)['default'];
 	
 	var _jquery = __webpack_require__(3);
 	
 	var _jquery2 = _interopRequireDefault(_jquery);
+	
+	__webpack_require__(5);
+	
+	__webpack_require__(6);
 	
 	__webpack_require__(7);
 	
@@ -83,17 +87,17 @@
 	
 	__webpack_require__(17);
 	
-	__webpack_require__(18);
-	
 	__webpack_require__(19);
 	
+	__webpack_require__(20);
+	
 	__webpack_require__(21);
+	
+	__webpack_require__(18);
 	
 	__webpack_require__(22);
 	
 	__webpack_require__(23);
-	
-	__webpack_require__(20);
 	
 	__webpack_require__(24);
 	
@@ -104,10 +108,6 @@
 	__webpack_require__(27);
 	
 	__webpack_require__(28);
-	
-	__webpack_require__(5);
-	
-	__webpack_require__(4);
 	
 	__webpack_require__(29);
 	
@@ -143,7 +143,7 @@
 	
 	__webpack_require__(45);
 	
-	__webpack_require__(46);
+	__webpack_require__(54);
 	
 	__webpack_require__(55);
 	
@@ -152,8 +152,6 @@
 	__webpack_require__(57);
 	
 	__webpack_require__(58);
-	
-	__webpack_require__(60);
 	
 	__webpack_provided_window_dot_jQuery = _jquery2['default'];
 	__webpack_provided_window_dot_$ = _jquery2['default'];
@@ -9379,1394 +9377,6 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
-	
-	/*!
-	 * jQuery UI Effects Blind 1.10.4
-	 * http://jqueryui.com
-	 *
-	 * Copyright 2014 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * http://api.jqueryui.com/blind-effect/
-	 *
-	 * Depends:
-	 *	jquery.ui.effect.js
-	 */
-	(function( $, undefined ) {
-	
-	var rvertical = /up|down|vertical/,
-		rpositivemotion = /up|left|vertical|horizontal/;
-	
-	$.effects.effect.blind = function( o, done ) {
-		// Create element
-		var el = $( this ),
-			props = [ "position", "top", "bottom", "left", "right", "height", "width" ],
-			mode = $.effects.setMode( el, o.mode || "hide" ),
-			direction = o.direction || "up",
-			vertical = rvertical.test( direction ),
-			ref = vertical ? "height" : "width",
-			ref2 = vertical ? "top" : "left",
-			motion = rpositivemotion.test( direction ),
-			animation = {},
-			show = mode === "show",
-			wrapper, distance, margin;
-	
-		// if already wrapped, the wrapper's properties are my property. #6245
-		if ( el.parent().is( ".ui-effects-wrapper" ) ) {
-			$.effects.save( el.parent(), props );
-		} else {
-			$.effects.save( el, props );
-		}
-		el.show();
-		wrapper = $.effects.createWrapper( el ).css({
-			overflow: "hidden"
-		});
-	
-		distance = wrapper[ ref ]();
-		margin = parseFloat( wrapper.css( ref2 ) ) || 0;
-	
-		animation[ ref ] = show ? distance : 0;
-		if ( !motion ) {
-			el
-				.css( vertical ? "bottom" : "right", 0 )
-				.css( vertical ? "top" : "left", "auto" )
-				.css({ position: "absolute" });
-	
-			animation[ ref2 ] = show ? margin : distance + margin;
-		}
-	
-		// start at 0 if we are showing
-		if ( show ) {
-			wrapper.css( ref, 0 );
-			if ( ! motion ) {
-				wrapper.css( ref2, margin + distance );
-			}
-		}
-	
-		// Animate
-		wrapper.animate( animation, {
-			duration: o.duration,
-			easing: o.easing,
-			queue: false,
-			complete: function() {
-				if ( mode === "hide" ) {
-					el.hide();
-				}
-				$.effects.restore( el, props );
-				$.effects.removeWrapper( el );
-				done();
-			}
-		});
-	
-	};
-	
-	})(jQuery);
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var jQuery = __webpack_require__(3);
-	
-	/*!
-	 * jQuery UI Effects 1.10.4
-	 * http://jqueryui.com
-	 *
-	 * Copyright 2014 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * http://api.jqueryui.com/category/effects-core/
-	 */
-	(function($, undefined) {
-	
-	var dataSpace = "ui-effects-";
-	
-	$.effects = {
-		effect: {}
-	};
-	
-	/*!
-	 * jQuery Color Animations v2.1.2
-	 * https://github.com/jquery/jquery-color
-	 *
-	 * Copyright 2013 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * Date: Wed Jan 16 08:47:09 2013 -0600
-	 */
-	(function( jQuery, undefined ) {
-	
-		var stepHooks = "backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopColor color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
-	
-		// plusequals test for += 100 -= 100
-		rplusequals = /^([\-+])=\s*(\d+\.?\d*)/,
-		// a set of RE's that can match strings and generate color tuples.
-		stringParsers = [{
-				re: /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
-				parse: function( execResult ) {
-					return [
-						execResult[ 1 ],
-						execResult[ 2 ],
-						execResult[ 3 ],
-						execResult[ 4 ]
-					];
-				}
-			}, {
-				re: /rgba?\(\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
-				parse: function( execResult ) {
-					return [
-						execResult[ 1 ] * 2.55,
-						execResult[ 2 ] * 2.55,
-						execResult[ 3 ] * 2.55,
-						execResult[ 4 ]
-					];
-				}
-			}, {
-				// this regex ignores A-F because it's compared against an already lowercased string
-				re: /#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})/,
-				parse: function( execResult ) {
-					return [
-						parseInt( execResult[ 1 ], 16 ),
-						parseInt( execResult[ 2 ], 16 ),
-						parseInt( execResult[ 3 ], 16 )
-					];
-				}
-			}, {
-				// this regex ignores A-F because it's compared against an already lowercased string
-				re: /#([a-f0-9])([a-f0-9])([a-f0-9])/,
-				parse: function( execResult ) {
-					return [
-						parseInt( execResult[ 1 ] + execResult[ 1 ], 16 ),
-						parseInt( execResult[ 2 ] + execResult[ 2 ], 16 ),
-						parseInt( execResult[ 3 ] + execResult[ 3 ], 16 )
-					];
-				}
-			}, {
-				re: /hsla?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
-				space: "hsla",
-				parse: function( execResult ) {
-					return [
-						execResult[ 1 ],
-						execResult[ 2 ] / 100,
-						execResult[ 3 ] / 100,
-						execResult[ 4 ]
-					];
-				}
-			}],
-	
-		// jQuery.Color( )
-		color = jQuery.Color = function( color, green, blue, alpha ) {
-			return new jQuery.Color.fn.parse( color, green, blue, alpha );
-		},
-		spaces = {
-			rgba: {
-				props: {
-					red: {
-						idx: 0,
-						type: "byte"
-					},
-					green: {
-						idx: 1,
-						type: "byte"
-					},
-					blue: {
-						idx: 2,
-						type: "byte"
-					}
-				}
-			},
-	
-			hsla: {
-				props: {
-					hue: {
-						idx: 0,
-						type: "degrees"
-					},
-					saturation: {
-						idx: 1,
-						type: "percent"
-					},
-					lightness: {
-						idx: 2,
-						type: "percent"
-					}
-				}
-			}
-		},
-		propTypes = {
-			"byte": {
-				floor: true,
-				max: 255
-			},
-			"percent": {
-				max: 1
-			},
-			"degrees": {
-				mod: 360,
-				floor: true
-			}
-		},
-		support = color.support = {},
-	
-		// element for support tests
-		supportElem = jQuery( "<p>" )[ 0 ],
-	
-		// colors = jQuery.Color.names
-		colors,
-	
-		// local aliases of functions called often
-		each = jQuery.each;
-	
-	// determine rgba support immediately
-	supportElem.style.cssText = "background-color:rgba(1,1,1,.5)";
-	support.rgba = supportElem.style.backgroundColor.indexOf( "rgba" ) > -1;
-	
-	// define cache name and alpha properties
-	// for rgba and hsla spaces
-	each( spaces, function( spaceName, space ) {
-		space.cache = "_" + spaceName;
-		space.props.alpha = {
-			idx: 3,
-			type: "percent",
-			def: 1
-		};
-	});
-	
-	function clamp( value, prop, allowEmpty ) {
-		var type = propTypes[ prop.type ] || {};
-	
-		if ( value == null ) {
-			return (allowEmpty || !prop.def) ? null : prop.def;
-		}
-	
-		// ~~ is an short way of doing floor for positive numbers
-		value = type.floor ? ~~value : parseFloat( value );
-	
-		// IE will pass in empty strings as value for alpha,
-		// which will hit this case
-		if ( isNaN( value ) ) {
-			return prop.def;
-		}
-	
-		if ( type.mod ) {
-			// we add mod before modding to make sure that negatives values
-			// get converted properly: -10 -> 350
-			return (value + type.mod) % type.mod;
-		}
-	
-		// for now all property types without mod have min and max
-		return 0 > value ? 0 : type.max < value ? type.max : value;
-	}
-	
-	function stringParse( string ) {
-		var inst = color(),
-			rgba = inst._rgba = [];
-	
-		string = string.toLowerCase();
-	
-		each( stringParsers, function( i, parser ) {
-			var parsed,
-				match = parser.re.exec( string ),
-				values = match && parser.parse( match ),
-				spaceName = parser.space || "rgba";
-	
-			if ( values ) {
-				parsed = inst[ spaceName ]( values );
-	
-				// if this was an rgba parse the assignment might happen twice
-				// oh well....
-				inst[ spaces[ spaceName ].cache ] = parsed[ spaces[ spaceName ].cache ];
-				rgba = inst._rgba = parsed._rgba;
-	
-				// exit each( stringParsers ) here because we matched
-				return false;
-			}
-		});
-	
-		// Found a stringParser that handled it
-		if ( rgba.length ) {
-	
-			// if this came from a parsed string, force "transparent" when alpha is 0
-			// chrome, (and maybe others) return "transparent" as rgba(0,0,0,0)
-			if ( rgba.join() === "0,0,0,0" ) {
-				jQuery.extend( rgba, colors.transparent );
-			}
-			return inst;
-		}
-	
-		// named colors
-		return colors[ string ];
-	}
-	
-	color.fn = jQuery.extend( color.prototype, {
-		parse: function( red, green, blue, alpha ) {
-			if ( red === undefined ) {
-				this._rgba = [ null, null, null, null ];
-				return this;
-			}
-			if ( red.jquery || red.nodeType ) {
-				red = jQuery( red ).css( green );
-				green = undefined;
-			}
-	
-			var inst = this,
-				type = jQuery.type( red ),
-				rgba = this._rgba = [];
-	
-			// more than 1 argument specified - assume ( red, green, blue, alpha )
-			if ( green !== undefined ) {
-				red = [ red, green, blue, alpha ];
-				type = "array";
-			}
-	
-			if ( type === "string" ) {
-				return this.parse( stringParse( red ) || colors._default );
-			}
-	
-			if ( type === "array" ) {
-				each( spaces.rgba.props, function( key, prop ) {
-					rgba[ prop.idx ] = clamp( red[ prop.idx ], prop );
-				});
-				return this;
-			}
-	
-			if ( type === "object" ) {
-				if ( red instanceof color ) {
-					each( spaces, function( spaceName, space ) {
-						if ( red[ space.cache ] ) {
-							inst[ space.cache ] = red[ space.cache ].slice();
-						}
-					});
-				} else {
-					each( spaces, function( spaceName, space ) {
-						var cache = space.cache;
-						each( space.props, function( key, prop ) {
-	
-							// if the cache doesn't exist, and we know how to convert
-							if ( !inst[ cache ] && space.to ) {
-	
-								// if the value was null, we don't need to copy it
-								// if the key was alpha, we don't need to copy it either
-								if ( key === "alpha" || red[ key ] == null ) {
-									return;
-								}
-								inst[ cache ] = space.to( inst._rgba );
-							}
-	
-							// this is the only case where we allow nulls for ALL properties.
-							// call clamp with alwaysAllowEmpty
-							inst[ cache ][ prop.idx ] = clamp( red[ key ], prop, true );
-						});
-	
-						// everything defined but alpha?
-						if ( inst[ cache ] && jQuery.inArray( null, inst[ cache ].slice( 0, 3 ) ) < 0 ) {
-							// use the default of 1
-							inst[ cache ][ 3 ] = 1;
-							if ( space.from ) {
-								inst._rgba = space.from( inst[ cache ] );
-							}
-						}
-					});
-				}
-				return this;
-			}
-		},
-		is: function( compare ) {
-			var is = color( compare ),
-				same = true,
-				inst = this;
-	
-			each( spaces, function( _, space ) {
-				var localCache,
-					isCache = is[ space.cache ];
-				if (isCache) {
-					localCache = inst[ space.cache ] || space.to && space.to( inst._rgba ) || [];
-					each( space.props, function( _, prop ) {
-						if ( isCache[ prop.idx ] != null ) {
-							same = ( isCache[ prop.idx ] === localCache[ prop.idx ] );
-							return same;
-						}
-					});
-				}
-				return same;
-			});
-			return same;
-		},
-		_space: function() {
-			var used = [],
-				inst = this;
-			each( spaces, function( spaceName, space ) {
-				if ( inst[ space.cache ] ) {
-					used.push( spaceName );
-				}
-			});
-			return used.pop();
-		},
-		transition: function( other, distance ) {
-			var end = color( other ),
-				spaceName = end._space(),
-				space = spaces[ spaceName ],
-				startColor = this.alpha() === 0 ? color( "transparent" ) : this,
-				start = startColor[ space.cache ] || space.to( startColor._rgba ),
-				result = start.slice();
-	
-			end = end[ space.cache ];
-			each( space.props, function( key, prop ) {
-				var index = prop.idx,
-					startValue = start[ index ],
-					endValue = end[ index ],
-					type = propTypes[ prop.type ] || {};
-	
-				// if null, don't override start value
-				if ( endValue === null ) {
-					return;
-				}
-				// if null - use end
-				if ( startValue === null ) {
-					result[ index ] = endValue;
-				} else {
-					if ( type.mod ) {
-						if ( endValue - startValue > type.mod / 2 ) {
-							startValue += type.mod;
-						} else if ( startValue - endValue > type.mod / 2 ) {
-							startValue -= type.mod;
-						}
-					}
-					result[ index ] = clamp( ( endValue - startValue ) * distance + startValue, prop );
-				}
-			});
-			return this[ spaceName ]( result );
-		},
-		blend: function( opaque ) {
-			// if we are already opaque - return ourself
-			if ( this._rgba[ 3 ] === 1 ) {
-				return this;
-			}
-	
-			var rgb = this._rgba.slice(),
-				a = rgb.pop(),
-				blend = color( opaque )._rgba;
-	
-			return color( jQuery.map( rgb, function( v, i ) {
-				return ( 1 - a ) * blend[ i ] + a * v;
-			}));
-		},
-		toRgbaString: function() {
-			var prefix = "rgba(",
-				rgba = jQuery.map( this._rgba, function( v, i ) {
-					return v == null ? ( i > 2 ? 1 : 0 ) : v;
-				});
-	
-			if ( rgba[ 3 ] === 1 ) {
-				rgba.pop();
-				prefix = "rgb(";
-			}
-	
-			return prefix + rgba.join() + ")";
-		},
-		toHslaString: function() {
-			var prefix = "hsla(",
-				hsla = jQuery.map( this.hsla(), function( v, i ) {
-					if ( v == null ) {
-						v = i > 2 ? 1 : 0;
-					}
-	
-					// catch 1 and 2
-					if ( i && i < 3 ) {
-						v = Math.round( v * 100 ) + "%";
-					}
-					return v;
-				});
-	
-			if ( hsla[ 3 ] === 1 ) {
-				hsla.pop();
-				prefix = "hsl(";
-			}
-			return prefix + hsla.join() + ")";
-		},
-		toHexString: function( includeAlpha ) {
-			var rgba = this._rgba.slice(),
-				alpha = rgba.pop();
-	
-			if ( includeAlpha ) {
-				rgba.push( ~~( alpha * 255 ) );
-			}
-	
-			return "#" + jQuery.map( rgba, function( v ) {
-	
-				// default to 0 when nulls exist
-				v = ( v || 0 ).toString( 16 );
-				return v.length === 1 ? "0" + v : v;
-			}).join("");
-		},
-		toString: function() {
-			return this._rgba[ 3 ] === 0 ? "transparent" : this.toRgbaString();
-		}
-	});
-	color.fn.parse.prototype = color.fn;
-	
-	// hsla conversions adapted from:
-	// https://code.google.com/p/maashaack/source/browse/packages/graphics/trunk/src/graphics/colors/HUE2RGB.as?r=5021
-	
-	function hue2rgb( p, q, h ) {
-		h = ( h + 1 ) % 1;
-		if ( h * 6 < 1 ) {
-			return p + (q - p) * h * 6;
-		}
-		if ( h * 2 < 1) {
-			return q;
-		}
-		if ( h * 3 < 2 ) {
-			return p + (q - p) * ((2/3) - h) * 6;
-		}
-		return p;
-	}
-	
-	spaces.hsla.to = function ( rgba ) {
-		if ( rgba[ 0 ] == null || rgba[ 1 ] == null || rgba[ 2 ] == null ) {
-			return [ null, null, null, rgba[ 3 ] ];
-		}
-		var r = rgba[ 0 ] / 255,
-			g = rgba[ 1 ] / 255,
-			b = rgba[ 2 ] / 255,
-			a = rgba[ 3 ],
-			max = Math.max( r, g, b ),
-			min = Math.min( r, g, b ),
-			diff = max - min,
-			add = max + min,
-			l = add * 0.5,
-			h, s;
-	
-		if ( min === max ) {
-			h = 0;
-		} else if ( r === max ) {
-			h = ( 60 * ( g - b ) / diff ) + 360;
-		} else if ( g === max ) {
-			h = ( 60 * ( b - r ) / diff ) + 120;
-		} else {
-			h = ( 60 * ( r - g ) / diff ) + 240;
-		}
-	
-		// chroma (diff) == 0 means greyscale which, by definition, saturation = 0%
-		// otherwise, saturation is based on the ratio of chroma (diff) to lightness (add)
-		if ( diff === 0 ) {
-			s = 0;
-		} else if ( l <= 0.5 ) {
-			s = diff / add;
-		} else {
-			s = diff / ( 2 - add );
-		}
-		return [ Math.round(h) % 360, s, l, a == null ? 1 : a ];
-	};
-	
-	spaces.hsla.from = function ( hsla ) {
-		if ( hsla[ 0 ] == null || hsla[ 1 ] == null || hsla[ 2 ] == null ) {
-			return [ null, null, null, hsla[ 3 ] ];
-		}
-		var h = hsla[ 0 ] / 360,
-			s = hsla[ 1 ],
-			l = hsla[ 2 ],
-			a = hsla[ 3 ],
-			q = l <= 0.5 ? l * ( 1 + s ) : l + s - l * s,
-			p = 2 * l - q;
-	
-		return [
-			Math.round( hue2rgb( p, q, h + ( 1 / 3 ) ) * 255 ),
-			Math.round( hue2rgb( p, q, h ) * 255 ),
-			Math.round( hue2rgb( p, q, h - ( 1 / 3 ) ) * 255 ),
-			a
-		];
-	};
-	
-	
-	each( spaces, function( spaceName, space ) {
-		var props = space.props,
-			cache = space.cache,
-			to = space.to,
-			from = space.from;
-	
-		// makes rgba() and hsla()
-		color.fn[ spaceName ] = function( value ) {
-	
-			// generate a cache for this space if it doesn't exist
-			if ( to && !this[ cache ] ) {
-				this[ cache ] = to( this._rgba );
-			}
-			if ( value === undefined ) {
-				return this[ cache ].slice();
-			}
-	
-			var ret,
-				type = jQuery.type( value ),
-				arr = ( type === "array" || type === "object" ) ? value : arguments,
-				local = this[ cache ].slice();
-	
-			each( props, function( key, prop ) {
-				var val = arr[ type === "object" ? key : prop.idx ];
-				if ( val == null ) {
-					val = local[ prop.idx ];
-				}
-				local[ prop.idx ] = clamp( val, prop );
-			});
-	
-			if ( from ) {
-				ret = color( from( local ) );
-				ret[ cache ] = local;
-				return ret;
-			} else {
-				return color( local );
-			}
-		};
-	
-		// makes red() green() blue() alpha() hue() saturation() lightness()
-		each( props, function( key, prop ) {
-			// alpha is included in more than one space
-			if ( color.fn[ key ] ) {
-				return;
-			}
-			color.fn[ key ] = function( value ) {
-				var vtype = jQuery.type( value ),
-					fn = ( key === "alpha" ? ( this._hsla ? "hsla" : "rgba" ) : spaceName ),
-					local = this[ fn ](),
-					cur = local[ prop.idx ],
-					match;
-	
-				if ( vtype === "undefined" ) {
-					return cur;
-				}
-	
-				if ( vtype === "function" ) {
-					value = value.call( this, cur );
-					vtype = jQuery.type( value );
-				}
-				if ( value == null && prop.empty ) {
-					return this;
-				}
-				if ( vtype === "string" ) {
-					match = rplusequals.exec( value );
-					if ( match ) {
-						value = cur + parseFloat( match[ 2 ] ) * ( match[ 1 ] === "+" ? 1 : -1 );
-					}
-				}
-				local[ prop.idx ] = value;
-				return this[ fn ]( local );
-			};
-		});
-	});
-	
-	// add cssHook and .fx.step function for each named hook.
-	// accept a space separated string of properties
-	color.hook = function( hook ) {
-		var hooks = hook.split( " " );
-		each( hooks, function( i, hook ) {
-			jQuery.cssHooks[ hook ] = {
-				set: function( elem, value ) {
-					var parsed, curElem,
-						backgroundColor = "";
-	
-					if ( value !== "transparent" && ( jQuery.type( value ) !== "string" || ( parsed = stringParse( value ) ) ) ) {
-						value = color( parsed || value );
-						if ( !support.rgba && value._rgba[ 3 ] !== 1 ) {
-							curElem = hook === "backgroundColor" ? elem.parentNode : elem;
-							while (
-								(backgroundColor === "" || backgroundColor === "transparent") &&
-								curElem && curElem.style
-							) {
-								try {
-									backgroundColor = jQuery.css( curElem, "backgroundColor" );
-									curElem = curElem.parentNode;
-								} catch ( e ) {
-								}
-							}
-	
-							value = value.blend( backgroundColor && backgroundColor !== "transparent" ?
-								backgroundColor :
-								"_default" );
-						}
-	
-						value = value.toRgbaString();
-					}
-					try {
-						elem.style[ hook ] = value;
-					} catch( e ) {
-						// wrapped to prevent IE from throwing errors on "invalid" values like 'auto' or 'inherit'
-					}
-				}
-			};
-			jQuery.fx.step[ hook ] = function( fx ) {
-				if ( !fx.colorInit ) {
-					fx.start = color( fx.elem, hook );
-					fx.end = color( fx.end );
-					fx.colorInit = true;
-				}
-				jQuery.cssHooks[ hook ].set( fx.elem, fx.start.transition( fx.end, fx.pos ) );
-			};
-		});
-	
-	};
-	
-	color.hook( stepHooks );
-	
-	jQuery.cssHooks.borderColor = {
-		expand: function( value ) {
-			var expanded = {};
-	
-			each( [ "Top", "Right", "Bottom", "Left" ], function( i, part ) {
-				expanded[ "border" + part + "Color" ] = value;
-			});
-			return expanded;
-		}
-	};
-	
-	// Basic color names only.
-	// Usage of any of the other color names requires adding yourself or including
-	// jquery.color.svg-names.js.
-	colors = jQuery.Color.names = {
-		// 4.1. Basic color keywords
-		aqua: "#00ffff",
-		black: "#000000",
-		blue: "#0000ff",
-		fuchsia: "#ff00ff",
-		gray: "#808080",
-		green: "#008000",
-		lime: "#00ff00",
-		maroon: "#800000",
-		navy: "#000080",
-		olive: "#808000",
-		purple: "#800080",
-		red: "#ff0000",
-		silver: "#c0c0c0",
-		teal: "#008080",
-		white: "#ffffff",
-		yellow: "#ffff00",
-	
-		// 4.2.3. "transparent" color keyword
-		transparent: [ null, null, null, 0 ],
-	
-		_default: "#ffffff"
-	};
-	
-	})( jQuery );
-	
-	
-	/******************************************************************************/
-	/****************************** CLASS ANIMATIONS ******************************/
-	/******************************************************************************/
-	(function() {
-	
-	var classAnimationActions = [ "add", "remove", "toggle" ],
-		shorthandStyles = {
-			border: 1,
-			borderBottom: 1,
-			borderColor: 1,
-			borderLeft: 1,
-			borderRight: 1,
-			borderTop: 1,
-			borderWidth: 1,
-			margin: 1,
-			padding: 1
-		};
-	
-	$.each([ "borderLeftStyle", "borderRightStyle", "borderBottomStyle", "borderTopStyle" ], function( _, prop ) {
-		$.fx.step[ prop ] = function( fx ) {
-			if ( fx.end !== "none" && !fx.setAttr || fx.pos === 1 && !fx.setAttr ) {
-				jQuery.style( fx.elem, prop, fx.end );
-				fx.setAttr = true;
-			}
-		};
-	});
-	
-	function getElementStyles( elem ) {
-		var key, len,
-			style = elem.ownerDocument.defaultView ?
-				elem.ownerDocument.defaultView.getComputedStyle( elem, null ) :
-				elem.currentStyle,
-			styles = {};
-	
-		if ( style && style.length && style[ 0 ] && style[ style[ 0 ] ] ) {
-			len = style.length;
-			while ( len-- ) {
-				key = style[ len ];
-				if ( typeof style[ key ] === "string" ) {
-					styles[ $.camelCase( key ) ] = style[ key ];
-				}
-			}
-		// support: Opera, IE <9
-		} else {
-			for ( key in style ) {
-				if ( typeof style[ key ] === "string" ) {
-					styles[ key ] = style[ key ];
-				}
-			}
-		}
-	
-		return styles;
-	}
-	
-	
-	function styleDifference( oldStyle, newStyle ) {
-		var diff = {},
-			name, value;
-	
-		for ( name in newStyle ) {
-			value = newStyle[ name ];
-			if ( oldStyle[ name ] !== value ) {
-				if ( !shorthandStyles[ name ] ) {
-					if ( $.fx.step[ name ] || !isNaN( parseFloat( value ) ) ) {
-						diff[ name ] = value;
-					}
-				}
-			}
-		}
-	
-		return diff;
-	}
-	
-	// support: jQuery <1.8
-	if ( !$.fn.addBack ) {
-		$.fn.addBack = function( selector ) {
-			return this.add( selector == null ?
-				this.prevObject : this.prevObject.filter( selector )
-			);
-		};
-	}
-	
-	$.effects.animateClass = function( value, duration, easing, callback ) {
-		var o = $.speed( duration, easing, callback );
-	
-		return this.queue( function() {
-			var animated = $( this ),
-				baseClass = animated.attr( "class" ) || "",
-				applyClassChange,
-				allAnimations = o.children ? animated.find( "*" ).addBack() : animated;
-	
-			// map the animated objects to store the original styles.
-			allAnimations = allAnimations.map(function() {
-				var el = $( this );
-				return {
-					el: el,
-					start: getElementStyles( this )
-				};
-			});
-	
-			// apply class change
-			applyClassChange = function() {
-				$.each( classAnimationActions, function(i, action) {
-					if ( value[ action ] ) {
-						animated[ action + "Class" ]( value[ action ] );
-					}
-				});
-			};
-			applyClassChange();
-	
-			// map all animated objects again - calculate new styles and diff
-			allAnimations = allAnimations.map(function() {
-				this.end = getElementStyles( this.el[ 0 ] );
-				this.diff = styleDifference( this.start, this.end );
-				return this;
-			});
-	
-			// apply original class
-			animated.attr( "class", baseClass );
-	
-			// map all animated objects again - this time collecting a promise
-			allAnimations = allAnimations.map(function() {
-				var styleInfo = this,
-					dfd = $.Deferred(),
-					opts = $.extend({}, o, {
-						queue: false,
-						complete: function() {
-							dfd.resolve( styleInfo );
-						}
-					});
-	
-				this.el.animate( this.diff, opts );
-				return dfd.promise();
-			});
-	
-			// once all animations have completed:
-			$.when.apply( $, allAnimations.get() ).done(function() {
-	
-				// set the final class
-				applyClassChange();
-	
-				// for each animated element,
-				// clear all css properties that were animated
-				$.each( arguments, function() {
-					var el = this.el;
-					$.each( this.diff, function(key) {
-						el.css( key, "" );
-					});
-				});
-	
-				// this is guarnteed to be there if you use jQuery.speed()
-				// it also handles dequeuing the next anim...
-				o.complete.call( animated[ 0 ] );
-			});
-		});
-	};
-	
-	$.fn.extend({
-		addClass: (function( orig ) {
-			return function( classNames, speed, easing, callback ) {
-				return speed ?
-					$.effects.animateClass.call( this,
-						{ add: classNames }, speed, easing, callback ) :
-					orig.apply( this, arguments );
-			};
-		})( $.fn.addClass ),
-	
-		removeClass: (function( orig ) {
-			return function( classNames, speed, easing, callback ) {
-				return arguments.length > 1 ?
-					$.effects.animateClass.call( this,
-						{ remove: classNames }, speed, easing, callback ) :
-					orig.apply( this, arguments );
-			};
-		})( $.fn.removeClass ),
-	
-		toggleClass: (function( orig ) {
-			return function( classNames, force, speed, easing, callback ) {
-				if ( typeof force === "boolean" || force === undefined ) {
-					if ( !speed ) {
-						// without speed parameter
-						return orig.apply( this, arguments );
-					} else {
-						return $.effects.animateClass.call( this,
-							(force ? { add: classNames } : { remove: classNames }),
-							speed, easing, callback );
-					}
-				} else {
-					// without force parameter
-					return $.effects.animateClass.call( this,
-						{ toggle: classNames }, force, speed, easing );
-				}
-			};
-		})( $.fn.toggleClass ),
-	
-		switchClass: function( remove, add, speed, easing, callback) {
-			return $.effects.animateClass.call( this, {
-				add: add,
-				remove: remove
-			}, speed, easing, callback );
-		}
-	});
-	
-	})();
-	
-	/******************************************************************************/
-	/*********************************** EFFECTS **********************************/
-	/******************************************************************************/
-	
-	(function() {
-	
-	$.extend( $.effects, {
-		version: "1.10.4",
-	
-		// Saves a set of properties in a data storage
-		save: function( element, set ) {
-			for( var i=0; i < set.length; i++ ) {
-				if ( set[ i ] !== null ) {
-					element.data( dataSpace + set[ i ], element[ 0 ].style[ set[ i ] ] );
-				}
-			}
-		},
-	
-		// Restores a set of previously saved properties from a data storage
-		restore: function( element, set ) {
-			var val, i;
-			for( i=0; i < set.length; i++ ) {
-				if ( set[ i ] !== null ) {
-					val = element.data( dataSpace + set[ i ] );
-					// support: jQuery 1.6.2
-					// http://bugs.jquery.com/ticket/9917
-					// jQuery 1.6.2 incorrectly returns undefined for any falsy value.
-					// We can't differentiate between "" and 0 here, so we just assume
-					// empty string since it's likely to be a more common value...
-					if ( val === undefined ) {
-						val = "";
-					}
-					element.css( set[ i ], val );
-				}
-			}
-		},
-	
-		setMode: function( el, mode ) {
-			if (mode === "toggle") {
-				mode = el.is( ":hidden" ) ? "show" : "hide";
-			}
-			return mode;
-		},
-	
-		// Translates a [top,left] array into a baseline value
-		// this should be a little more flexible in the future to handle a string & hash
-		getBaseline: function( origin, original ) {
-			var y, x;
-			switch ( origin[ 0 ] ) {
-				case "top": y = 0; break;
-				case "middle": y = 0.5; break;
-				case "bottom": y = 1; break;
-				default: y = origin[ 0 ] / original.height;
-			}
-			switch ( origin[ 1 ] ) {
-				case "left": x = 0; break;
-				case "center": x = 0.5; break;
-				case "right": x = 1; break;
-				default: x = origin[ 1 ] / original.width;
-			}
-			return {
-				x: x,
-				y: y
-			};
-		},
-	
-		// Wraps the element around a wrapper that copies position properties
-		createWrapper: function( element ) {
-	
-			// if the element is already wrapped, return it
-			if ( element.parent().is( ".ui-effects-wrapper" )) {
-				return element.parent();
-			}
-	
-			// wrap the element
-			var props = {
-					width: element.outerWidth(true),
-					height: element.outerHeight(true),
-					"float": element.css( "float" )
-				},
-				wrapper = $( "<div></div>" )
-					.addClass( "ui-effects-wrapper" )
-					.css({
-						fontSize: "100%",
-						background: "transparent",
-						border: "none",
-						margin: 0,
-						padding: 0
-					}),
-				// Store the size in case width/height are defined in % - Fixes #5245
-				size = {
-					width: element.width(),
-					height: element.height()
-				},
-				active = document.activeElement;
-	
-			// support: Firefox
-			// Firefox incorrectly exposes anonymous content
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=561664
-			try {
-				active.id;
-			} catch( e ) {
-				active = document.body;
-			}
-	
-			element.wrap( wrapper );
-	
-			// Fixes #7595 - Elements lose focus when wrapped.
-			if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
-				$( active ).focus();
-			}
-	
-			wrapper = element.parent(); //Hotfix for jQuery 1.4 since some change in wrap() seems to actually lose the reference to the wrapped element
-	
-			// transfer positioning properties to the wrapper
-			if ( element.css( "position" ) === "static" ) {
-				wrapper.css({ position: "relative" });
-				element.css({ position: "relative" });
-			} else {
-				$.extend( props, {
-					position: element.css( "position" ),
-					zIndex: element.css( "z-index" )
-				});
-				$.each([ "top", "left", "bottom", "right" ], function(i, pos) {
-					props[ pos ] = element.css( pos );
-					if ( isNaN( parseInt( props[ pos ], 10 ) ) ) {
-						props[ pos ] = "auto";
-					}
-				});
-				element.css({
-					position: "relative",
-					top: 0,
-					left: 0,
-					right: "auto",
-					bottom: "auto"
-				});
-			}
-			element.css(size);
-	
-			return wrapper.css( props ).show();
-		},
-	
-		removeWrapper: function( element ) {
-			var active = document.activeElement;
-	
-			if ( element.parent().is( ".ui-effects-wrapper" ) ) {
-				element.parent().replaceWith( element );
-	
-				// Fixes #7595 - Elements lose focus when wrapped.
-				if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
-					$( active ).focus();
-				}
-			}
-	
-	
-			return element;
-		},
-	
-		setTransition: function( element, list, factor, value ) {
-			value = value || {};
-			$.each( list, function( i, x ) {
-				var unit = element.cssUnit( x );
-				if ( unit[ 0 ] > 0 ) {
-					value[ x ] = unit[ 0 ] * factor + unit[ 1 ];
-				}
-			});
-			return value;
-		}
-	});
-	
-	// return an effect options object for the given parameters:
-	function _normalizeArguments( effect, options, speed, callback ) {
-	
-		// allow passing all options as the first parameter
-		if ( $.isPlainObject( effect ) ) {
-			options = effect;
-			effect = effect.effect;
-		}
-	
-		// convert to an object
-		effect = { effect: effect };
-	
-		// catch (effect, null, ...)
-		if ( options == null ) {
-			options = {};
-		}
-	
-		// catch (effect, callback)
-		if ( $.isFunction( options ) ) {
-			callback = options;
-			speed = null;
-			options = {};
-		}
-	
-		// catch (effect, speed, ?)
-		if ( typeof options === "number" || $.fx.speeds[ options ] ) {
-			callback = speed;
-			speed = options;
-			options = {};
-		}
-	
-		// catch (effect, options, callback)
-		if ( $.isFunction( speed ) ) {
-			callback = speed;
-			speed = null;
-		}
-	
-		// add options to effect
-		if ( options ) {
-			$.extend( effect, options );
-		}
-	
-		speed = speed || options.duration;
-		effect.duration = $.fx.off ? 0 :
-			typeof speed === "number" ? speed :
-			speed in $.fx.speeds ? $.fx.speeds[ speed ] :
-			$.fx.speeds._default;
-	
-		effect.complete = callback || options.complete;
-	
-		return effect;
-	}
-	
-	function standardAnimationOption( option ) {
-		// Valid standard speeds (nothing, number, named speed)
-		if ( !option || typeof option === "number" || $.fx.speeds[ option ] ) {
-			return true;
-		}
-	
-		// Invalid strings - treat as "normal" speed
-		if ( typeof option === "string" && !$.effects.effect[ option ] ) {
-			return true;
-		}
-	
-		// Complete callback
-		if ( $.isFunction( option ) ) {
-			return true;
-		}
-	
-		// Options hash (but not naming an effect)
-		if ( typeof option === "object" && !option.effect ) {
-			return true;
-		}
-	
-		// Didn't match any standard API
-		return false;
-	}
-	
-	$.fn.extend({
-		effect: function( /* effect, options, speed, callback */ ) {
-			var args = _normalizeArguments.apply( this, arguments ),
-				mode = args.mode,
-				queue = args.queue,
-				effectMethod = $.effects.effect[ args.effect ];
-	
-			if ( $.fx.off || !effectMethod ) {
-				// delegate to the original method (e.g., .show()) if possible
-				if ( mode ) {
-					return this[ mode ]( args.duration, args.complete );
-				} else {
-					return this.each( function() {
-						if ( args.complete ) {
-							args.complete.call( this );
-						}
-					});
-				}
-			}
-	
-			function run( next ) {
-				var elem = $( this ),
-					complete = args.complete,
-					mode = args.mode;
-	
-				function done() {
-					if ( $.isFunction( complete ) ) {
-						complete.call( elem[0] );
-					}
-					if ( $.isFunction( next ) ) {
-						next();
-					}
-				}
-	
-				// If the element already has the correct final state, delegate to
-				// the core methods so the internal tracking of "olddisplay" works.
-				if ( elem.is( ":hidden" ) ? mode === "hide" : mode === "show" ) {
-					elem[ mode ]();
-					done();
-				} else {
-					effectMethod.call( elem[0], args, done );
-				}
-			}
-	
-			return queue === false ? this.each( run ) : this.queue( queue || "fx", run );
-		},
-	
-		show: (function( orig ) {
-			return function( option ) {
-				if ( standardAnimationOption( option ) ) {
-					return orig.apply( this, arguments );
-				} else {
-					var args = _normalizeArguments.apply( this, arguments );
-					args.mode = "show";
-					return this.effect.call( this, args );
-				}
-			};
-		})( $.fn.show ),
-	
-		hide: (function( orig ) {
-			return function( option ) {
-				if ( standardAnimationOption( option ) ) {
-					return orig.apply( this, arguments );
-				} else {
-					var args = _normalizeArguments.apply( this, arguments );
-					args.mode = "hide";
-					return this.effect.call( this, args );
-				}
-			};
-		})( $.fn.hide ),
-	
-		toggle: (function( orig ) {
-			return function( option ) {
-				if ( standardAnimationOption( option ) || typeof option === "boolean" ) {
-					return orig.apply( this, arguments );
-				} else {
-					var args = _normalizeArguments.apply( this, arguments );
-					args.mode = "toggle";
-					return this.effect.call( this, args );
-				}
-			};
-		})( $.fn.toggle ),
-	
-		// helper functions
-		cssUnit: function(key) {
-			var style = this.css( key ),
-				val = [];
-	
-			$.each( [ "em", "px", "%", "pt" ], function( i, unit ) {
-				if ( style.indexOf( unit ) > 0 ) {
-					val = [ parseFloat( style ), unit ];
-				}
-			});
-			return val;
-		}
-	});
-	
-	})();
-	
-	/******************************************************************************/
-	/*********************************** EASING ***********************************/
-	/******************************************************************************/
-	
-	(function() {
-	
-	// based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
-	
-	var baseEasings = {};
-	
-	$.each( [ "Quad", "Cubic", "Quart", "Quint", "Expo" ], function( i, name ) {
-		baseEasings[ name ] = function( p ) {
-			return Math.pow( p, i + 2 );
-		};
-	});
-	
-	$.extend( baseEasings, {
-		Sine: function ( p ) {
-			return 1 - Math.cos( p * Math.PI / 2 );
-		},
-		Circ: function ( p ) {
-			return 1 - Math.sqrt( 1 - p * p );
-		},
-		Elastic: function( p ) {
-			return p === 0 || p === 1 ? p :
-				-Math.pow( 2, 8 * (p - 1) ) * Math.sin( ( (p - 1) * 80 - 7.5 ) * Math.PI / 15 );
-		},
-		Back: function( p ) {
-			return p * p * ( 3 * p - 2 );
-		},
-		Bounce: function ( p ) {
-			var pow2,
-				bounce = 4;
-	
-			while ( p < ( ( pow2 = Math.pow( 2, --bounce ) ) - 1 ) / 11 ) {}
-			return 1 / Math.pow( 4, 3 - bounce ) - 7.5625 * Math.pow( ( pow2 * 3 - 2 ) / 22 - p, 2 );
-		}
-	});
-	
-	$.each( baseEasings, function( name, easeIn ) {
-		$.easing[ "easeIn" + name ] = easeIn;
-		$.easing[ "easeOut" + name ] = function( p ) {
-			return 1 - easeIn( 1 - p );
-		};
-		$.easing[ "easeInOut" + name ] = function( p ) {
-			return p < 0.5 ?
-				easeIn( p * 2 ) / 2 :
-				1 - easeIn( p * -2 + 2 ) / 2;
-		};
-	});
-	
-	})();
-	
-	})(jQuery);
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
 	"use strict";
 	
 	exports["default"] = function (obj) {
@@ -10778,7 +9388,7 @@
 	exports.__esModule = true;
 
 /***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(jQuery) {/*!
@@ -11306,7 +9916,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 8 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_provided_window_dot_jQuery) {/* =========================================================
@@ -11740,7 +10350,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 9 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
@@ -12068,7 +10678,7 @@
 
 
 /***/ },
-/* 10 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
@@ -12597,11 +11207,11 @@
 
 
 /***/ },
-/* 11 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(10);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Mouse 1.10.4
@@ -12775,7 +11385,7 @@
 
 
 /***/ },
-/* 12 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
@@ -13284,13 +11894,13 @@
 
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
 	__webpack_require__(9);
-	__webpack_require__(11);
-	__webpack_require__(10);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Draggable 1.10.4
@@ -14253,14 +12863,14 @@
 
 
 /***/ },
-/* 14 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	__webpack_require__(9);
-	__webpack_require__(10);
 	__webpack_require__(11);
-	__webpack_require__(13);
 	
 	/*!
 	 * jQuery UI Droppable 1.10.4
@@ -14654,13 +13264,13 @@
 
 
 /***/ },
-/* 15 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
 	__webpack_require__(9);
-	__webpack_require__(11);
-	__webpack_require__(10);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Resizable 1.10.4
@@ -15643,13 +14253,13 @@
 
 
 /***/ },
-/* 16 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
 	__webpack_require__(9);
-	__webpack_require__(11);
-	__webpack_require__(10);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Selectable 1.10.4
@@ -15931,13 +14541,13 @@
 
 
 /***/ },
-/* 17 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
 	__webpack_require__(9);
-	__webpack_require__(11);
-	__webpack_require__(10);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Sortable 1.10.4
@@ -17231,12 +15841,12 @@
 
 
 /***/ },
-/* 18 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
-	__webpack_require__(10);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Accordion 1.10.4
@@ -17811,14 +16421,14 @@
 
 
 /***/ },
-/* 19 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	__webpack_require__(10);
-	__webpack_require__(12);
-	__webpack_require__(20);
+	__webpack_require__(18);
 	
 	/*!
 	 * jQuery UI Autocomplete 1.10.4
@@ -18429,13 +17039,13 @@
 
 
 /***/ },
-/* 20 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	__webpack_require__(10);
-	__webpack_require__(12);
 	
 	/*!
 	 * jQuery UI Menu 1.10.4
@@ -19067,12 +17677,12 @@
 
 
 /***/ },
-/* 21 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
-	__webpack_require__(10);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Button 1.10.4
@@ -19472,11 +18082,11 @@
 
 
 /***/ },
-/* 22 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
+	__webpack_require__(7);
 	
 	/*!
 	 * jQuery UI Datepicker 1.10.4
@@ -21519,17 +20129,17 @@
 
 
 /***/ },
-/* 23 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
+	__webpack_require__(8);
+	__webpack_require__(19);
+	__webpack_require__(11);
 	__webpack_require__(9);
 	__webpack_require__(10);
-	__webpack_require__(21);
 	__webpack_require__(13);
-	__webpack_require__(11);
-	__webpack_require__(12);
-	__webpack_require__(15);
 	
 	/*!
 	 * jQuery UI Dialog 1.10.4
@@ -22357,12 +20967,12 @@
 
 
 /***/ },
-/* 24 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
-	__webpack_require__(10);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Progressbar 1.10.4
@@ -22512,13 +21122,13 @@
 
 
 /***/ },
-/* 25 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
+	__webpack_require__(7);
 	__webpack_require__(9);
-	__webpack_require__(11);
-	__webpack_require__(10);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Slider 1.10.4
@@ -23199,13 +21809,13 @@
 
 
 /***/ },
-/* 26 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
-	__webpack_require__(10);
-	__webpack_require__(21);
+	__webpack_require__(7);
+	__webpack_require__(8);
+	__webpack_require__(19);
 	
 	/*!
 	 * jQuery UI Spinner 1.10.4
@@ -23707,12 +22317,12 @@
 
 
 /***/ },
-/* 27 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
-	__webpack_require__(10);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	
 	/*!
 	 * jQuery UI Tabs 1.10.4
@@ -24566,13 +23176,13 @@
 
 
 /***/ },
-/* 28 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(9);
+	__webpack_require__(7);
+	__webpack_require__(8);
 	__webpack_require__(10);
-	__webpack_require__(12);
 	
 	/*!
 	 * jQuery UI Tooltip 1.10.4
@@ -24979,11 +23589,1399 @@
 
 
 /***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var jQuery = __webpack_require__(3);
+	
+	/*!
+	 * jQuery UI Effects 1.10.4
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/category/effects-core/
+	 */
+	(function($, undefined) {
+	
+	var dataSpace = "ui-effects-";
+	
+	$.effects = {
+		effect: {}
+	};
+	
+	/*!
+	 * jQuery Color Animations v2.1.2
+	 * https://github.com/jquery/jquery-color
+	 *
+	 * Copyright 2013 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * Date: Wed Jan 16 08:47:09 2013 -0600
+	 */
+	(function( jQuery, undefined ) {
+	
+		var stepHooks = "backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopColor color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
+	
+		// plusequals test for += 100 -= 100
+		rplusequals = /^([\-+])=\s*(\d+\.?\d*)/,
+		// a set of RE's that can match strings and generate color tuples.
+		stringParsers = [{
+				re: /rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
+				parse: function( execResult ) {
+					return [
+						execResult[ 1 ],
+						execResult[ 2 ],
+						execResult[ 3 ],
+						execResult[ 4 ]
+					];
+				}
+			}, {
+				re: /rgba?\(\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
+				parse: function( execResult ) {
+					return [
+						execResult[ 1 ] * 2.55,
+						execResult[ 2 ] * 2.55,
+						execResult[ 3 ] * 2.55,
+						execResult[ 4 ]
+					];
+				}
+			}, {
+				// this regex ignores A-F because it's compared against an already lowercased string
+				re: /#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})/,
+				parse: function( execResult ) {
+					return [
+						parseInt( execResult[ 1 ], 16 ),
+						parseInt( execResult[ 2 ], 16 ),
+						parseInt( execResult[ 3 ], 16 )
+					];
+				}
+			}, {
+				// this regex ignores A-F because it's compared against an already lowercased string
+				re: /#([a-f0-9])([a-f0-9])([a-f0-9])/,
+				parse: function( execResult ) {
+					return [
+						parseInt( execResult[ 1 ] + execResult[ 1 ], 16 ),
+						parseInt( execResult[ 2 ] + execResult[ 2 ], 16 ),
+						parseInt( execResult[ 3 ] + execResult[ 3 ], 16 )
+					];
+				}
+			}, {
+				re: /hsla?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\%\s*,\s*(\d+(?:\.\d+)?)\%\s*(?:,\s*(\d?(?:\.\d+)?)\s*)?\)/,
+				space: "hsla",
+				parse: function( execResult ) {
+					return [
+						execResult[ 1 ],
+						execResult[ 2 ] / 100,
+						execResult[ 3 ] / 100,
+						execResult[ 4 ]
+					];
+				}
+			}],
+	
+		// jQuery.Color( )
+		color = jQuery.Color = function( color, green, blue, alpha ) {
+			return new jQuery.Color.fn.parse( color, green, blue, alpha );
+		},
+		spaces = {
+			rgba: {
+				props: {
+					red: {
+						idx: 0,
+						type: "byte"
+					},
+					green: {
+						idx: 1,
+						type: "byte"
+					},
+					blue: {
+						idx: 2,
+						type: "byte"
+					}
+				}
+			},
+	
+			hsla: {
+				props: {
+					hue: {
+						idx: 0,
+						type: "degrees"
+					},
+					saturation: {
+						idx: 1,
+						type: "percent"
+					},
+					lightness: {
+						idx: 2,
+						type: "percent"
+					}
+				}
+			}
+		},
+		propTypes = {
+			"byte": {
+				floor: true,
+				max: 255
+			},
+			"percent": {
+				max: 1
+			},
+			"degrees": {
+				mod: 360,
+				floor: true
+			}
+		},
+		support = color.support = {},
+	
+		// element for support tests
+		supportElem = jQuery( "<p>" )[ 0 ],
+	
+		// colors = jQuery.Color.names
+		colors,
+	
+		// local aliases of functions called often
+		each = jQuery.each;
+	
+	// determine rgba support immediately
+	supportElem.style.cssText = "background-color:rgba(1,1,1,.5)";
+	support.rgba = supportElem.style.backgroundColor.indexOf( "rgba" ) > -1;
+	
+	// define cache name and alpha properties
+	// for rgba and hsla spaces
+	each( spaces, function( spaceName, space ) {
+		space.cache = "_" + spaceName;
+		space.props.alpha = {
+			idx: 3,
+			type: "percent",
+			def: 1
+		};
+	});
+	
+	function clamp( value, prop, allowEmpty ) {
+		var type = propTypes[ prop.type ] || {};
+	
+		if ( value == null ) {
+			return (allowEmpty || !prop.def) ? null : prop.def;
+		}
+	
+		// ~~ is an short way of doing floor for positive numbers
+		value = type.floor ? ~~value : parseFloat( value );
+	
+		// IE will pass in empty strings as value for alpha,
+		// which will hit this case
+		if ( isNaN( value ) ) {
+			return prop.def;
+		}
+	
+		if ( type.mod ) {
+			// we add mod before modding to make sure that negatives values
+			// get converted properly: -10 -> 350
+			return (value + type.mod) % type.mod;
+		}
+	
+		// for now all property types without mod have min and max
+		return 0 > value ? 0 : type.max < value ? type.max : value;
+	}
+	
+	function stringParse( string ) {
+		var inst = color(),
+			rgba = inst._rgba = [];
+	
+		string = string.toLowerCase();
+	
+		each( stringParsers, function( i, parser ) {
+			var parsed,
+				match = parser.re.exec( string ),
+				values = match && parser.parse( match ),
+				spaceName = parser.space || "rgba";
+	
+			if ( values ) {
+				parsed = inst[ spaceName ]( values );
+	
+				// if this was an rgba parse the assignment might happen twice
+				// oh well....
+				inst[ spaces[ spaceName ].cache ] = parsed[ spaces[ spaceName ].cache ];
+				rgba = inst._rgba = parsed._rgba;
+	
+				// exit each( stringParsers ) here because we matched
+				return false;
+			}
+		});
+	
+		// Found a stringParser that handled it
+		if ( rgba.length ) {
+	
+			// if this came from a parsed string, force "transparent" when alpha is 0
+			// chrome, (and maybe others) return "transparent" as rgba(0,0,0,0)
+			if ( rgba.join() === "0,0,0,0" ) {
+				jQuery.extend( rgba, colors.transparent );
+			}
+			return inst;
+		}
+	
+		// named colors
+		return colors[ string ];
+	}
+	
+	color.fn = jQuery.extend( color.prototype, {
+		parse: function( red, green, blue, alpha ) {
+			if ( red === undefined ) {
+				this._rgba = [ null, null, null, null ];
+				return this;
+			}
+			if ( red.jquery || red.nodeType ) {
+				red = jQuery( red ).css( green );
+				green = undefined;
+			}
+	
+			var inst = this,
+				type = jQuery.type( red ),
+				rgba = this._rgba = [];
+	
+			// more than 1 argument specified - assume ( red, green, blue, alpha )
+			if ( green !== undefined ) {
+				red = [ red, green, blue, alpha ];
+				type = "array";
+			}
+	
+			if ( type === "string" ) {
+				return this.parse( stringParse( red ) || colors._default );
+			}
+	
+			if ( type === "array" ) {
+				each( spaces.rgba.props, function( key, prop ) {
+					rgba[ prop.idx ] = clamp( red[ prop.idx ], prop );
+				});
+				return this;
+			}
+	
+			if ( type === "object" ) {
+				if ( red instanceof color ) {
+					each( spaces, function( spaceName, space ) {
+						if ( red[ space.cache ] ) {
+							inst[ space.cache ] = red[ space.cache ].slice();
+						}
+					});
+				} else {
+					each( spaces, function( spaceName, space ) {
+						var cache = space.cache;
+						each( space.props, function( key, prop ) {
+	
+							// if the cache doesn't exist, and we know how to convert
+							if ( !inst[ cache ] && space.to ) {
+	
+								// if the value was null, we don't need to copy it
+								// if the key was alpha, we don't need to copy it either
+								if ( key === "alpha" || red[ key ] == null ) {
+									return;
+								}
+								inst[ cache ] = space.to( inst._rgba );
+							}
+	
+							// this is the only case where we allow nulls for ALL properties.
+							// call clamp with alwaysAllowEmpty
+							inst[ cache ][ prop.idx ] = clamp( red[ key ], prop, true );
+						});
+	
+						// everything defined but alpha?
+						if ( inst[ cache ] && jQuery.inArray( null, inst[ cache ].slice( 0, 3 ) ) < 0 ) {
+							// use the default of 1
+							inst[ cache ][ 3 ] = 1;
+							if ( space.from ) {
+								inst._rgba = space.from( inst[ cache ] );
+							}
+						}
+					});
+				}
+				return this;
+			}
+		},
+		is: function( compare ) {
+			var is = color( compare ),
+				same = true,
+				inst = this;
+	
+			each( spaces, function( _, space ) {
+				var localCache,
+					isCache = is[ space.cache ];
+				if (isCache) {
+					localCache = inst[ space.cache ] || space.to && space.to( inst._rgba ) || [];
+					each( space.props, function( _, prop ) {
+						if ( isCache[ prop.idx ] != null ) {
+							same = ( isCache[ prop.idx ] === localCache[ prop.idx ] );
+							return same;
+						}
+					});
+				}
+				return same;
+			});
+			return same;
+		},
+		_space: function() {
+			var used = [],
+				inst = this;
+			each( spaces, function( spaceName, space ) {
+				if ( inst[ space.cache ] ) {
+					used.push( spaceName );
+				}
+			});
+			return used.pop();
+		},
+		transition: function( other, distance ) {
+			var end = color( other ),
+				spaceName = end._space(),
+				space = spaces[ spaceName ],
+				startColor = this.alpha() === 0 ? color( "transparent" ) : this,
+				start = startColor[ space.cache ] || space.to( startColor._rgba ),
+				result = start.slice();
+	
+			end = end[ space.cache ];
+			each( space.props, function( key, prop ) {
+				var index = prop.idx,
+					startValue = start[ index ],
+					endValue = end[ index ],
+					type = propTypes[ prop.type ] || {};
+	
+				// if null, don't override start value
+				if ( endValue === null ) {
+					return;
+				}
+				// if null - use end
+				if ( startValue === null ) {
+					result[ index ] = endValue;
+				} else {
+					if ( type.mod ) {
+						if ( endValue - startValue > type.mod / 2 ) {
+							startValue += type.mod;
+						} else if ( startValue - endValue > type.mod / 2 ) {
+							startValue -= type.mod;
+						}
+					}
+					result[ index ] = clamp( ( endValue - startValue ) * distance + startValue, prop );
+				}
+			});
+			return this[ spaceName ]( result );
+		},
+		blend: function( opaque ) {
+			// if we are already opaque - return ourself
+			if ( this._rgba[ 3 ] === 1 ) {
+				return this;
+			}
+	
+			var rgb = this._rgba.slice(),
+				a = rgb.pop(),
+				blend = color( opaque )._rgba;
+	
+			return color( jQuery.map( rgb, function( v, i ) {
+				return ( 1 - a ) * blend[ i ] + a * v;
+			}));
+		},
+		toRgbaString: function() {
+			var prefix = "rgba(",
+				rgba = jQuery.map( this._rgba, function( v, i ) {
+					return v == null ? ( i > 2 ? 1 : 0 ) : v;
+				});
+	
+			if ( rgba[ 3 ] === 1 ) {
+				rgba.pop();
+				prefix = "rgb(";
+			}
+	
+			return prefix + rgba.join() + ")";
+		},
+		toHslaString: function() {
+			var prefix = "hsla(",
+				hsla = jQuery.map( this.hsla(), function( v, i ) {
+					if ( v == null ) {
+						v = i > 2 ? 1 : 0;
+					}
+	
+					// catch 1 and 2
+					if ( i && i < 3 ) {
+						v = Math.round( v * 100 ) + "%";
+					}
+					return v;
+				});
+	
+			if ( hsla[ 3 ] === 1 ) {
+				hsla.pop();
+				prefix = "hsl(";
+			}
+			return prefix + hsla.join() + ")";
+		},
+		toHexString: function( includeAlpha ) {
+			var rgba = this._rgba.slice(),
+				alpha = rgba.pop();
+	
+			if ( includeAlpha ) {
+				rgba.push( ~~( alpha * 255 ) );
+			}
+	
+			return "#" + jQuery.map( rgba, function( v ) {
+	
+				// default to 0 when nulls exist
+				v = ( v || 0 ).toString( 16 );
+				return v.length === 1 ? "0" + v : v;
+			}).join("");
+		},
+		toString: function() {
+			return this._rgba[ 3 ] === 0 ? "transparent" : this.toRgbaString();
+		}
+	});
+	color.fn.parse.prototype = color.fn;
+	
+	// hsla conversions adapted from:
+	// https://code.google.com/p/maashaack/source/browse/packages/graphics/trunk/src/graphics/colors/HUE2RGB.as?r=5021
+	
+	function hue2rgb( p, q, h ) {
+		h = ( h + 1 ) % 1;
+		if ( h * 6 < 1 ) {
+			return p + (q - p) * h * 6;
+		}
+		if ( h * 2 < 1) {
+			return q;
+		}
+		if ( h * 3 < 2 ) {
+			return p + (q - p) * ((2/3) - h) * 6;
+		}
+		return p;
+	}
+	
+	spaces.hsla.to = function ( rgba ) {
+		if ( rgba[ 0 ] == null || rgba[ 1 ] == null || rgba[ 2 ] == null ) {
+			return [ null, null, null, rgba[ 3 ] ];
+		}
+		var r = rgba[ 0 ] / 255,
+			g = rgba[ 1 ] / 255,
+			b = rgba[ 2 ] / 255,
+			a = rgba[ 3 ],
+			max = Math.max( r, g, b ),
+			min = Math.min( r, g, b ),
+			diff = max - min,
+			add = max + min,
+			l = add * 0.5,
+			h, s;
+	
+		if ( min === max ) {
+			h = 0;
+		} else if ( r === max ) {
+			h = ( 60 * ( g - b ) / diff ) + 360;
+		} else if ( g === max ) {
+			h = ( 60 * ( b - r ) / diff ) + 120;
+		} else {
+			h = ( 60 * ( r - g ) / diff ) + 240;
+		}
+	
+		// chroma (diff) == 0 means greyscale which, by definition, saturation = 0%
+		// otherwise, saturation is based on the ratio of chroma (diff) to lightness (add)
+		if ( diff === 0 ) {
+			s = 0;
+		} else if ( l <= 0.5 ) {
+			s = diff / add;
+		} else {
+			s = diff / ( 2 - add );
+		}
+		return [ Math.round(h) % 360, s, l, a == null ? 1 : a ];
+	};
+	
+	spaces.hsla.from = function ( hsla ) {
+		if ( hsla[ 0 ] == null || hsla[ 1 ] == null || hsla[ 2 ] == null ) {
+			return [ null, null, null, hsla[ 3 ] ];
+		}
+		var h = hsla[ 0 ] / 360,
+			s = hsla[ 1 ],
+			l = hsla[ 2 ],
+			a = hsla[ 3 ],
+			q = l <= 0.5 ? l * ( 1 + s ) : l + s - l * s,
+			p = 2 * l - q;
+	
+		return [
+			Math.round( hue2rgb( p, q, h + ( 1 / 3 ) ) * 255 ),
+			Math.round( hue2rgb( p, q, h ) * 255 ),
+			Math.round( hue2rgb( p, q, h - ( 1 / 3 ) ) * 255 ),
+			a
+		];
+	};
+	
+	
+	each( spaces, function( spaceName, space ) {
+		var props = space.props,
+			cache = space.cache,
+			to = space.to,
+			from = space.from;
+	
+		// makes rgba() and hsla()
+		color.fn[ spaceName ] = function( value ) {
+	
+			// generate a cache for this space if it doesn't exist
+			if ( to && !this[ cache ] ) {
+				this[ cache ] = to( this._rgba );
+			}
+			if ( value === undefined ) {
+				return this[ cache ].slice();
+			}
+	
+			var ret,
+				type = jQuery.type( value ),
+				arr = ( type === "array" || type === "object" ) ? value : arguments,
+				local = this[ cache ].slice();
+	
+			each( props, function( key, prop ) {
+				var val = arr[ type === "object" ? key : prop.idx ];
+				if ( val == null ) {
+					val = local[ prop.idx ];
+				}
+				local[ prop.idx ] = clamp( val, prop );
+			});
+	
+			if ( from ) {
+				ret = color( from( local ) );
+				ret[ cache ] = local;
+				return ret;
+			} else {
+				return color( local );
+			}
+		};
+	
+		// makes red() green() blue() alpha() hue() saturation() lightness()
+		each( props, function( key, prop ) {
+			// alpha is included in more than one space
+			if ( color.fn[ key ] ) {
+				return;
+			}
+			color.fn[ key ] = function( value ) {
+				var vtype = jQuery.type( value ),
+					fn = ( key === "alpha" ? ( this._hsla ? "hsla" : "rgba" ) : spaceName ),
+					local = this[ fn ](),
+					cur = local[ prop.idx ],
+					match;
+	
+				if ( vtype === "undefined" ) {
+					return cur;
+				}
+	
+				if ( vtype === "function" ) {
+					value = value.call( this, cur );
+					vtype = jQuery.type( value );
+				}
+				if ( value == null && prop.empty ) {
+					return this;
+				}
+				if ( vtype === "string" ) {
+					match = rplusequals.exec( value );
+					if ( match ) {
+						value = cur + parseFloat( match[ 2 ] ) * ( match[ 1 ] === "+" ? 1 : -1 );
+					}
+				}
+				local[ prop.idx ] = value;
+				return this[ fn ]( local );
+			};
+		});
+	});
+	
+	// add cssHook and .fx.step function for each named hook.
+	// accept a space separated string of properties
+	color.hook = function( hook ) {
+		var hooks = hook.split( " " );
+		each( hooks, function( i, hook ) {
+			jQuery.cssHooks[ hook ] = {
+				set: function( elem, value ) {
+					var parsed, curElem,
+						backgroundColor = "";
+	
+					if ( value !== "transparent" && ( jQuery.type( value ) !== "string" || ( parsed = stringParse( value ) ) ) ) {
+						value = color( parsed || value );
+						if ( !support.rgba && value._rgba[ 3 ] !== 1 ) {
+							curElem = hook === "backgroundColor" ? elem.parentNode : elem;
+							while (
+								(backgroundColor === "" || backgroundColor === "transparent") &&
+								curElem && curElem.style
+							) {
+								try {
+									backgroundColor = jQuery.css( curElem, "backgroundColor" );
+									curElem = curElem.parentNode;
+								} catch ( e ) {
+								}
+							}
+	
+							value = value.blend( backgroundColor && backgroundColor !== "transparent" ?
+								backgroundColor :
+								"_default" );
+						}
+	
+						value = value.toRgbaString();
+					}
+					try {
+						elem.style[ hook ] = value;
+					} catch( e ) {
+						// wrapped to prevent IE from throwing errors on "invalid" values like 'auto' or 'inherit'
+					}
+				}
+			};
+			jQuery.fx.step[ hook ] = function( fx ) {
+				if ( !fx.colorInit ) {
+					fx.start = color( fx.elem, hook );
+					fx.end = color( fx.end );
+					fx.colorInit = true;
+				}
+				jQuery.cssHooks[ hook ].set( fx.elem, fx.start.transition( fx.end, fx.pos ) );
+			};
+		});
+	
+	};
+	
+	color.hook( stepHooks );
+	
+	jQuery.cssHooks.borderColor = {
+		expand: function( value ) {
+			var expanded = {};
+	
+			each( [ "Top", "Right", "Bottom", "Left" ], function( i, part ) {
+				expanded[ "border" + part + "Color" ] = value;
+			});
+			return expanded;
+		}
+	};
+	
+	// Basic color names only.
+	// Usage of any of the other color names requires adding yourself or including
+	// jquery.color.svg-names.js.
+	colors = jQuery.Color.names = {
+		// 4.1. Basic color keywords
+		aqua: "#00ffff",
+		black: "#000000",
+		blue: "#0000ff",
+		fuchsia: "#ff00ff",
+		gray: "#808080",
+		green: "#008000",
+		lime: "#00ff00",
+		maroon: "#800000",
+		navy: "#000080",
+		olive: "#808000",
+		purple: "#800080",
+		red: "#ff0000",
+		silver: "#c0c0c0",
+		teal: "#008080",
+		white: "#ffffff",
+		yellow: "#ffff00",
+	
+		// 4.2.3. "transparent" color keyword
+		transparent: [ null, null, null, 0 ],
+	
+		_default: "#ffffff"
+	};
+	
+	})( jQuery );
+	
+	
+	/******************************************************************************/
+	/****************************** CLASS ANIMATIONS ******************************/
+	/******************************************************************************/
+	(function() {
+	
+	var classAnimationActions = [ "add", "remove", "toggle" ],
+		shorthandStyles = {
+			border: 1,
+			borderBottom: 1,
+			borderColor: 1,
+			borderLeft: 1,
+			borderRight: 1,
+			borderTop: 1,
+			borderWidth: 1,
+			margin: 1,
+			padding: 1
+		};
+	
+	$.each([ "borderLeftStyle", "borderRightStyle", "borderBottomStyle", "borderTopStyle" ], function( _, prop ) {
+		$.fx.step[ prop ] = function( fx ) {
+			if ( fx.end !== "none" && !fx.setAttr || fx.pos === 1 && !fx.setAttr ) {
+				jQuery.style( fx.elem, prop, fx.end );
+				fx.setAttr = true;
+			}
+		};
+	});
+	
+	function getElementStyles( elem ) {
+		var key, len,
+			style = elem.ownerDocument.defaultView ?
+				elem.ownerDocument.defaultView.getComputedStyle( elem, null ) :
+				elem.currentStyle,
+			styles = {};
+	
+		if ( style && style.length && style[ 0 ] && style[ style[ 0 ] ] ) {
+			len = style.length;
+			while ( len-- ) {
+				key = style[ len ];
+				if ( typeof style[ key ] === "string" ) {
+					styles[ $.camelCase( key ) ] = style[ key ];
+				}
+			}
+		// support: Opera, IE <9
+		} else {
+			for ( key in style ) {
+				if ( typeof style[ key ] === "string" ) {
+					styles[ key ] = style[ key ];
+				}
+			}
+		}
+	
+		return styles;
+	}
+	
+	
+	function styleDifference( oldStyle, newStyle ) {
+		var diff = {},
+			name, value;
+	
+		for ( name in newStyle ) {
+			value = newStyle[ name ];
+			if ( oldStyle[ name ] !== value ) {
+				if ( !shorthandStyles[ name ] ) {
+					if ( $.fx.step[ name ] || !isNaN( parseFloat( value ) ) ) {
+						diff[ name ] = value;
+					}
+				}
+			}
+		}
+	
+		return diff;
+	}
+	
+	// support: jQuery <1.8
+	if ( !$.fn.addBack ) {
+		$.fn.addBack = function( selector ) {
+			return this.add( selector == null ?
+				this.prevObject : this.prevObject.filter( selector )
+			);
+		};
+	}
+	
+	$.effects.animateClass = function( value, duration, easing, callback ) {
+		var o = $.speed( duration, easing, callback );
+	
+		return this.queue( function() {
+			var animated = $( this ),
+				baseClass = animated.attr( "class" ) || "",
+				applyClassChange,
+				allAnimations = o.children ? animated.find( "*" ).addBack() : animated;
+	
+			// map the animated objects to store the original styles.
+			allAnimations = allAnimations.map(function() {
+				var el = $( this );
+				return {
+					el: el,
+					start: getElementStyles( this )
+				};
+			});
+	
+			// apply class change
+			applyClassChange = function() {
+				$.each( classAnimationActions, function(i, action) {
+					if ( value[ action ] ) {
+						animated[ action + "Class" ]( value[ action ] );
+					}
+				});
+			};
+			applyClassChange();
+	
+			// map all animated objects again - calculate new styles and diff
+			allAnimations = allAnimations.map(function() {
+				this.end = getElementStyles( this.el[ 0 ] );
+				this.diff = styleDifference( this.start, this.end );
+				return this;
+			});
+	
+			// apply original class
+			animated.attr( "class", baseClass );
+	
+			// map all animated objects again - this time collecting a promise
+			allAnimations = allAnimations.map(function() {
+				var styleInfo = this,
+					dfd = $.Deferred(),
+					opts = $.extend({}, o, {
+						queue: false,
+						complete: function() {
+							dfd.resolve( styleInfo );
+						}
+					});
+	
+				this.el.animate( this.diff, opts );
+				return dfd.promise();
+			});
+	
+			// once all animations have completed:
+			$.when.apply( $, allAnimations.get() ).done(function() {
+	
+				// set the final class
+				applyClassChange();
+	
+				// for each animated element,
+				// clear all css properties that were animated
+				$.each( arguments, function() {
+					var el = this.el;
+					$.each( this.diff, function(key) {
+						el.css( key, "" );
+					});
+				});
+	
+				// this is guarnteed to be there if you use jQuery.speed()
+				// it also handles dequeuing the next anim...
+				o.complete.call( animated[ 0 ] );
+			});
+		});
+	};
+	
+	$.fn.extend({
+		addClass: (function( orig ) {
+			return function( classNames, speed, easing, callback ) {
+				return speed ?
+					$.effects.animateClass.call( this,
+						{ add: classNames }, speed, easing, callback ) :
+					orig.apply( this, arguments );
+			};
+		})( $.fn.addClass ),
+	
+		removeClass: (function( orig ) {
+			return function( classNames, speed, easing, callback ) {
+				return arguments.length > 1 ?
+					$.effects.animateClass.call( this,
+						{ remove: classNames }, speed, easing, callback ) :
+					orig.apply( this, arguments );
+			};
+		})( $.fn.removeClass ),
+	
+		toggleClass: (function( orig ) {
+			return function( classNames, force, speed, easing, callback ) {
+				if ( typeof force === "boolean" || force === undefined ) {
+					if ( !speed ) {
+						// without speed parameter
+						return orig.apply( this, arguments );
+					} else {
+						return $.effects.animateClass.call( this,
+							(force ? { add: classNames } : { remove: classNames }),
+							speed, easing, callback );
+					}
+				} else {
+					// without force parameter
+					return $.effects.animateClass.call( this,
+						{ toggle: classNames }, force, speed, easing );
+				}
+			};
+		})( $.fn.toggleClass ),
+	
+		switchClass: function( remove, add, speed, easing, callback) {
+			return $.effects.animateClass.call( this, {
+				add: add,
+				remove: remove
+			}, speed, easing, callback );
+		}
+	});
+	
+	})();
+	
+	/******************************************************************************/
+	/*********************************** EFFECTS **********************************/
+	/******************************************************************************/
+	
+	(function() {
+	
+	$.extend( $.effects, {
+		version: "1.10.4",
+	
+		// Saves a set of properties in a data storage
+		save: function( element, set ) {
+			for( var i=0; i < set.length; i++ ) {
+				if ( set[ i ] !== null ) {
+					element.data( dataSpace + set[ i ], element[ 0 ].style[ set[ i ] ] );
+				}
+			}
+		},
+	
+		// Restores a set of previously saved properties from a data storage
+		restore: function( element, set ) {
+			var val, i;
+			for( i=0; i < set.length; i++ ) {
+				if ( set[ i ] !== null ) {
+					val = element.data( dataSpace + set[ i ] );
+					// support: jQuery 1.6.2
+					// http://bugs.jquery.com/ticket/9917
+					// jQuery 1.6.2 incorrectly returns undefined for any falsy value.
+					// We can't differentiate between "" and 0 here, so we just assume
+					// empty string since it's likely to be a more common value...
+					if ( val === undefined ) {
+						val = "";
+					}
+					element.css( set[ i ], val );
+				}
+			}
+		},
+	
+		setMode: function( el, mode ) {
+			if (mode === "toggle") {
+				mode = el.is( ":hidden" ) ? "show" : "hide";
+			}
+			return mode;
+		},
+	
+		// Translates a [top,left] array into a baseline value
+		// this should be a little more flexible in the future to handle a string & hash
+		getBaseline: function( origin, original ) {
+			var y, x;
+			switch ( origin[ 0 ] ) {
+				case "top": y = 0; break;
+				case "middle": y = 0.5; break;
+				case "bottom": y = 1; break;
+				default: y = origin[ 0 ] / original.height;
+			}
+			switch ( origin[ 1 ] ) {
+				case "left": x = 0; break;
+				case "center": x = 0.5; break;
+				case "right": x = 1; break;
+				default: x = origin[ 1 ] / original.width;
+			}
+			return {
+				x: x,
+				y: y
+			};
+		},
+	
+		// Wraps the element around a wrapper that copies position properties
+		createWrapper: function( element ) {
+	
+			// if the element is already wrapped, return it
+			if ( element.parent().is( ".ui-effects-wrapper" )) {
+				return element.parent();
+			}
+	
+			// wrap the element
+			var props = {
+					width: element.outerWidth(true),
+					height: element.outerHeight(true),
+					"float": element.css( "float" )
+				},
+				wrapper = $( "<div></div>" )
+					.addClass( "ui-effects-wrapper" )
+					.css({
+						fontSize: "100%",
+						background: "transparent",
+						border: "none",
+						margin: 0,
+						padding: 0
+					}),
+				// Store the size in case width/height are defined in % - Fixes #5245
+				size = {
+					width: element.width(),
+					height: element.height()
+				},
+				active = document.activeElement;
+	
+			// support: Firefox
+			// Firefox incorrectly exposes anonymous content
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=561664
+			try {
+				active.id;
+			} catch( e ) {
+				active = document.body;
+			}
+	
+			element.wrap( wrapper );
+	
+			// Fixes #7595 - Elements lose focus when wrapped.
+			if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
+				$( active ).focus();
+			}
+	
+			wrapper = element.parent(); //Hotfix for jQuery 1.4 since some change in wrap() seems to actually lose the reference to the wrapped element
+	
+			// transfer positioning properties to the wrapper
+			if ( element.css( "position" ) === "static" ) {
+				wrapper.css({ position: "relative" });
+				element.css({ position: "relative" });
+			} else {
+				$.extend( props, {
+					position: element.css( "position" ),
+					zIndex: element.css( "z-index" )
+				});
+				$.each([ "top", "left", "bottom", "right" ], function(i, pos) {
+					props[ pos ] = element.css( pos );
+					if ( isNaN( parseInt( props[ pos ], 10 ) ) ) {
+						props[ pos ] = "auto";
+					}
+				});
+				element.css({
+					position: "relative",
+					top: 0,
+					left: 0,
+					right: "auto",
+					bottom: "auto"
+				});
+			}
+			element.css(size);
+	
+			return wrapper.css( props ).show();
+		},
+	
+		removeWrapper: function( element ) {
+			var active = document.activeElement;
+	
+			if ( element.parent().is( ".ui-effects-wrapper" ) ) {
+				element.parent().replaceWith( element );
+	
+				// Fixes #7595 - Elements lose focus when wrapped.
+				if ( element[ 0 ] === active || $.contains( element[ 0 ], active ) ) {
+					$( active ).focus();
+				}
+			}
+	
+	
+			return element;
+		},
+	
+		setTransition: function( element, list, factor, value ) {
+			value = value || {};
+			$.each( list, function( i, x ) {
+				var unit = element.cssUnit( x );
+				if ( unit[ 0 ] > 0 ) {
+					value[ x ] = unit[ 0 ] * factor + unit[ 1 ];
+				}
+			});
+			return value;
+		}
+	});
+	
+	// return an effect options object for the given parameters:
+	function _normalizeArguments( effect, options, speed, callback ) {
+	
+		// allow passing all options as the first parameter
+		if ( $.isPlainObject( effect ) ) {
+			options = effect;
+			effect = effect.effect;
+		}
+	
+		// convert to an object
+		effect = { effect: effect };
+	
+		// catch (effect, null, ...)
+		if ( options == null ) {
+			options = {};
+		}
+	
+		// catch (effect, callback)
+		if ( $.isFunction( options ) ) {
+			callback = options;
+			speed = null;
+			options = {};
+		}
+	
+		// catch (effect, speed, ?)
+		if ( typeof options === "number" || $.fx.speeds[ options ] ) {
+			callback = speed;
+			speed = options;
+			options = {};
+		}
+	
+		// catch (effect, options, callback)
+		if ( $.isFunction( speed ) ) {
+			callback = speed;
+			speed = null;
+		}
+	
+		// add options to effect
+		if ( options ) {
+			$.extend( effect, options );
+		}
+	
+		speed = speed || options.duration;
+		effect.duration = $.fx.off ? 0 :
+			typeof speed === "number" ? speed :
+			speed in $.fx.speeds ? $.fx.speeds[ speed ] :
+			$.fx.speeds._default;
+	
+		effect.complete = callback || options.complete;
+	
+		return effect;
+	}
+	
+	function standardAnimationOption( option ) {
+		// Valid standard speeds (nothing, number, named speed)
+		if ( !option || typeof option === "number" || $.fx.speeds[ option ] ) {
+			return true;
+		}
+	
+		// Invalid strings - treat as "normal" speed
+		if ( typeof option === "string" && !$.effects.effect[ option ] ) {
+			return true;
+		}
+	
+		// Complete callback
+		if ( $.isFunction( option ) ) {
+			return true;
+		}
+	
+		// Options hash (but not naming an effect)
+		if ( typeof option === "object" && !option.effect ) {
+			return true;
+		}
+	
+		// Didn't match any standard API
+		return false;
+	}
+	
+	$.fn.extend({
+		effect: function( /* effect, options, speed, callback */ ) {
+			var args = _normalizeArguments.apply( this, arguments ),
+				mode = args.mode,
+				queue = args.queue,
+				effectMethod = $.effects.effect[ args.effect ];
+	
+			if ( $.fx.off || !effectMethod ) {
+				// delegate to the original method (e.g., .show()) if possible
+				if ( mode ) {
+					return this[ mode ]( args.duration, args.complete );
+				} else {
+					return this.each( function() {
+						if ( args.complete ) {
+							args.complete.call( this );
+						}
+					});
+				}
+			}
+	
+			function run( next ) {
+				var elem = $( this ),
+					complete = args.complete,
+					mode = args.mode;
+	
+				function done() {
+					if ( $.isFunction( complete ) ) {
+						complete.call( elem[0] );
+					}
+					if ( $.isFunction( next ) ) {
+						next();
+					}
+				}
+	
+				// If the element already has the correct final state, delegate to
+				// the core methods so the internal tracking of "olddisplay" works.
+				if ( elem.is( ":hidden" ) ? mode === "hide" : mode === "show" ) {
+					elem[ mode ]();
+					done();
+				} else {
+					effectMethod.call( elem[0], args, done );
+				}
+			}
+	
+			return queue === false ? this.each( run ) : this.queue( queue || "fx", run );
+		},
+	
+		show: (function( orig ) {
+			return function( option ) {
+				if ( standardAnimationOption( option ) ) {
+					return orig.apply( this, arguments );
+				} else {
+					var args = _normalizeArguments.apply( this, arguments );
+					args.mode = "show";
+					return this.effect.call( this, args );
+				}
+			};
+		})( $.fn.show ),
+	
+		hide: (function( orig ) {
+			return function( option ) {
+				if ( standardAnimationOption( option ) ) {
+					return orig.apply( this, arguments );
+				} else {
+					var args = _normalizeArguments.apply( this, arguments );
+					args.mode = "hide";
+					return this.effect.call( this, args );
+				}
+			};
+		})( $.fn.hide ),
+	
+		toggle: (function( orig ) {
+			return function( option ) {
+				if ( standardAnimationOption( option ) || typeof option === "boolean" ) {
+					return orig.apply( this, arguments );
+				} else {
+					var args = _normalizeArguments.apply( this, arguments );
+					args.mode = "toggle";
+					return this.effect.call( this, args );
+				}
+			};
+		})( $.fn.toggle ),
+	
+		// helper functions
+		cssUnit: function(key) {
+			var style = this.css( key ),
+				val = [];
+	
+			$.each( [ "em", "px", "%", "pt" ], function( i, unit ) {
+				if ( style.indexOf( unit ) > 0 ) {
+					val = [ parseFloat( style ), unit ];
+				}
+			});
+			return val;
+		}
+	});
+	
+	})();
+	
+	/******************************************************************************/
+	/*********************************** EASING ***********************************/
+	/******************************************************************************/
+	
+	(function() {
+	
+	// based on easing equations from Robert Penner (http://www.robertpenner.com/easing)
+	
+	var baseEasings = {};
+	
+	$.each( [ "Quad", "Cubic", "Quart", "Quint", "Expo" ], function( i, name ) {
+		baseEasings[ name ] = function( p ) {
+			return Math.pow( p, i + 2 );
+		};
+	});
+	
+	$.extend( baseEasings, {
+		Sine: function ( p ) {
+			return 1 - Math.cos( p * Math.PI / 2 );
+		},
+		Circ: function ( p ) {
+			return 1 - Math.sqrt( 1 - p * p );
+		},
+		Elastic: function( p ) {
+			return p === 0 || p === 1 ? p :
+				-Math.pow( 2, 8 * (p - 1) ) * Math.sin( ( (p - 1) * 80 - 7.5 ) * Math.PI / 15 );
+		},
+		Back: function( p ) {
+			return p * p * ( 3 * p - 2 );
+		},
+		Bounce: function ( p ) {
+			var pow2,
+				bounce = 4;
+	
+			while ( p < ( ( pow2 = Math.pow( 2, --bounce ) ) - 1 ) / 11 ) {}
+			return 1 / Math.pow( 4, 3 - bounce ) - 7.5625 * Math.pow( ( pow2 * 3 - 2 ) / 22 - p, 2 );
+		}
+	});
+	
+	$.each( baseEasings, function( name, easeIn ) {
+		$.easing[ "easeIn" + name ] = easeIn;
+		$.easing[ "easeOut" + name ] = function( p ) {
+			return 1 - easeIn( 1 - p );
+		};
+		$.easing[ "easeInOut" + name ] = function( p ) {
+			return p < 0.5 ?
+				easeIn( p * 2 ) / 2 :
+				1 - easeIn( p * -2 + 2 ) / 2;
+		};
+	});
+	
+	})();
+	
+	})(jQuery);
+
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var jQuery = __webpack_require__(3);
+	__webpack_require__(27);
+	
+	/*!
+	 * jQuery UI Effects Blind 1.10.4
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/blind-effect/
+	 *
+	 * Depends:
+	 *	jquery.ui.effect.js
+	 */
+	(function( $, undefined ) {
+	
+	var rvertical = /up|down|vertical/,
+		rpositivemotion = /up|left|vertical|horizontal/;
+	
+	$.effects.effect.blind = function( o, done ) {
+		// Create element
+		var el = $( this ),
+			props = [ "position", "top", "bottom", "left", "right", "height", "width" ],
+			mode = $.effects.setMode( el, o.mode || "hide" ),
+			direction = o.direction || "up",
+			vertical = rvertical.test( direction ),
+			ref = vertical ? "height" : "width",
+			ref2 = vertical ? "top" : "left",
+			motion = rpositivemotion.test( direction ),
+			animation = {},
+			show = mode === "show",
+			wrapper, distance, margin;
+	
+		// if already wrapped, the wrapper's properties are my property. #6245
+		if ( el.parent().is( ".ui-effects-wrapper" ) ) {
+			$.effects.save( el.parent(), props );
+		} else {
+			$.effects.save( el, props );
+		}
+		el.show();
+		wrapper = $.effects.createWrapper( el ).css({
+			overflow: "hidden"
+		});
+	
+		distance = wrapper[ ref ]();
+		margin = parseFloat( wrapper.css( ref2 ) ) || 0;
+	
+		animation[ ref ] = show ? distance : 0;
+		if ( !motion ) {
+			el
+				.css( vertical ? "bottom" : "right", 0 )
+				.css( vertical ? "top" : "left", "auto" )
+				.css({ position: "absolute" });
+	
+			animation[ ref2 ] = show ? margin : distance + margin;
+		}
+	
+		// start at 0 if we are showing
+		if ( show ) {
+			wrapper.css( ref, 0 );
+			if ( ! motion ) {
+				wrapper.css( ref2, margin + distance );
+			}
+		}
+	
+		// Animate
+		wrapper.animate( animation, {
+			duration: o.duration,
+			easing: o.easing,
+			queue: false,
+			complete: function() {
+				if ( mode === "hide" ) {
+					el.hide();
+				}
+				$.effects.restore( el, props );
+				$.effects.removeWrapper( el );
+				done();
+			}
+		});
+	
+	};
+	
+	})(jQuery);
+
+
+/***/ },
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Bounce 1.10.4
@@ -25105,7 +25103,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Clip 1.10.4
@@ -25181,7 +25179,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Drop 1.10.4
@@ -25255,7 +25253,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Explode 1.10.4
@@ -25361,7 +25359,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Fade 1.10.4
@@ -25400,7 +25398,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Fold 1.10.4
@@ -25485,7 +25483,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Highlight 1.10.4
@@ -25544,7 +25542,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Pulsate 1.10.4
@@ -25616,7 +25614,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Scale 1.10.4
@@ -25943,7 +25941,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Shake 1.10.4
@@ -26026,7 +26024,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Slide 1.10.4
@@ -26099,7 +26097,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var jQuery = __webpack_require__(3);
-	__webpack_require__(5);
+	__webpack_require__(27);
 	
 	/*!
 	 * jQuery UI Effects Transfer 1.10.4
@@ -26490,1936 +26488,6 @@
 /* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(jQuery) {/* jshint ignore: start */
-	/* jquery.nicescroll 3.5.0 InuYaksa*2013 MIT http://areaaperta.com/nicescroll */
-	"use strict";
-	
-	(function (e) {
-	
-	  var z = !1,
-	      E = !1,
-	      L = 5000,
-	      M = 2000,
-	      y = 0,
-	      N = (function () {
-	    var e = document.getElementsByTagName("script"),
-	        e = e[e.length - 1].src.split("?")[0];
-	    return 0 < e.split("/").length ? e.split("/").slice(0, -1).join("/") + "/" : "";
-	  })(),
-	      H = ["ms", "moz", "webkit", "o"],
-	      v = window.requestAnimationFrame || !1,
-	      w = window.cancelAnimationFrame || !1;
-	  if (!v) for (var O in H) {
-	    var F = H[O];
-	    v || (v = window[F + "RequestAnimationFrame"]);
-	    w || (w = window[F + "CancelAnimationFrame"] || window[F + "CancelRequestAnimationFrame"]);
-	  }
-	  var A = window.MutationObserver || window.WebKitMutationObserver || !1,
-	      I = {
-	    zindex: "auto",
-	    cursoropacitymin: 0,
-	    cursoropacitymax: 1,
-	    cursorcolor: "#424242",
-	    cursorwidth: "5px",
-	    cursorborder: "1px solid #fff",
-	    cursorborderradius: "5px",
-	    scrollspeed: 60,
-	    mousescrollstep: 24,
-	    touchbehavior: !1,
-	    hwacceleration: !0,
-	    usetransition: !0,
-	    boxzoom: !1,
-	    dblclickzoom: !0,
-	    gesturezoom: !0,
-	    grabcursorenabled: !0,
-	    autohidemode: !0,
-	    background: "",
-	    iframeautoresize: !0,
-	    cursorminheight: 32,
-	    preservenativescrolling: !0,
-	    railoffset: !1,
-	    bouncescroll: !0,
-	    spacebarenabled: !0,
-	    railpadding: {
-	      top: 0,
-	      right: 0,
-	      left: 0,
-	      bottom: 0
-	    },
-	    disableoutline: !0,
-	    horizrailenabled: !0,
-	    railalign: "right",
-	    railvalign: "bottom",
-	    enabletranslate3d: !0,
-	    enablemousewheel: !0,
-	    enablekeyboard: !0,
-	    smoothscroll: !0,
-	    sensitiverail: !0,
-	    enablemouselockapi: !0,
-	    cursorfixedheight: !1,
-	    directionlockdeadzone: 6,
-	    hidecursordelay: 400,
-	    nativeparentscrolling: !0,
-	    enablescrollonselection: !0,
-	    overflowx: !0,
-	    overflowy: !0,
-	    cursordragspeed: 0.3,
-	    rtlmode: !1,
-	    cursordragontouch: !1,
-	    oneaxismousemode: "auto"
-	  },
-	      G = !1,
-	      P = function P() {
-	    if (G) return G;
-	    var e = document.createElement("DIV"),
-	        c = {
-	      haspointerlock: "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document
-	    };
-	    c.isopera = "opera" in window;
-	    c.isopera12 = c.isopera && "getUserMedia" in navigator;
-	    c.isoperamini = "[object OperaMini]" === Object.prototype.toString.call(window.operamini);
-	    c.isie = "all" in document && "attachEvent" in e && !c.isopera;
-	    c.isieold = c.isie && !("msInterpolationMode" in e.style);
-	    c.isie7 = c.isie && !c.isieold && (!("documentMode" in document) || 7 == document.documentMode);
-	    c.isie8 = c.isie && "documentMode" in document && 8 == document.documentMode;
-	    c.isie9 = c.isie && "performance" in window && 9 <= document.documentMode;
-	    c.isie10 = c.isie && "performance" in window && 10 <= document.documentMode;
-	    c.isie9mobile = /iemobile.9/i.test(navigator.userAgent);
-	    c.isie9mobile && (c.isie9 = !1);
-	    c.isie7mobile = !c.isie9mobile && c.isie7 && /iemobile/i.test(navigator.userAgent);
-	    c.ismozilla = "MozAppearance" in e.style;
-	    c.iswebkit = "WebkitAppearance" in e.style;
-	    c.ischrome = "chrome" in window;
-	    c.ischrome22 = c.ischrome && c.haspointerlock;
-	    c.ischrome26 = c.ischrome && "transition" in e.style;
-	    c.cantouch = "ontouchstart" in document.documentElement || "ontouchstart" in window;
-	    c.hasmstouch = window.navigator.msPointerEnabled || !1;
-	    c.ismac = /^mac$/i.test(navigator.platform);
-	    c.isios = c.cantouch && /iphone|ipad|ipod/i.test(navigator.platform);
-	    c.isios4 = c.isios && !("seal" in Object);
-	    c.isandroid = /android/i.test(navigator.userAgent);
-	    c.trstyle = !1;
-	    c.hastransform = !1;
-	    c.hastranslate3d = !1;
-	    c.transitionstyle = !1;
-	    c.hastransition = !1;
-	    c.transitionend = !1;
-	    for (var k = ["transform", "msTransform", "webkitTransform", "MozTransform", "OTransform"], l = 0; l < k.length; l++) if ("undefined" != typeof e.style[k[l]]) {
-	      c.trstyle = k[l];
-	      break;
-	    }
-	    c.hastransform = !1 != c.trstyle;
-	    c.hastransform && (e.style[c.trstyle] = "translate3d(1px,2px,3px)", c.hastranslate3d = /translate3d/.test(e.style[c.trstyle]));
-	    c.transitionstyle = !1;
-	    c.prefixstyle = "";
-	    c.transitionend = !1;
-	    for (var k = "transition webkitTransition MozTransition OTransition OTransition msTransition KhtmlTransition".split(" "), q = " -webkit- -moz- -o- -o -ms- -khtml-".split(" "), t = "transitionend webkitTransitionEnd transitionend otransitionend oTransitionEnd msTransitionEnd KhtmlTransitionEnd".split(" "), l = 0; l < k.length; l++) if (k[l] in e.style) {
-	      c.transitionstyle = k[l];
-	      c.prefixstyle = q[l];
-	      c.transitionend = t[l];
-	      break;
-	    }
-	    c.ischrome26 && (c.prefixstyle = q[1]);
-	    c.hastransition = c.transitionstyle;
-	    a: {
-	      k = ["-moz-grab", "-webkit-grab", "grab"];
-	      if (c.ischrome && !c.ischrome22 || c.isie) k = [];
-	      for (l = 0; l < k.length; l++) if ((q = k[l], e.style.cursor = q, e.style.cursor == q)) {
-	        k = q;
-	        break a;
-	      }
-	      k = "url(http://www.google.com/intl/en_ALL/mapfiles/openhand.cur),n-resize";
-	    }
-	    c.cursorgrabvalue = k;
-	    c.hasmousecapture = "setCapture" in e;
-	    c.hasMutationObserver = !1 !== A;
-	    return G = c;
-	  },
-	      Q = function Q(h, c) {
-	    function k() {
-	      var d = b.win;
-	      if ("zIndex" in d) return d.zIndex();
-	      for (; 0 < d.length && 9 != d[0].nodeType;) {
-	        var c = d.css("zIndex");
-	        if (!isNaN(c) && 0 != c) return parseInt(c);
-	        d = d.parent();
-	      }
-	      return !1;
-	    }
-	
-	    function l(d, c, f) {
-	      c = d.css(c);
-	      d = parseFloat(c);
-	      return isNaN(d) ? (d = u[c] || 0, f = 3 == d ? f ? b.win.outerHeight() - b.win.innerHeight() : b.win.outerWidth() - b.win.innerWidth() : 1, b.isie8 && d && (d += 1), f ? d : 0) : d;
-	    }
-	
-	    function q(d, c, f, g) {
-	      b._bind(d, c, function (b) {
-	        b = b ? b : window.event;
-	        var g = {
-	          original: b,
-	          target: b.target || b.srcElement,
-	          type: "wheel",
-	          deltaMode: "MozMousePixelScroll" == b.type ? 0 : 1,
-	          deltaX: 0,
-	          deltaZ: 0,
-	          preventDefault: function preventDefault() {
-	            b.preventDefault ? b.preventDefault() : b.returnValue = !1;
-	            return !1;
-	          },
-	          stopImmediatePropagation: function stopImmediatePropagation() {
-	            b.stopImmediatePropagation ? b.stopImmediatePropagation() : b.cancelBubble = !0;
-	          }
-	        };
-	        "mousewheel" == c ? (g.deltaY = -0.025 * b.wheelDelta, b.wheelDeltaX && (g.deltaX = -0.025 * b.wheelDeltaX)) : g.deltaY = b.detail;
-	        return f.call(d, g);
-	      }, g);
-	    }
-	
-	    function t(d, c, f) {
-	      var g, e;
-	      0 == d.deltaMode ? (g = -Math.floor(d.deltaX * (b.opt.mousescrollstep / 54)), e = -Math.floor(d.deltaY * (b.opt.mousescrollstep / 54))) : 1 == d.deltaMode && (g = -Math.floor(d.deltaX * b.opt.mousescrollstep), e = -Math.floor(d.deltaY * b.opt.mousescrollstep));
-	      c && (b.opt.oneaxismousemode && 0 == g && e) && (g = e, e = 0);
-	      g && (b.scrollmom && b.scrollmom.stop(), b.lastdeltax += g, b.debounced("mousewheelx", function () {
-	        var d = b.lastdeltax;
-	        b.lastdeltax = 0;
-	        b.rail.drag || b.doScrollLeftBy(d);
-	      }, 120));
-	      if (e) {
-	        if (b.opt.nativeparentscrolling && f && !b.ispage && !b.zoomactive) if (0 > e) {
-	          if (b.getScrollTop() >= b.page.maxh) return !0;
-	        } else if (0 >= b.getScrollTop()) return !0;
-	        b.scrollmom && b.scrollmom.stop();
-	        b.lastdeltay += e;
-	        b.debounced("mousewheely", function () {
-	          var d = b.lastdeltay;
-	          b.lastdeltay = 0;
-	          b.rail.drag || b.doScrollBy(d);
-	        }, 120);
-	      }
-	      d.stopImmediatePropagation();
-	      return d.preventDefault();
-	    }
-	    var b = this;
-	    this.version = "3.5.0";
-	    this.name = "nicescroll";
-	    this.me = c;
-	    this.opt = {
-	      doc: e("body"),
-	      win: !1
-	    };
-	    e.extend(this.opt, I);
-	    this.opt.snapbackspeed = 80;
-	    if (h) for (var p in b.opt) "undefined" != typeof h[p] && (b.opt[p] = h[p]);
-	    this.iddoc = (this.doc = b.opt.doc) && this.doc[0] ? this.doc[0].id || "" : "";
-	    this.ispage = /BODY|HTML/.test(b.opt.win ? b.opt.win[0].nodeName : this.doc[0].nodeName);
-	    this.haswrapper = !1 !== b.opt.win;
-	    this.win = b.opt.win || (this.ispage ? e(window) : this.doc);
-	    this.docscroll = this.ispage && !this.haswrapper ? e(window) : this.win;
-	    this.body = e("body");
-	    this.iframe = this.isfixed = this.viewport = !1;
-	    this.isiframe = "IFRAME" == this.doc[0].nodeName && "IFRAME" == this.win[0].nodeName;
-	    this.istextarea = "TEXTAREA" == this.win[0].nodeName;
-	    this.forcescreen = !1;
-	    this.canshowonmouseevent = "scroll" != b.opt.autohidemode;
-	    this.page = this.view = this.onzoomout = this.onzoomin = this.onscrollcancel = this.onscrollend = this.onscrollstart = this.onclick = this.ongesturezoom = this.onkeypress = this.onmousewheel = this.onmousemove = this.onmouseup = this.onmousedown = !1;
-	    this.scroll = {
-	      x: 0,
-	      y: 0
-	    };
-	    this.scrollratio = {
-	      x: 0,
-	      y: 0
-	    };
-	    this.cursorheight = 20;
-	    this.scrollvaluemax = 0;
-	    this.observerremover = this.observer = this.scrollmom = this.scrollrunning = this.checkrtlmode = !1;
-	    do this.id = "ascrail" + M++; while (document.getElementById(this.id));
-	    this.hasmousefocus = this.hasfocus = this.zoomactive = this.zoom = this.selectiondrag = this.cursorfreezed = this.cursor = this.rail = !1;
-	    this.visibility = !0;
-	    this.hidden = this.locked = !1;
-	    this.cursoractive = !0;
-	    this.overflowx = b.opt.overflowx;
-	    this.overflowy = b.opt.overflowy;
-	    this.nativescrollingarea = !1;
-	    this.checkarea = 0;
-	    this.events = [];
-	    this.saved = {};
-	    this.delaylist = {};
-	    this.synclist = {};
-	    this.lastdeltay = this.lastdeltax = 0;
-	    this.detected = P();
-	    var g = e.extend({}, this.detected);
-	    this.ishwscroll = (this.canhwscroll = g.hastransform && b.opt.hwacceleration) && b.haswrapper;
-	    this.istouchcapable = !1;
-	    g.cantouch && (g.ischrome && !g.isios && !g.isandroid) && (this.istouchcapable = !0, g.cantouch = !1);
-	    g.cantouch && (g.ismozilla && !g.isios && !g.isandroid) && (this.istouchcapable = !0, g.cantouch = !1);
-	    b.opt.enablemouselockapi || (g.hasmousecapture = !1, g.haspointerlock = !1);
-	    this.delayed = function (d, c, f, g) {
-	      var e = b.delaylist[d],
-	          k = new Date().getTime();
-	      if (!g && e && e.tt) return !1;
-	      e && e.tt && clearTimeout(e.tt);
-	      if (e && e.last + f > k && !e.tt) b.delaylist[d] = {
-	        last: k + f,
-	        tt: setTimeout(function () {
-	          b.delaylist[d].tt = 0;
-	          c.call();
-	        }, f)
-	      };else if (!e || !e.tt) b.delaylist[d] = {
-	        last: k,
-	        tt: 0
-	      }, setTimeout(function () {
-	        c.call();
-	      }, 0);
-	    };
-	    this.debounced = function (d, c, f) {
-	      var g = b.delaylist[d];
-	      new Date().getTime();
-	      b.delaylist[d] = c;
-	      g || setTimeout(function () {
-	        var c = b.delaylist[d];
-	        b.delaylist[d] = !1;
-	        c.call();
-	      }, f);
-	    };
-	    this.synched = function (d, c) {
-	      b.synclist[d] = c;
-	      (function () {
-	        b.onsync || (v(function () {
-	          b.onsync = !1;
-	          for (d in b.synclist) {
-	            var c = b.synclist[d];
-	            c && c.call(b);
-	            b.synclist[d] = !1;
-	          }
-	        }), b.onsync = !0);
-	      })();
-	      return d;
-	    };
-	    this.unsynched = function (d) {
-	      b.synclist[d] && (b.synclist[d] = !1);
-	    };
-	    this.css = function (d, c) {
-	      for (var f in c) b.saved.css.push([d, f, d.css(f)]), d.css(f, c[f]);
-	    };
-	    this.scrollTop = function (d) {
-	      return "undefined" == typeof d ? b.getScrollTop() : b.setScrollTop(d);
-	    };
-	    this.scrollLeft = function (d) {
-	      return "undefined" == typeof d ? b.getScrollLeft() : b.setScrollLeft(d);
-	    };
-	    var BezierClass = function BezierClass(b, c, f, g, e, k, l) {
-	      this.st = b;
-	      this.ed = c;
-	      this.spd = f;
-	      this.p1 = g || 0;
-	      this.p2 = e || 1;
-	      this.p3 = k || 0;
-	      this.p4 = l || 1;
-	      this.ts = new Date().getTime();
-	      this.df = this.ed - this.st;
-	    };
-	    BezierClass.prototype = {
-	      B2: function B2(b) {
-	        return 3 * b * b * (1 - b);
-	      },
-	      B3: function B3(b) {
-	        return 3 * b * (1 - b) * (1 - b);
-	      },
-	      B4: function B4(b) {
-	        return (1 - b) * (1 - b) * (1 - b);
-	      },
-	      getNow: function getNow() {
-	        var b = 1 - (new Date().getTime() - this.ts) / this.spd,
-	            c = this.B2(b) + this.B3(b) + this.B4(b);
-	        return 0 > b ? this.ed : this.st + Math.round(this.df * c);
-	      },
-	      update: function update(b, c) {
-	        this.st = this.getNow();
-	        this.ed = b;
-	        this.spd = c;
-	        this.ts = new Date().getTime();
-	        this.df = this.ed - this.st;
-	        return this;
-	      }
-	    };
-	    if (this.ishwscroll) {
-	      this.doc.translate = {
-	        x: 0,
-	        y: 0,
-	        tx: "0px",
-	        ty: "0px"
-	      };
-	      g.hastranslate3d && g.isios && this.doc.css("-webkit-backface-visibility", "hidden");
-	      var s = function s() {
-	        var d = b.doc.css(g.trstyle);
-	        return d && "matrix" == d.substr(0, 6) ? d.replace(/^.*\((.*)\)$/g, "$1").replace(/px/g, "").split(/, +/) : !1;
-	      };
-	      this.getScrollTop = function (d) {
-	        if (!d) {
-	          if (d = s()) return 16 == d.length ? -d[13] : -d[5];
-	          if (b.timerscroll && b.timerscroll.bz) return b.timerscroll.bz.getNow();
-	        }
-	        return b.doc.translate.y;
-	      };
-	      this.getScrollLeft = function (d) {
-	        if (!d) {
-	          if (d = s()) return 16 == d.length ? -d[12] : -d[4];
-	          if (b.timerscroll && b.timerscroll.bh) return b.timerscroll.bh.getNow();
-	        }
-	        return b.doc.translate.x;
-	      };
-	      this.notifyScrollEvent = document.createEvent ? function (b) {
-	        var c = document.createEvent("UIEvents");
-	        c.initUIEvent("scroll", !1, !0, window, 1);
-	        b.dispatchEvent(c);
-	      } : document.fireEvent ? function (b) {
-	        var c = document.createEventObject();
-	        b.fireEvent("onscroll");
-	        c.cancelBubble = !0;
-	      } : function (b, c) {};
-	      g.hastranslate3d && b.opt.enabletranslate3d ? (this.setScrollTop = function (d, c) {
-	        b.doc.translate.y = d;
-	        b.doc.translate.ty = -1 * d + "px";
-	        b.doc.css(g.trstyle, "translate3d(" + b.doc.translate.tx + "," + b.doc.translate.ty + ",0px)");
-	        c || b.notifyScrollEvent(b.win[0]);
-	      }, this.setScrollLeft = function (d, c) {
-	        b.doc.translate.x = d;
-	        b.doc.translate.tx = -1 * d + "px";
-	        b.doc.css(g.trstyle, "translate3d(" + b.doc.translate.tx + "," + b.doc.translate.ty + ",0px)");
-	        c || b.notifyScrollEvent(b.win[0]);
-	      }) : (this.setScrollTop = function (d, c) {
-	        b.doc.translate.y = d;
-	        b.doc.translate.ty = -1 * d + "px";
-	        b.doc.css(g.trstyle, "translate(" + b.doc.translate.tx + "," + b.doc.translate.ty + ")");
-	        c || b.notifyScrollEvent(b.win[0]);
-	      }, this.setScrollLeft = function (d, c) {
-	        b.doc.translate.x = d;
-	        b.doc.translate.tx = -1 * d + "px";
-	        b.doc.css(g.trstyle, "translate(" + b.doc.translate.tx + "," + b.doc.translate.ty + ")");
-	        c || b.notifyScrollEvent(b.win[0]);
-	      });
-	    } else this.getScrollTop = function () {
-	      return b.docscroll.scrollTop();
-	    }, this.setScrollTop = function (d) {
-	      return b.docscroll.scrollTop(d);
-	    }, this.getScrollLeft = function () {
-	      return b.docscroll.scrollLeft();
-	    }, this.setScrollLeft = function (d) {
-	      return b.docscroll.scrollLeft(d);
-	    };
-	    this.getTarget = function (b) {
-	      return !b ? !1 : b.target ? b.target : b.srcElement ? b.srcElement : !1;
-	    };
-	    this.hasParent = function (b, c) {
-	      if (!b) return !1;
-	      for (var f = b.target || b.srcElement || b || !1; f && f.id != c;) f = f.parentNode || !1;
-	      return !1 !== f;
-	    };
-	    var u = {
-	      thin: 1,
-	      medium: 3,
-	      thick: 5
-	    };
-	    this.getOffset = function () {
-	      if (b.isfixed) return {
-	        top: parseFloat(b.win.css("top")),
-	        left: parseFloat(b.win.css("left"))
-	      };
-	      if (!b.viewport) return b.win.offset();
-	      var d = b.win.offset(),
-	          c = b.viewport.offset();
-	      return {
-	        top: d.top - c.top + b.viewport.scrollTop(),
-	        left: d.left - c.left + b.viewport.scrollLeft()
-	      };
-	    };
-	    this.updateScrollBar = function (d) {
-	      if (b.ishwscroll) b.rail.css({
-	        height: b.win.innerHeight()
-	      }), b.railh && b.railh.css({
-	        width: b.win.innerWidth()
-	      });else {
-	        var c = b.getOffset(),
-	            f = c.top,
-	            g = c.left,
-	            f = f + l(b.win, "border-top-width", !0);
-	        b.win.outerWidth();
-	        b.win.innerWidth();
-	        var g = g + (b.rail.align ? b.win.outerWidth() - l(b.win, "border-right-width") - b.rail.width : l(b.win, "border-left-width")),
-	            e = b.opt.railoffset;
-	        e && (e.top && (f += e.top), b.rail.align && e.left && (g += e.left));
-	        b.locked || b.rail.css({
-	          top: f,
-	          left: g,
-	          height: d ? d.h : b.win.innerHeight()
-	        });
-	        b.zoom && b.zoom.css({
-	          top: f + 1,
-	          left: 1 == b.rail.align ? g - 20 : g + b.rail.width + 4
-	        });
-	        b.railh && !b.locked && (f = c.top, g = c.left, d = b.railh.align ? f + l(b.win, "border-top-width", !0) + b.win.innerHeight() - b.railh.height : f + l(b.win, "border-top-width", !0), g += l(b.win, "border-left-width"), b.railh.css({
-	          top: d,
-	          left: g,
-	          width: b.railh.width
-	        }));
-	      }
-	    };
-	    this.doRailClick = function (d, c, f) {
-	      var g;
-	      b.locked || (b.cancelEvent(d), c ? (c = f ? b.doScrollLeft : b.doScrollTop, g = f ? (d.pageX - b.railh.offset().left - b.cursorwidth / 2) * b.scrollratio.x : (d.pageY - b.rail.offset().top - b.cursorheight / 2) * b.scrollratio.y, c(g)) : (c = f ? b.doScrollLeftBy : b.doScrollBy, g = f ? b.scroll.x : b.scroll.y, d = f ? d.pageX - b.railh.offset().left : d.pageY - b.rail.offset().top, f = f ? b.view.w : b.view.h, g >= d ? c(f) : c(-f)));
-	    };
-	    b.hasanimationframe = v;
-	    b.hascancelanimationframe = w;
-	    b.hasanimationframe ? b.hascancelanimationframe || (w = function () {
-	      b.cancelAnimationFrame = !0;
-	    }) : (v = function (b) {
-	      return setTimeout(b, 15 - Math.floor(+new Date() / 1000) % 16);
-	    }, w = clearInterval);
-	    this.init = function () {
-	      b.saved.css = [];
-	      if (g.isie7mobile || g.isoperamini) return !0;
-	      g.hasmstouch && b.css(b.ispage ? e("html") : b.win, {
-	        "-ms-touch-action": "none"
-	      });
-	      b.zindex = "auto";
-	      b.zindex = !b.ispage && "auto" == b.opt.zindex ? k() || "auto" : b.opt.zindex;
-	      !b.ispage && "auto" != b.zindex && b.zindex > y && (y = b.zindex);
-	      b.isie && (0 == b.zindex && "auto" == b.opt.zindex) && (b.zindex = "auto");
-	      if (!b.ispage || !g.cantouch && !g.isieold && !g.isie9mobile) {
-	        var d = b.docscroll;
-	        b.ispage && (d = b.haswrapper ? b.win : b.doc);
-	        g.isie9mobile || b.css(d, {
-	          "overflow-y": "hidden"
-	        });
-	        b.ispage && g.isie7 && ("BODY" == b.doc[0].nodeName ? b.css(e("html"), {
-	          "overflow-y": "hidden"
-	        }) : "HTML" == b.doc[0].nodeName && b.css(e("body"), {
-	          "overflow-y": "hidden"
-	        }));
-	        g.isios && (!b.ispage && !b.haswrapper) && b.css(e("body"), {
-	          "-webkit-overflow-scrolling": "touch"
-	        });
-	        var c = e(document.createElement("div"));
-	        c.css({
-	          position: "relative",
-	          top: 0,
-	          "float": "right",
-	          width: b.opt.cursorwidth,
-	          height: "0px",
-	          "background-color": b.opt.cursorcolor,
-	          border: b.opt.cursorborder,
-	          "background-clip": "padding-box",
-	          "-webkit-border-radius": b.opt.cursorborderradius,
-	          "-moz-border-radius": b.opt.cursorborderradius,
-	          "border-radius": b.opt.cursorborderradius
-	        });
-	        c.hborder = parseFloat(c.outerHeight() - c.innerHeight());
-	        b.cursor = c;
-	        var f = e(document.createElement("div"));
-	        f.attr("id", b.id);
-	        f.addClass("nicescroll-rails");
-	        var l,
-	            h,
-	            x = ["left", "right"],
-	            q;
-	        for (q in x) h = x[q], (l = b.opt.railpadding[h]) ? f.css("padding-" + h, l + "px") : b.opt.railpadding[h] = 0;
-	        f.append(c);
-	        f.width = Math.max(parseFloat(b.opt.cursorwidth), c.outerWidth()) + b.opt.railpadding.left + b.opt.railpadding.right;
-	        f.css({
-	          width: f.width + "px",
-	          zIndex: b.zindex,
-	          background: b.opt.background,
-	          cursor: "default"
-	        });
-	        f.visibility = !0;
-	        f.scrollable = !0;
-	        f.align = "left" == b.opt.railalign ? 0 : 1;
-	        b.rail = f;
-	        c = b.rail.drag = !1;
-	        b.opt.boxzoom && (!b.ispage && !g.isieold) && (c = document.createElement("div"), b.bind(c, "click", b.doZoom), b.zoom = e(c), b.zoom.css({
-	          cursor: "pointer",
-	          "z-index": b.zindex,
-	          backgroundImage: "url(" + N + "zoomico.png)",
-	          height: 18,
-	          width: 18,
-	          backgroundPosition: "0px 0px"
-	        }), b.opt.dblclickzoom && b.bind(b.win, "dblclick", b.doZoom), g.cantouch && b.opt.gesturezoom && (b.ongesturezoom = function (d) {
-	          1.5 < d.scale && b.doZoomIn(d);
-	          0.8 > d.scale && b.doZoomOut(d);
-	          return b.cancelEvent(d);
-	        }, b.bind(b.win, "gestureend", b.ongesturezoom)));
-	        b.railh = !1;
-	        if (b.opt.horizrailenabled) {
-	          b.css(d, {
-	            "overflow-x": "hidden"
-	          });
-	          c = e(document.createElement("div"));
-	          c.css({
-	            position: "relative",
-	            top: 0,
-	            height: b.opt.cursorwidth,
-	            width: "0px",
-	            "background-color": b.opt.cursorcolor,
-	            border: b.opt.cursorborder,
-	            "background-clip": "padding-box",
-	            "-webkit-border-radius": b.opt.cursorborderradius,
-	            "-moz-border-radius": b.opt.cursorborderradius,
-	            "border-radius": b.opt.cursorborderradius
-	          });
-	          c.wborder = parseFloat(c.outerWidth() - c.innerWidth());
-	          b.cursorh = c;
-	          var m = e(document.createElement("div"));
-	          m.attr("id", b.id + "-hr");
-	          m.addClass("nicescroll-rails");
-	          m.height = Math.max(parseFloat(b.opt.cursorwidth), c.outerHeight());
-	          m.css({
-	            height: m.height + "px",
-	            zIndex: b.zindex,
-	            background: b.opt.background
-	          });
-	          m.append(c);
-	          m.visibility = !0;
-	          m.scrollable = !0;
-	          m.align = "top" == b.opt.railvalign ? 0 : 1;
-	          b.railh = m;
-	          b.railh.drag = !1;
-	        }
-	        b.ispage ? (f.css({
-	          position: "fixed",
-	          top: "0px",
-	          height: "100%"
-	        }), f.align ? f.css({
-	          right: "0px"
-	        }) : f.css({
-	          left: "0px"
-	        }), b.body.append(f), b.railh && (m.css({
-	          position: "fixed",
-	          left: "0px",
-	          width: "100%"
-	        }), m.align ? m.css({
-	          bottom: "0px"
-	        }) : m.css({
-	          top: "0px"
-	        }), b.body.append(m))) : (b.ishwscroll ? ("static" == b.win.css("position") && b.css(b.win, {
-	          position: "relative"
-	        }), d = "HTML" == b.win[0].nodeName ? b.body : b.win, b.zoom && (b.zoom.css({
-	          position: "absolute",
-	          top: 1,
-	          right: 0,
-	          "margin-right": f.width + 4
-	        }), d.append(b.zoom)), f.css({
-	          position: "absolute",
-	          top: 0
-	        }), f.align ? f.css({
-	          right: 0
-	        }) : f.css({
-	          left: 0
-	        }), d.append(f), m && (m.css({
-	          position: "absolute",
-	          left: 0,
-	          bottom: 0
-	        }), m.align ? m.css({
-	          bottom: 0
-	        }) : m.css({
-	          top: 0
-	        }), d.append(m))) : (b.isfixed = "fixed" == b.win.css("position"), d = b.isfixed ? "fixed" : "absolute", b.isfixed || (b.viewport = b.getViewport(b.win[0])), b.viewport && (b.body = b.viewport, !1 == /fixed|relative|absolute/.test(b.viewport.css("position")) && b.css(b.viewport, {
-	          position: "relative"
-	        })), f.css({
-	          position: d
-	        }), b.zoom && b.zoom.css({
-	          position: d
-	        }), b.updateScrollBar(), b.body.append(f), b.zoom && b.body.append(b.zoom), b.railh && (m.css({
-	          position: d
-	        }), b.body.append(m))), g.isios && b.css(b.win, {
-	          "-webkit-tap-highlight-color": "rgba(0,0,0,0)",
-	          "-webkit-touch-callout": "none"
-	        }), g.isie && b.opt.disableoutline && b.win.attr("hideFocus", "true"), g.iswebkit && b.opt.disableoutline && b.win.css({
-	          outline: "none"
-	        }));
-	        !1 === b.opt.autohidemode ? (b.autohidedom = !1, b.rail.css({
-	          opacity: b.opt.cursoropacitymax
-	        }), b.railh && b.railh.css({
-	          opacity: b.opt.cursoropacitymax
-	        })) : !0 === b.opt.autohidemode || "leave" === b.opt.autohidemode ? (b.autohidedom = e().add(b.rail), g.isie8 && (b.autohidedom = b.autohidedom.add(b.cursor)), b.railh && (b.autohidedom = b.autohidedom.add(b.railh)), b.railh && g.isie8 && (b.autohidedom = b.autohidedom.add(b.cursorh))) : "scroll" == b.opt.autohidemode ? (b.autohidedom = e().add(b.rail), b.railh && (b.autohidedom = b.autohidedom.add(b.railh))) : "cursor" == b.opt.autohidemode ? (b.autohidedom = e().add(b.cursor), b.railh && (b.autohidedom = b.autohidedom.add(b.cursorh))) : "hidden" == b.opt.autohidemode && (b.autohidedom = !1, b.hide(), b.locked = !1);
-	        if (g.isie9mobile) b.scrollmom = new J(b), b.onmangotouch = function (d) {
-	          d = b.getScrollTop();
-	          var c = b.getScrollLeft();
-	          if (d == b.scrollmom.lastscrolly && c == b.scrollmom.lastscrollx) return !0;
-	          var f = d - b.mangotouch.sy,
-	              g = c - b.mangotouch.sx;
-	          if (0 != Math.round(Math.sqrt(Math.pow(g, 2) + Math.pow(f, 2)))) {
-	            var n = 0 > f ? -1 : 1,
-	                e = 0 > g ? -1 : 1,
-	                k = +new Date();
-	            b.mangotouch.lazy && clearTimeout(b.mangotouch.lazy);
-	            80 < k - b.mangotouch.tm || b.mangotouch.dry != n || b.mangotouch.drx != e ? (b.scrollmom.stop(), b.scrollmom.reset(c, d), b.mangotouch.sy = d, b.mangotouch.ly = d, b.mangotouch.sx = c, b.mangotouch.lx = c, b.mangotouch.dry = n, b.mangotouch.drx = e, b.mangotouch.tm = k) : (b.scrollmom.stop(), b.scrollmom.update(b.mangotouch.sx - g, b.mangotouch.sy - f), b.mangotouch.tm = k, f = Math.max(Math.abs(b.mangotouch.ly - d), Math.abs(b.mangotouch.lx - c)), b.mangotouch.ly = d, b.mangotouch.lx = c, 2 < f && (b.mangotouch.lazy = setTimeout(function () {
-	              b.mangotouch.lazy = !1;
-	              b.mangotouch.dry = 0;
-	              b.mangotouch.drx = 0;
-	              b.mangotouch.tm = 0;
-	              b.scrollmom.doMomentum(30);
-	            }, 100)));
-	          }
-	        }, f = b.getScrollTop(), m = b.getScrollLeft(), b.mangotouch = {
-	          sy: f,
-	          ly: f,
-	          dry: 0,
-	          sx: m,
-	          lx: m,
-	          drx: 0,
-	          lazy: !1,
-	          tm: 0
-	        }, b.bind(b.docscroll, "scroll", b.onmangotouch);else {
-	          if (g.cantouch || b.istouchcapable || b.opt.touchbehavior || g.hasmstouch) {
-	            b.scrollmom = new J(b);
-	            b.ontouchstart = function (d) {
-	              if (d.pointerType && 2 != d.pointerType) return !1;
-	              if (!b.locked) {
-	                if (g.hasmstouch) for (var c = d.target ? d.target : !1; c;) {
-	                  var f = e(c).getNiceScroll();
-	                  if (0 < f.length && f[0].me == b.me) break;
-	                  if (0 < f.length) return !1;
-	                  if ("DIV" == c.nodeName && c.id == b.id) break;
-	                  c = c.parentNode ? c.parentNode : !1;
-	                }
-	                b.cancelScroll();
-	                if ((c = b.getTarget(d)) && /INPUT/i.test(c.nodeName) && /range/i.test(c.type)) return b.stopPropagation(d);
-	                !("clientX" in d) && "changedTouches" in d && (d.clientX = d.changedTouches[0].clientX, d.clientY = d.changedTouches[0].clientY);
-	                b.forcescreen && (f = d, d = {
-	                  original: d.original ? d.original : d
-	                }, d.clientX = f.screenX, d.clientY = f.screenY);
-	                b.rail.drag = {
-	                  x: d.clientX,
-	                  y: d.clientY,
-	                  sx: b.scroll.x,
-	                  sy: b.scroll.y,
-	                  st: b.getScrollTop(),
-	                  sl: b.getScrollLeft(),
-	                  pt: 2,
-	                  dl: !1
-	                };
-	                if (b.ispage || !b.opt.directionlockdeadzone) b.rail.drag.dl = "f";else {
-	                  var f = e(window).width(),
-	                      n = e(window).height(),
-	                      k = Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
-	                      l = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight),
-	                      n = Math.max(0, l - n),
-	                      f = Math.max(0, k - f);
-	                  b.rail.drag.ck = !b.rail.scrollable && b.railh.scrollable ? 0 < n ? "v" : !1 : b.rail.scrollable && !b.railh.scrollable ? 0 < f ? "h" : !1 : !1;
-	                  b.rail.drag.ck || (b.rail.drag.dl = "f");
-	                }
-	                b.opt.touchbehavior && (b.isiframe && g.isie) && (f = b.win.position(), b.rail.drag.x += f.left, b.rail.drag.y += f.top);
-	                b.hasmoving = !1;
-	                b.lastmouseup = !1;
-	                b.scrollmom.reset(d.clientX, d.clientY);
-	                if (!g.cantouch && !this.istouchcapable && !g.hasmstouch) {
-	                  if (!c || !/INPUT|SELECT|TEXTAREA/i.test(c.nodeName)) return (!b.ispage && g.hasmousecapture && c.setCapture(), b.opt.touchbehavior ? b.cancelEvent(d) : b.stopPropagation(d));
-	                  /SUBMIT|CANCEL|BUTTON/i.test(e(c).attr("type")) && (pc = {
-	                    tg: c,
-	                    click: !1
-	                  }, b.preventclick = pc);
-	                }
-	              }
-	            };
-	            b.ontouchend = function (d) {
-	              if (d.pointerType && 2 != d.pointerType) return !1;
-	              if (b.rail.drag && 2 == b.rail.drag.pt && (b.scrollmom.doMomentum(), b.rail.drag = !1, b.hasmoving && (b.hasmoving = !1, b.lastmouseup = !0, b.hideCursor(), g.hasmousecapture && document.releaseCapture(), !g.cantouch))) return b.cancelEvent(d);
-	            };
-	            var t = b.opt.touchbehavior && b.isiframe && !g.hasmousecapture;
-	            b.ontouchmove = function (d, c) {
-	              if (d.pointerType && 2 != d.pointerType) return !1;
-	              if (b.rail.drag && 2 == b.rail.drag.pt) {
-	                if (g.cantouch && "undefined" == typeof d.original) return !0;
-	                b.hasmoving = !0;
-	                b.preventclick && !b.preventclick.click && (b.preventclick.click = b.preventclick.tg.onclick || !1, b.preventclick.tg.onclick = b.onpreventclick);
-	                d = e.extend({
-	                  original: d
-	                }, d);
-	                "changedTouches" in d && (d.clientX = d.changedTouches[0].clientX, d.clientY = d.changedTouches[0].clientY);
-	                if (b.forcescreen) {
-	                  var f = d;
-	                  d = {
-	                    original: d.original ? d.original : d
-	                  };
-	                  d.clientX = f.screenX;
-	                  d.clientY = f.screenY;
-	                }
-	                f = ofy = 0;
-	                if (t && !c) {
-	                  var n = b.win.position(),
-	                      f = -n.left;
-	                  ofy = -n.top;
-	                }
-	                var k = d.clientY + ofy,
-	                    n = k - b.rail.drag.y,
-	                    l = d.clientX + f,
-	                    h = l - b.rail.drag.x,
-	                    r = b.rail.drag.st - n;
-	                b.ishwscroll && b.opt.bouncescroll ? 0 > r ? r = Math.round(r / 2) : r > b.page.maxh && (r = b.page.maxh + Math.round((r - b.page.maxh) / 2)) : (0 > r && (k = r = 0), r > b.page.maxh && (r = b.page.maxh, k = 0));
-	                if (b.railh && b.railh.scrollable) {
-	                  var m = b.rail.drag.sl - h;
-	                  b.ishwscroll && b.opt.bouncescroll ? 0 > m ? m = Math.round(m / 2) : m > b.page.maxw && (m = b.page.maxw + Math.round((m - b.page.maxw) / 2)) : (0 > m && (l = m = 0), m > b.page.maxw && (m = b.page.maxw, l = 0));
-	                }
-	                f = !1;
-	                if (b.rail.drag.dl) f = !0, "v" == b.rail.drag.dl ? m = b.rail.drag.sl : "h" == b.rail.drag.dl && (r = b.rail.drag.st);else {
-	                  var n = Math.abs(n),
-	                      h = Math.abs(h),
-	                      x = b.opt.directionlockdeadzone;
-	                  if ("v" == b.rail.drag.ck) {
-	                    if (n > x && h <= 0.3 * n) return (b.rail.drag = !1, !0);
-	                    h > x && (b.rail.drag.dl = "f", e("body").scrollTop(e("body").scrollTop()));
-	                  } else if ("h" == b.rail.drag.ck) {
-	                    if (h > x && n <= 0.3 * h) return (b.rail.drag = !1, !0);
-	                    n > x && (b.rail.drag.dl = "f", e("body").scrollLeft(e("body").scrollLeft()));
-	                  }
-	                }
-	                b.synched("touchmove", function () {
-	                  b.rail.drag && 2 == b.rail.drag.pt && (b.prepareTransition && b.prepareTransition(0), b.rail.scrollable && b.setScrollTop(r), b.scrollmom.update(l, k), b.railh && b.railh.scrollable ? (b.setScrollLeft(m), b.showCursor(r, m)) : b.showCursor(r), g.isie10 && document.selection.clear());
-	                });
-	                g.ischrome && b.istouchcapable && (f = !1);
-	                if (f) return b.cancelEvent(d);
-	              }
-	            };
-	          }
-	          b.onmousedown = function (d, c) {
-	            if (!(b.rail.drag && 1 != b.rail.drag.pt)) {
-	              if (b.locked) return b.cancelEvent(d);
-	              b.cancelScroll();
-	              b.rail.drag = {
-	                x: d.clientX,
-	                y: d.clientY,
-	                sx: b.scroll.x,
-	                sy: b.scroll.y,
-	                pt: 1,
-	                hr: !!c
-	              };
-	              var f = b.getTarget(d);
-	              !b.ispage && g.hasmousecapture && f.setCapture();
-	              b.isiframe && !g.hasmousecapture && (b.saved.csspointerevents = b.doc.css("pointer-events"), b.css(b.doc, {
-	                "pointer-events": "none"
-	              }));
-	              return b.cancelEvent(d);
-	            }
-	          };
-	          b.onmouseup = function (d) {
-	            if (b.rail.drag && (g.hasmousecapture && document.releaseCapture(), b.isiframe && !g.hasmousecapture && b.doc.css("pointer-events", b.saved.csspointerevents), 1 == b.rail.drag.pt)) return (b.rail.drag = !1, b.cancelEvent(d));
-	          };
-	          b.onmousemove = function (d) {
-	            if (b.rail.drag && 1 == b.rail.drag.pt) {
-	              if (g.ischrome && 0 == d.which) return b.onmouseup(d);
-	              b.cursorfreezed = !0;
-	              if (b.rail.drag.hr) {
-	                b.scroll.x = b.rail.drag.sx + (d.clientX - b.rail.drag.x);
-	                0 > b.scroll.x && (b.scroll.x = 0);
-	                var c = b.scrollvaluemaxw;
-	                b.scroll.x > c && (b.scroll.x = c);
-	              } else b.scroll.y = b.rail.drag.sy + (d.clientY - b.rail.drag.y), 0 > b.scroll.y && (b.scroll.y = 0), c = b.scrollvaluemax, b.scroll.y > c && (b.scroll.y = c);
-	              b.synched("mousemove", function () {
-	                b.rail.drag && 1 == b.rail.drag.pt && (b.showCursor(), b.rail.drag.hr ? b.doScrollLeft(Math.round(b.scroll.x * b.scrollratio.x), b.opt.cursordragspeed) : b.doScrollTop(Math.round(b.scroll.y * b.scrollratio.y), b.opt.cursordragspeed));
-	              });
-	              return b.cancelEvent(d);
-	            }
-	          };
-	          if (g.cantouch || b.opt.touchbehavior) b.onpreventclick = function (d) {
-	            if (b.preventclick) return (b.preventclick.tg.onclick = b.preventclick.click, b.preventclick = !1, b.cancelEvent(d));
-	          }, b.bind(b.win, "mousedown", b.ontouchstart), b.onclick = g.isios ? !1 : function (d) {
-	            return b.lastmouseup ? (b.lastmouseup = !1, b.cancelEvent(d)) : !0;
-	          }, b.opt.grabcursorenabled && g.cursorgrabvalue && (b.css(b.ispage ? b.doc : b.win, {
-	            cursor: g.cursorgrabvalue
-	          }), b.css(b.rail, {
-	            cursor: g.cursorgrabvalue
-	          }));else {
-	            var p = function p(d) {
-	              if (b.selectiondrag) {
-	                if (d) {
-	                  var c = b.win.outerHeight();
-	                  d = d.pageY - b.selectiondrag.top;
-	                  0 < d && d < c && (d = 0);
-	                  d >= c && (d -= c);
-	                  b.selectiondrag.df = d;
-	                }
-	                0 != b.selectiondrag.df && (b.doScrollBy(2 * -Math.floor(b.selectiondrag.df / 6)), b.debounced("doselectionscroll", function () {
-	                  p();
-	                }, 50));
-	              }
-	            };
-	            b.hasTextSelected = "getSelection" in document ? function () {
-	              return 0 < document.getSelection().rangeCount;
-	            } : "selection" in document ? function () {
-	              return "None" != document.selection.type;
-	            } : function () {
-	              return !1;
-	            };
-	            b.onselectionstart = function (d) {
-	              b.ispage || (b.selectiondrag = b.win.offset());
-	            };
-	            b.onselectionend = function (d) {
-	              b.selectiondrag = !1;
-	            };
-	            b.onselectiondrag = function (d) {
-	              b.selectiondrag && b.hasTextSelected() && b.debounced("selectionscroll", function () {
-	                p(d);
-	              }, 250);
-	            };
-	          }
-	          g.hasmstouch && (b.css(b.rail, {
-	            "-ms-touch-action": "none"
-	          }), b.css(b.cursor, {
-	            "-ms-touch-action": "none"
-	          }), b.bind(b.win, "MSPointerDown", b.ontouchstart), b.bind(document, "MSPointerUp", b.ontouchend), b.bind(document, "MSPointerMove", b.ontouchmove), b.bind(b.cursor, "MSGestureHold", function (b) {
-	            b.preventDefault();
-	          }), b.bind(b.cursor, "contextmenu", function (b) {
-	            b.preventDefault();
-	          }));
-	          this.istouchcapable && (b.bind(b.win, "touchstart", b.ontouchstart), b.bind(document, "touchend", b.ontouchend), b.bind(document, "touchcancel", b.ontouchend), b.bind(document, "touchmove", b.ontouchmove));
-	          b.bind(b.cursor, "mousedown", b.onmousedown);
-	          b.bind(b.cursor, "mouseup", b.onmouseup);
-	          b.railh && (b.bind(b.cursorh, "mousedown", function (d) {
-	            b.onmousedown(d, !0);
-	          }), b.bind(b.cursorh, "mouseup", function (d) {
-	            if (!(b.rail.drag && 2 == b.rail.drag.pt)) return (b.rail.drag = !1, b.hasmoving = !1, b.hideCursor(), g.hasmousecapture && document.releaseCapture(), b.cancelEvent(d));
-	          }));
-	          if (b.opt.cursordragontouch || !g.cantouch && !b.opt.touchbehavior) b.rail.css({
-	            cursor: "default"
-	          }), b.railh && b.railh.css({
-	            cursor: "default"
-	          }), b.jqbind(b.rail, "mouseenter", function () {
-	            b.canshowonmouseevent && b.showCursor();
-	            b.rail.active = !0;
-	          }), b.jqbind(b.rail, "mouseleave", function () {
-	            b.rail.active = !1;
-	            b.rail.drag || b.hideCursor();
-	          }), b.opt.sensitiverail && (b.bind(b.rail, "click", function (d) {
-	            b.doRailClick(d, !1, !1);
-	          }), b.bind(b.rail, "dblclick", function (d) {
-	            b.doRailClick(d, !0, !1);
-	          }), b.bind(b.cursor, "click", function (d) {
-	            b.cancelEvent(d);
-	          }), b.bind(b.cursor, "dblclick", function (d) {
-	            b.cancelEvent(d);
-	          })), b.railh && (b.jqbind(b.railh, "mouseenter", function () {
-	            b.canshowonmouseevent && b.showCursor();
-	            b.rail.active = !0;
-	          }), b.jqbind(b.railh, "mouseleave", function () {
-	            b.rail.active = !1;
-	            b.rail.drag || b.hideCursor();
-	          }), b.opt.sensitiverail && (b.bind(b.railh, "click", function (d) {
-	            b.doRailClick(d, !1, !0);
-	          }), b.bind(b.railh, "dblclick", function (d) {
-	            b.doRailClick(d, !0, !0);
-	          }), b.bind(b.cursorh, "click", function (d) {
-	            b.cancelEvent(d);
-	          }), b.bind(b.cursorh, "dblclick", function (d) {
-	            b.cancelEvent(d);
-	          })));
-	          !g.cantouch && !b.opt.touchbehavior ? (b.bind(g.hasmousecapture ? b.win : document, "mouseup", b.onmouseup), b.bind(document, "mousemove", b.onmousemove), b.onclick && b.bind(document, "click", b.onclick), !b.ispage && b.opt.enablescrollonselection && (b.bind(b.win[0], "mousedown", b.onselectionstart), b.bind(document, "mouseup", b.onselectionend), b.bind(b.cursor, "mouseup", b.onselectionend), b.cursorh && b.bind(b.cursorh, "mouseup", b.onselectionend), b.bind(document, "mousemove", b.onselectiondrag)), b.zoom && (b.jqbind(b.zoom, "mouseenter", function () {
-	            b.canshowonmouseevent && b.showCursor();
-	            b.rail.active = !0;
-	          }), b.jqbind(b.zoom, "mouseleave", function () {
-	            b.rail.active = !1;
-	            b.rail.drag || b.hideCursor();
-	          }))) : (b.bind(g.hasmousecapture ? b.win : document, "mouseup", b.ontouchend), b.bind(document, "mousemove", b.ontouchmove), b.onclick && b.bind(document, "click", b.onclick), b.opt.cursordragontouch && (b.bind(b.cursor, "mousedown", b.onmousedown), b.bind(b.cursor, "mousemove", b.onmousemove), b.cursorh && b.bind(b.cursorh, "mousedown", function (d) {
-	            b.onmousedown(d, !0);
-	          }), b.cursorh && b.bind(b.cursorh, "mousemove", b.onmousemove)));
-	          b.opt.enablemousewheel && (b.isiframe || b.bind(g.isie && b.ispage ? document : b.win, "mousewheel", b.onmousewheel), b.bind(b.rail, "mousewheel", b.onmousewheel), b.railh && b.bind(b.railh, "mousewheel", b.onmousewheelhr));
-	          !b.ispage && (!g.cantouch && !/HTML|BODY/.test(b.win[0].nodeName)) && (b.win.attr("tabindex") || b.win.attr({
-	            tabindex: L++
-	          }), b.jqbind(b.win, "focus", function (d) {
-	            z = b.getTarget(d).id || !0;
-	            b.hasfocus = !0;
-	            b.canshowonmouseevent && b.noticeCursor();
-	          }), b.jqbind(b.win, "blur", function (d) {
-	            z = !1;
-	            b.hasfocus = !1;
-	          }), b.jqbind(b.win, "mouseenter", function (d) {
-	            E = b.getTarget(d).id || !0;
-	            b.hasmousefocus = !0;
-	            b.canshowonmouseevent && b.noticeCursor();
-	          }), b.jqbind(b.win, "mouseleave", function () {
-	            E = !1;
-	            b.hasmousefocus = !1;
-	            b.rail.drag || b.hideCursor();
-	          }));
-	        }
-	        b.onkeypress = function (d) {
-	          if (b.locked && 0 == b.page.maxh) return !0;
-	          d = d ? d : window.e;
-	          var c = b.getTarget(d);
-	          if (c && /INPUT|TEXTAREA|SELECT|OPTION/.test(c.nodeName) && (!c.getAttribute("type") && !c.type || !/submit|button|cancel/i.tp)) return !0;
-	          if (b.hasfocus || b.hasmousefocus && !z || b.ispage && !z && !E) {
-	            c = d.keyCode;
-	            if (b.locked && 27 != c) return b.cancelEvent(d);
-	            var f = d.ctrlKey || !1,
-	                n = d.shiftKey || !1,
-	                g = !1;
-	            switch (c) {
-	              case 38:
-	              case 63233:
-	                b.doScrollBy(72);
-	                g = !0;
-	                break;
-	              case 40:
-	              case 63235:
-	                b.doScrollBy(-72);
-	                g = !0;
-	                break;
-	              case 37:
-	              case 63232:
-	                b.railh && (f ? b.doScrollLeft(0) : b.doScrollLeftBy(72), g = !0);
-	                break;
-	              case 39:
-	              case 63234:
-	                b.railh && (f ? b.doScrollLeft(b.page.maxw) : b.doScrollLeftBy(-72), g = !0);
-	                break;
-	              case 33:
-	              case 63276:
-	                b.doScrollBy(b.view.h);
-	                g = !0;
-	                break;
-	              case 34:
-	              case 63277:
-	                b.doScrollBy(-b.view.h);
-	                g = !0;
-	                break;
-	              case 36:
-	              case 63273:
-	                b.railh && f ? b.doScrollPos(0, 0) : b.doScrollTo(0);
-	                g = !0;
-	                break;
-	              case 35:
-	              case 63275:
-	                b.railh && f ? b.doScrollPos(b.page.maxw, b.page.maxh) : b.doScrollTo(b.page.maxh);
-	                g = !0;
-	                break;
-	              case 32:
-	                b.opt.spacebarenabled && (n ? b.doScrollBy(b.view.h) : b.doScrollBy(-b.view.h), g = !0);
-	                break;
-	              case 27:
-	                b.zoomactive && (b.doZoom(), g = !0);
-	            }
-	            if (g) return b.cancelEvent(d);
-	          }
-	        };
-	        b.opt.enablekeyboard && b.bind(document, g.isopera && !g.isopera12 ? "keypress" : "keydown", b.onkeypress);
-	        b.bind(window, "resize", b.lazyResize);
-	        b.bind(window, "orientationchange", b.lazyResize);
-	        b.bind(window, "load", b.lazyResize);
-	        if (g.ischrome && !b.ispage && !b.haswrapper) {
-	          var s = b.win.attr("style"),
-	              f = parseFloat(b.win.css("width")) + 1;
-	          b.win.css("width", f);
-	          b.synched("chromefix", function () {
-	            b.win.attr("style", s);
-	          });
-	        }
-	        b.onAttributeChange = function (d) {
-	          b.lazyResize(250);
-	        };
-	        !b.ispage && !b.haswrapper && (!1 !== A ? (b.observer = new A(function (d) {
-	          d.forEach(b.onAttributeChange);
-	        }), b.observer.observe(b.win[0], {
-	          childList: !0,
-	          characterData: !1,
-	          attributes: !0,
-	          subtree: !1
-	        }), b.observerremover = new A(function (d) {
-	          d.forEach(function (d) {
-	            if (0 < d.removedNodes.length) for (var c in d.removedNodes) if (d.removedNodes[c] == b.win[0]) return b.remove();
-	          });
-	        }), b.observerremover.observe(b.win[0].parentNode, {
-	          childList: !0,
-	          characterData: !1,
-	          attributes: !1,
-	          subtree: !1
-	        })) : (b.bind(b.win, g.isie && !g.isie9 ? "propertychange" : "DOMAttrModified", b.onAttributeChange), g.isie9 && b.win[0].attachEvent("onpropertychange", b.onAttributeChange), b.bind(b.win, "DOMNodeRemoved", function (d) {
-	          d.target == b.win[0] && b.remove();
-	        })));
-	        !b.ispage && b.opt.boxzoom && b.bind(window, "resize", b.resizeZoom);
-	        b.istextarea && b.bind(b.win, "mouseup", b.lazyResize);
-	        b.checkrtlmode = !0;
-	        b.lazyResize(30);
-	      }
-	      if ("IFRAME" == this.doc[0].nodeName) {
-	        var K = function K(d) {
-	          b.iframexd = !1;
-	          try {
-	            var c = "contentDocument" in this ? this.contentDocument : this.contentWindow.document;
-	          } catch (f) {
-	            b.iframexd = !0, c = !1;
-	          }
-	          if (b.iframexd) return ("console" in window && console.log("NiceScroll error: policy restriced iframe"), !0);
-	          b.forcescreen = !0;
-	          b.isiframe && (b.iframe = {
-	            doc: e(c),
-	            html: b.doc.contents().find("html")[0],
-	            body: b.doc.contents().find("body")[0]
-	          }, b.getContentSize = function () {
-	            return {
-	              w: Math.max(b.iframe.html.scrollWidth, b.iframe.body.scrollWidth),
-	              h: Math.max(b.iframe.html.scrollHeight, b.iframe.body.scrollHeight)
-	            };
-	          }, b.docscroll = e(b.iframe.body));
-	          !g.isios && (b.opt.iframeautoresize && !b.isiframe) && (b.win.scrollTop(0), b.doc.height(""), d = Math.max(c.getElementsByTagName("html")[0].scrollHeight, c.body.scrollHeight), b.doc.height(d));
-	          b.lazyResize(30);
-	          g.isie7 && b.css(e(b.iframe.html), {
-	            "overflow-y": "hidden"
-	          });
-	          b.css(e(b.iframe.body), {
-	            "overflow-y": "hidden"
-	          });
-	          g.isios && b.haswrapper && b.css(e(c.body), {
-	            "-webkit-transform": "translate3d(0,0,0)"
-	          });
-	          "contentWindow" in this ? b.bind(this.contentWindow, "scroll", b.onscroll) : b.bind(c, "scroll", b.onscroll);
-	          b.opt.enablemousewheel && b.bind(c, "mousewheel", b.onmousewheel);
-	          b.opt.enablekeyboard && b.bind(c, g.isopera ? "keypress" : "keydown", b.onkeypress);
-	          if (g.cantouch || b.opt.touchbehavior) b.bind(c, "mousedown", b.ontouchstart), b.bind(c, "mousemove", function (d) {
-	            b.ontouchmove(d, !0);
-	          }), b.opt.grabcursorenabled && g.cursorgrabvalue && b.css(e(c.body), {
-	            cursor: g.cursorgrabvalue
-	          });
-	          b.bind(c, "mouseup", b.ontouchend);
-	          b.zoom && (b.opt.dblclickzoom && b.bind(c, "dblclick", b.doZoom), b.ongesturezoom && b.bind(c, "gestureend", b.ongesturezoom));
-	        };
-	        this.doc[0].readyState && "complete" == this.doc[0].readyState && setTimeout(function () {
-	          K.call(b.doc[0], !1);
-	        }, 500);
-	        b.bind(this.doc, "load", K);
-	      }
-	    };
-	    this.showCursor = function (d, c) {
-	      b.cursortimeout && (clearTimeout(b.cursortimeout), b.cursortimeout = 0);
-	      if (b.rail) {
-	        b.autohidedom && (b.autohidedom.stop().css({
-	          opacity: b.opt.cursoropacitymax
-	        }), b.cursoractive = !0);
-	        if (!b.rail.drag || 1 != b.rail.drag.pt) "undefined" != typeof d && !1 !== d && (b.scroll.y = Math.round(1 * d / b.scrollratio.y)), "undefined" != typeof c && (b.scroll.x = Math.round(1 * c / b.scrollratio.x));
-	        b.cursor.css({
-	          height: b.cursorheight,
-	          top: b.scroll.y
-	        });
-	        b.cursorh && (!b.rail.align && b.rail.visibility ? b.cursorh.css({
-	          width: b.cursorwidth,
-	          left: b.scroll.x + b.rail.width
-	        }) : b.cursorh.css({
-	          width: b.cursorwidth,
-	          left: b.scroll.x
-	        }), b.cursoractive = !0);
-	        b.zoom && b.zoom.stop().css({
-	          opacity: b.opt.cursoropacitymax
-	        });
-	      }
-	    };
-	    this.hideCursor = function (d) {
-	      !b.cursortimeout && (b.rail && b.autohidedom && !(b.hasmousefocus && "leave" == b.opt.autohidemode)) && (b.cursortimeout = setTimeout(function () {
-	        if (!b.rail.active || !b.showonmouseevent) b.autohidedom.stop().animate({
-	          opacity: b.opt.cursoropacitymin
-	        }), b.zoom && b.zoom.stop().animate({
-	          opacity: b.opt.cursoropacitymin
-	        }), b.cursoractive = !1;
-	        b.cursortimeout = 0;
-	      }, d || b.opt.hidecursordelay));
-	    };
-	    this.noticeCursor = function (d, c, f) {
-	      b.showCursor(c, f);
-	      b.rail.active || b.hideCursor(d);
-	    };
-	    this.getContentSize = b.ispage ? function () {
-	      return {
-	        w: Math.max(document.body.scrollWidth, document.documentElement.scrollWidth),
-	        h: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)
-	      };
-	    } : b.haswrapper ? function () {
-	      return {
-	        w: b.doc.outerWidth() + parseInt(b.win.css("paddingLeft")) + parseInt(b.win.css("paddingRight")),
-	        h: b.doc.outerHeight() + parseInt(b.win.css("paddingTop")) + parseInt(b.win.css("paddingBottom"))
-	      };
-	    } : function () {
-	      return {
-	        w: b.docscroll[0].scrollWidth,
-	        h: b.docscroll[0].scrollHeight
-	      };
-	    };
-	    this.onResize = function (d, c) {
-	      if (!b.win) return !1;
-	      if (!b.haswrapper && !b.ispage) {
-	        if ("none" == b.win.css("display")) return (b.visibility && b.hideRail().hideRailHr(), !1);
-	        !b.hidden && !b.visibility && b.showRail().showRailHr();
-	      }
-	      var f = b.page.maxh,
-	          g = b.page.maxw,
-	          e = b.view.w;
-	      b.view = {
-	        w: b.ispage ? b.win.width() : parseInt(b.win[0].clientWidth),
-	        h: b.ispage ? b.win.height() : parseInt(b.win[0].clientHeight)
-	      };
-	      b.page = c ? c : b.getContentSize();
-	      b.page.maxh = Math.max(0, b.page.h - b.view.h);
-	      b.page.maxw = Math.max(0, b.page.w - b.view.w);
-	      if (b.page.maxh == f && b.page.maxw == g && b.view.w == e) {
-	        if (b.ispage) return b;
-	        f = b.win.offset();
-	        if (b.lastposition && (g = b.lastposition, g.top == f.top && g.left == f.left)) return b;
-	        b.lastposition = f;
-	      }
-	      0 == b.page.maxh ? (b.hideRail(), b.scrollvaluemax = 0, b.scroll.y = 0, b.scrollratio.y = 0, b.cursorheight = 0, b.setScrollTop(0), b.rail.scrollable = !1) : b.rail.scrollable = !0;
-	      0 == b.page.maxw ? (b.hideRailHr(), b.scrollvaluemaxw = 0, b.scroll.x = 0, b.scrollratio.x = 0, b.cursorwidth = 0, b.setScrollLeft(0), b.railh.scrollable = !1) : b.railh.scrollable = !0;
-	      b.locked = 0 == b.page.maxh && 0 == b.page.maxw;
-	      if (b.locked) return (b.ispage || b.updateScrollBar(b.view), !1);
-	      !b.hidden && !b.visibility ? b.showRail().showRailHr() : !b.hidden && !b.railh.visibility && b.showRailHr();
-	      b.istextarea && (b.win.css("resize") && "none" != b.win.css("resize")) && (b.view.h -= 20);
-	      b.cursorheight = Math.min(b.view.h, Math.round(b.view.h * (b.view.h / b.page.h)));
-	      b.cursorheight = b.opt.cursorfixedheight ? b.opt.cursorfixedheight : Math.max(b.opt.cursorminheight, b.cursorheight);
-	      b.cursorwidth = Math.min(b.view.w, Math.round(b.view.w * (b.view.w / b.page.w)));
-	      b.cursorwidth = b.opt.cursorfixedheight ? b.opt.cursorfixedheight : Math.max(b.opt.cursorminheight, b.cursorwidth);
-	      b.scrollvaluemax = b.view.h - b.cursorheight - b.cursor.hborder;
-	      b.railh && (b.railh.width = 0 < b.page.maxh ? b.view.w - b.rail.width : b.view.w, b.scrollvaluemaxw = b.railh.width - b.cursorwidth - b.cursorh.wborder);
-	      b.checkrtlmode && b.railh && (b.checkrtlmode = !1, b.opt.rtlmode && 0 == b.scroll.x && b.setScrollLeft(b.page.maxw));
-	      b.ispage || b.updateScrollBar(b.view);
-	      b.scrollratio = {
-	        x: b.page.maxw / b.scrollvaluemaxw,
-	        y: b.page.maxh / b.scrollvaluemax
-	      };
-	      b.getScrollTop() > b.page.maxh ? b.doScrollTop(b.page.maxh) : (b.scroll.y = Math.round(b.getScrollTop() * (1 / b.scrollratio.y)), b.scroll.x = Math.round(b.getScrollLeft() * (1 / b.scrollratio.x)), b.cursoractive && b.noticeCursor());
-	      b.scroll.y && 0 == b.getScrollTop() && b.doScrollTo(Math.floor(b.scroll.y * b.scrollratio.y));
-	      return b;
-	    };
-	    this.resize = b.onResize;
-	    this.lazyResize = function (d) {
-	      d = isNaN(d) ? 30 : d;
-	      b.delayed("resize", b.resize, d);
-	      return b;
-	    };
-	    this._bind = function (d, c, f, g) {
-	      b.events.push({
-	        e: d,
-	        n: c,
-	        f: f,
-	        b: g,
-	        q: !1
-	      });
-	      d.addEventListener ? d.addEventListener(c, f, g || !1) : d.attachEvent ? d.attachEvent("on" + c, f) : d["on" + c] = f;
-	    };
-	    this.jqbind = function (d, c, f) {
-	      b.events.push({
-	        e: d,
-	        n: c,
-	        f: f,
-	        q: !0
-	      });
-	      e(d).bind(c, f);
-	    };
-	    this.bind = function (d, c, f, e) {
-	      var k = "jquery" in d ? d[0] : d;
-	      "mousewheel" == c ? "onwheel" in b.win ? b._bind(k, "wheel", f, e || !1) : (d = "undefined" != typeof document.onmousewheel ? "mousewheel" : "DOMMouseScroll", q(k, d, f, e || !1), "DOMMouseScroll" == d && q(k, "MozMousePixelScroll", f, e || !1)) : k.addEventListener ? (g.cantouch && /mouseup|mousedown|mousemove/.test(c) && b._bind(k, "mousedown" == c ? "touchstart" : "mouseup" == c ? "touchend" : "touchmove", function (b) {
-	        if (b.touches) {
-	          if (2 > b.touches.length) {
-	            var d = b.touches.length ? b.touches[0] : b;
-	            d.original = b;
-	            f.call(this, d);
-	          }
-	        } else b.changedTouches && (d = b.changedTouches[0], d.original = b, f.call(this, d));
-	      }, e || !1), b._bind(k, c, f, e || !1), g.cantouch && "mouseup" == c && b._bind(k, "touchcancel", f, e || !1)) : b._bind(k, c, function (d) {
-	        if ((d = d || window.event || !1) && d.srcElement) d.target = d.srcElement;
-	        "pageY" in d || (d.pageX = d.clientX + document.documentElement.scrollLeft, d.pageY = d.clientY + document.documentElement.scrollTop);
-	        return !1 === f.call(k, d) || !1 === e ? b.cancelEvent(d) : !0;
-	      });
-	    };
-	    this._unbind = function (b, c, f, g) {
-	      b.removeEventListener ? b.removeEventListener(c, f, g) : b.detachEvent ? b.detachEvent("on" + c, f) : b["on" + c] = !1;
-	    };
-	    this.unbindAll = function () {
-	      for (var d = 0; d < b.events.length; d++) {
-	        var c = b.events[d];
-	        c.q ? c.e.unbind(c.n, c.f) : b._unbind(c.e, c.n, c.f, c.b);
-	      }
-	    };
-	    this.cancelEvent = function (b) {
-	      b = b.original ? b.original : b ? b : window.event || !1;
-	      if (!b) return !1;
-	      b.preventDefault && b.preventDefault();
-	      b.stopPropagation && b.stopPropagation();
-	      b.preventManipulation && b.preventManipulation();
-	      b.cancelBubble = !0;
-	      b.cancel = !0;
-	      return b.returnValue = !1;
-	    };
-	    this.stopPropagation = function (b) {
-	      b = b.original ? b.original : b ? b : window.event || !1;
-	      if (!b) return !1;
-	      if (b.stopPropagation) return b.stopPropagation();
-	      b.cancelBubble && (b.cancelBubble = !0);
-	      return !1;
-	    };
-	    this.showRail = function () {
-	      if (0 != b.page.maxh && (b.ispage || "none" != b.win.css("display"))) b.visibility = !0, b.rail.visibility = !0, b.rail.css("display", "block");
-	      return b;
-	    };
-	    this.showRailHr = function () {
-	      if (!b.railh) return b;
-	      if (0 != b.page.maxw && (b.ispage || "none" != b.win.css("display"))) b.railh.visibility = !0, b.railh.css("display", "block");
-	      return b;
-	    };
-	    this.hideRail = function () {
-	      b.visibility = !1;
-	      b.rail.visibility = !1;
-	      b.rail.css("display", "none");
-	      return b;
-	    };
-	    this.hideRailHr = function () {
-	      if (!b.railh) return b;
-	      b.railh.visibility = !1;
-	      b.railh.css("display", "none");
-	      return b;
-	    };
-	    this.show = function () {
-	      b.hidden = !1;
-	      b.locked = !1;
-	      return b.showRail().showRailHr();
-	    };
-	    this.hide = function () {
-	      b.hidden = !0;
-	      b.locked = !0;
-	      return b.hideRail().hideRailHr();
-	    };
-	    this.toggle = function () {
-	      return b.hidden ? b.show() : b.hide();
-	    };
-	    this.remove = function () {
-	      b.stop();
-	      b.cursortimeout && clearTimeout(b.cursortimeout);
-	      b.doZoomOut();
-	      b.unbindAll();
-	      g.isie9 && b.win[0].detachEvent("onpropertychange", b.onAttributeChange);
-	      !1 !== b.observer && b.observer.disconnect();
-	      !1 !== b.observerremover && b.observerremover.disconnect();
-	      b.events = null;
-	      b.cursor && b.cursor.remove();
-	      b.cursorh && b.cursorh.remove();
-	      b.rail && b.rail.remove();
-	      b.railh && b.railh.remove();
-	      b.zoom && b.zoom.remove();
-	      for (var d = 0; d < b.saved.css.length; d++) {
-	        var c = b.saved.css[d];
-	        c[0].css(c[1], "undefined" == typeof c[2] ? "" : c[2]);
-	      }
-	      b.saved = !1;
-	      b.me.data("__nicescroll", "");
-	      var f = e.nicescroll;
-	      f.each(function (d) {
-	        if (this && this.id === b.id) {
-	          delete f[d];
-	          for (var c = ++d; c < f.length; c++, d++) f[d] = f[c];
-	          f.length--;
-	          f.length && delete f[f.length];
-	        }
-	      });
-	      for (var k in b) b[k] = null, delete b[k];
-	      b = null;
-	    };
-	    this.scrollstart = function (d) {
-	      this.onscrollstart = d;
-	      return b;
-	    };
-	    this.scrollend = function (d) {
-	      this.onscrollend = d;
-	      return b;
-	    };
-	    this.scrollcancel = function (d) {
-	      this.onscrollcancel = d;
-	      return b;
-	    };
-	    this.zoomin = function (d) {
-	      this.onzoomin = d;
-	      return b;
-	    };
-	    this.zoomout = function (d) {
-	      this.onzoomout = d;
-	      return b;
-	    };
-	    this.isScrollable = function (b) {
-	      b = b.target ? b.target : b;
-	      if ("OPTION" == b.nodeName) return !0;
-	      for (; b && 1 == b.nodeType && !/BODY|HTML/.test(b.nodeName);) {
-	        var c = e(b),
-	            c = c.css("overflowY") || c.css("overflowX") || c.css("overflow") || "";
-	        if (/scroll|auto/.test(c)) return b.clientHeight != b.scrollHeight;
-	        b = b.parentNode ? b.parentNode : !1;
-	      }
-	      return !1;
-	    };
-	    this.getViewport = function (b) {
-	      for (b = b && b.parentNode ? b.parentNode : !1; b && 1 == b.nodeType && !/BODY|HTML/.test(b.nodeName);) {
-	        var c = e(b);
-	        if (/fixed|absolute/.test(c.css("position"))) return c;
-	        var f = c.css("overflowY") || c.css("overflowX") || c.css("overflow") || "";
-	        if (/scroll|auto/.test(f) && b.clientHeight != b.scrollHeight || 0 < c.getNiceScroll().length) return c;
-	        b = b.parentNode ? b.parentNode : !1;
-	      }
-	      return !1;
-	    };
-	    this.onmousewheel = function (d) {
-	      if (b.locked) return (b.debounced("checkunlock", b.resize, 250), !0);
-	      if (b.rail.drag) return b.cancelEvent(d);
-	      "auto" == b.opt.oneaxismousemode && 0 != d.deltaX && (b.opt.oneaxismousemode = !1);
-	      if (b.opt.oneaxismousemode && 0 == d.deltaX && !b.rail.scrollable) return b.railh && b.railh.scrollable ? b.onmousewheelhr(d) : !0;
-	      var c = +new Date(),
-	          f = !1;
-	      b.opt.preservenativescrolling && b.checkarea + 600 < c && (b.nativescrollingarea = b.isScrollable(d), f = !0);
-	      b.checkarea = c;
-	      if (b.nativescrollingarea) return !0;
-	      if (d = t(d, !1, f)) b.checkarea = 0;
-	      return d;
-	    };
-	    this.onmousewheelhr = function (d) {
-	      if (b.locked || !b.railh.scrollable) return !0;
-	      if (b.rail.drag) return b.cancelEvent(d);
-	      var c = +new Date(),
-	          f = !1;
-	      b.opt.preservenativescrolling && b.checkarea + 600 < c && (b.nativescrollingarea = b.isScrollable(d), f = !0);
-	      b.checkarea = c;
-	      return b.nativescrollingarea ? !0 : b.locked ? b.cancelEvent(d) : t(d, !0, f);
-	    };
-	    this.stop = function () {
-	      b.cancelScroll();
-	      b.scrollmon && b.scrollmon.stop();
-	      b.cursorfreezed = !1;
-	      b.scroll.y = Math.round(b.getScrollTop() * (1 / b.scrollratio.y));
-	      b.noticeCursor();
-	      return b;
-	    };
-	    this.getTransitionSpeed = function (d) {
-	      var c = Math.round(10 * b.opt.scrollspeed);
-	      d = Math.min(c, Math.round(d / 20 * b.opt.scrollspeed));
-	      return 20 < d ? d : 0;
-	    };
-	    b.opt.smoothscroll ? b.ishwscroll && g.hastransition && b.opt.usetransition ? (this.prepareTransition = function (d, c) {
-	      var f = c ? 20 < d ? d : 0 : b.getTransitionSpeed(d),
-	          e = f ? g.prefixstyle + "transform " + f + "ms ease-out" : "";
-	      if (!b.lasttransitionstyle || b.lasttransitionstyle != e) b.lasttransitionstyle = e, b.doc.css(g.transitionstyle, e);
-	      return f;
-	    }, this.doScrollLeft = function (c, g) {
-	      var f = b.scrollrunning ? b.newscrolly : b.getScrollTop();
-	      b.doScrollPos(c, f, g);
-	    }, this.doScrollTop = function (c, g) {
-	      var f = b.scrollrunning ? b.newscrollx : b.getScrollLeft();
-	      b.doScrollPos(f, c, g);
-	    }, this.doScrollPos = function (c, e, f) {
-	      var k = b.getScrollTop(),
-	          l = b.getScrollLeft();
-	      (0 > (b.newscrolly - k) * (e - k) || 0 > (b.newscrollx - l) * (c - l)) && b.cancelScroll();
-	      !1 == b.opt.bouncescroll && (0 > e ? e = 0 : e > b.page.maxh && (e = b.page.maxh), 0 > c ? c = 0 : c > b.page.maxw && (c = b.page.maxw));
-	      if (b.scrollrunning && c == b.newscrollx && e == b.newscrolly) return !1;
-	      b.newscrolly = e;
-	      b.newscrollx = c;
-	      b.newscrollspeed = f || !1;
-	      if (b.timer) return !1;
-	      b.timer = setTimeout(function () {
-	        var f = b.getScrollTop(),
-	            k = b.getScrollLeft(),
-	            l,
-	            h;
-	        l = c - k;
-	        h = e - f;
-	        l = Math.round(Math.sqrt(Math.pow(l, 2) + Math.pow(h, 2)));
-	        l = b.newscrollspeed && 1 < b.newscrollspeed ? b.newscrollspeed : b.getTransitionSpeed(l);
-	        b.newscrollspeed && 1 >= b.newscrollspeed && (l *= b.newscrollspeed);
-	        b.prepareTransition(l, !0);
-	        b.timerscroll && b.timerscroll.tm && clearInterval(b.timerscroll.tm);
-	        0 < l && (!b.scrollrunning && b.onscrollstart && b.onscrollstart.call(b, {
-	          type: "scrollstart",
-	          current: {
-	            x: k,
-	            y: f
-	          },
-	          request: {
-	            x: c,
-	            y: e
-	          },
-	          end: {
-	            x: b.newscrollx,
-	            y: b.newscrolly
-	          },
-	          speed: l
-	        }), g.transitionend ? b.scrollendtrapped || (b.scrollendtrapped = !0, b.bind(b.doc, g.transitionend, b.onScrollEnd, !1)) : (b.scrollendtrapped && clearTimeout(b.scrollendtrapped), b.scrollendtrapped = setTimeout(b.onScrollEnd, l)), b.timerscroll = {
-	          bz: new BezierClass(f, b.newscrolly, l, 0, 0, 0.58, 1),
-	          bh: new BezierClass(k, b.newscrollx, l, 0, 0, 0.58, 1)
-	        }, b.cursorfreezed || (b.timerscroll.tm = setInterval(function () {
-	          b.showCursor(b.getScrollTop(), b.getScrollLeft());
-	        }, 60)));
-	        b.synched("doScroll-set", function () {
-	          b.timer = 0;
-	          b.scrollendtrapped && (b.scrollrunning = !0);
-	          b.setScrollTop(b.newscrolly);
-	          b.setScrollLeft(b.newscrollx);
-	          if (!b.scrollendtrapped) b.onScrollEnd();
-	        });
-	      }, 50);
-	    }, this.cancelScroll = function () {
-	      if (!b.scrollendtrapped) return !0;
-	      var c = b.getScrollTop(),
-	          e = b.getScrollLeft();
-	      b.scrollrunning = !1;
-	      g.transitionend || clearTimeout(g.transitionend);
-	      b.scrollendtrapped = !1;
-	      b._unbind(b.doc, g.transitionend, b.onScrollEnd);
-	      b.prepareTransition(0);
-	      b.setScrollTop(c);
-	      b.railh && b.setScrollLeft(e);
-	      b.timerscroll && b.timerscroll.tm && clearInterval(b.timerscroll.tm);
-	      b.timerscroll = !1;
-	      b.cursorfreezed = !1;
-	      b.showCursor(c, e);
-	      return b;
-	    }, this.onScrollEnd = function () {
-	      b.scrollendtrapped && b._unbind(b.doc, g.transitionend, b.onScrollEnd);
-	      b.scrollendtrapped = !1;
-	      b.prepareTransition(0);
-	      b.timerscroll && b.timerscroll.tm && clearInterval(b.timerscroll.tm);
-	      b.timerscroll = !1;
-	      var c = b.getScrollTop(),
-	          e = b.getScrollLeft();
-	      b.setScrollTop(c);
-	      b.railh && b.setScrollLeft(e);
-	      b.noticeCursor(!1, c, e);
-	      b.cursorfreezed = !1;
-	      0 > c ? c = 0 : c > b.page.maxh && (c = b.page.maxh);
-	      0 > e ? e = 0 : e > b.page.maxw && (e = b.page.maxw);
-	      if (c != b.newscrolly || e != b.newscrollx) return b.doScrollPos(e, c, b.opt.snapbackspeed);
-	      b.onscrollend && b.scrollrunning && b.onscrollend.call(b, {
-	        type: "scrollend",
-	        current: {
-	          x: e,
-	          y: c
-	        },
-	        end: {
-	          x: b.newscrollx,
-	          y: b.newscrolly
-	        }
-	      });
-	      b.scrollrunning = !1;
-	    }) : (this.doScrollLeft = function (c, g) {
-	      var f = b.scrollrunning ? b.newscrolly : b.getScrollTop();
-	      b.doScrollPos(c, f, g);
-	    }, this.doScrollTop = function (c, g) {
-	      var f = b.scrollrunning ? b.newscrollx : b.getScrollLeft();
-	      b.doScrollPos(f, c, g);
-	    }, this.doScrollPos = function (c, g, f) {
-	      function e() {
-	        if (b.cancelAnimationFrame) return !0;
-	        b.scrollrunning = !0;
-	        if (p = 1 - p) return b.timer = v(e) || 1;
-	        var c = 0,
-	            d = b.getScrollTop(),
-	            sy = b.getScrollTop();
-	        if (b.dst.ay) {
-	          var d = b.bzscroll ? b.dst.py + b.bzscroll.getNow() * b.dst.ay : b.newscrolly,
-	              f = d - sy;
-	          if (0 > f && d < b.newscrolly || 0 < f && d > b.newscrolly) d = b.newscrolly;
-	          b.setScrollTop(d);
-	          d == b.newscrolly && (c = 1);
-	        } else c = 1;
-	        var g = b.getScrollLeft();
-	        var sx = b.getScrollLeft();
-	        if (b.dst.ax) {
-	          g = b.bzscroll ? b.dst.px + b.bzscroll.getNow() * b.dst.ax : b.newscrollx;
-	          f = g - sx;
-	          if (0 > f && g < b.newscrollx || 0 < f && g > b.newscrollx) g = b.newscrollx;
-	          b.setScrollLeft(g);
-	          g == b.newscrollx && (c += 1);
-	        } else c += 1;
-	        2 == c ? (b.timer = 0, b.cursorfreezed = !1, b.bzscroll = !1, b.scrollrunning = !1, 0 > d ? d = 0 : d > b.page.maxh && (d = b.page.maxh), 0 > g ? g = 0 : g > b.page.maxw && (g = b.page.maxw), g != b.newscrollx || d != b.newscrolly ? b.doScrollPos(g, d) : b.onscrollend && b.onscrollend.call(b, {
-	          type: "scrollend",
-	          current: {
-	            x: sx,
-	            y: sy
-	          },
-	          end: {
-	            x: b.newscrollx,
-	            y: b.newscrolly
-	          }
-	        })) : b.timer = v(e) || 1;
-	      }
-	      g = "undefined" == typeof g || !1 === g ? b.getScrollTop(!0) : g;
-	      if (b.timer && b.newscrolly == g && b.newscrollx == c) return !0;
-	      b.timer && w(b.timer);
-	      b.timer = 0;
-	      var k = b.getScrollTop(),
-	          l = b.getScrollLeft();
-	      (0 > (b.newscrolly - k) * (g - k) || 0 > (b.newscrollx - l) * (c - l)) && b.cancelScroll();
-	      b.newscrolly = g;
-	      b.newscrollx = c;
-	      if (!b.bouncescroll || !b.rail.visibility) 0 > b.newscrolly ? b.newscrolly = 0 : b.newscrolly > b.page.maxh && (b.newscrolly = b.page.maxh);
-	      if (!b.bouncescroll || !b.railh.visibility) 0 > b.newscrollx ? b.newscrollx = 0 : b.newscrollx > b.page.maxw && (b.newscrollx = b.page.maxw);
-	      b.dst = {};
-	      b.dst.x = c - l;
-	      b.dst.y = g - k;
-	      b.dst.px = l;
-	      b.dst.py = k;
-	      var h = Math.round(Math.sqrt(Math.pow(b.dst.x, 2) + Math.pow(b.dst.y, 2)));
-	      b.dst.ax = b.dst.x / h;
-	      b.dst.ay = b.dst.y / h;
-	      var m = 0,
-	          q = h;
-	      0 == b.dst.x ? (m = k, q = g, b.dst.ay = 1, b.dst.py = 0) : 0 == b.dst.y && (m = l, q = c, b.dst.ax = 1, b.dst.px = 0);
-	      h = b.getTransitionSpeed(h);
-	      f && 1 >= f && (h *= f);
-	      b.bzscroll = 0 < h ? b.bzscroll ? b.bzscroll.update(q, h) : new BezierClass(m, q, h, 0, 1, 0, 1) : !1;
-	      if (!b.timer) {
-	        (k == b.page.maxh && g >= b.page.maxh || l == b.page.maxw && c >= b.page.maxw) && b.checkContentSize();
-	        var p = 1;
-	        b.cancelAnimationFrame = !1;
-	        b.timer = 1;
-	        b.onscrollstart && !b.scrollrunning && b.onscrollstart.call(b, {
-	          type: "scrollstart",
-	          current: {
-	            x: l,
-	            y: k
-	          },
-	          request: {
-	            x: c,
-	            y: g
-	          },
-	          end: {
-	            x: b.newscrollx,
-	            y: b.newscrolly
-	          },
-	          speed: h
-	        });
-	        e();
-	        (k == b.page.maxh && g >= k || l == b.page.maxw && c >= l) && b.checkContentSize();
-	        b.noticeCursor();
-	      }
-	    }, this.cancelScroll = function () {
-	      b.timer && w(b.timer);
-	      b.timer = 0;
-	      b.bzscroll = !1;
-	      b.scrollrunning = !1;
-	      return b;
-	    }) : (this.doScrollLeft = function (c, g) {
-	      var f = b.getScrollTop();
-	      b.doScrollPos(c, f, g);
-	    }, this.doScrollTop = function (c, g) {
-	      var f = b.getScrollLeft();
-	      b.doScrollPos(f, c, g);
-	    }, this.doScrollPos = function (c, g, f) {
-	      var e = c > b.page.maxw ? b.page.maxw : c;
-	      0 > e && (e = 0);
-	      var k = g > b.page.maxh ? b.page.maxh : g;
-	      0 > k && (k = 0);
-	      b.synched("scroll", function () {
-	        b.setScrollTop(k);
-	        b.setScrollLeft(e);
-	      });
-	    }, this.cancelScroll = function () {});
-	    this.doScrollBy = function (c, g) {
-	      var f = 0,
-	          f = g ? Math.floor((b.scroll.y - c) * b.scrollratio.y) : (b.timer ? b.newscrolly : b.getScrollTop(!0)) - c;
-	      if (b.bouncescroll) {
-	        var e = Math.round(b.view.h / 2);
-	        f < -e ? f = -e : f > b.page.maxh + e && (f = b.page.maxh + e);
-	      }
-	      b.cursorfreezed = !1;
-	      var py = b.getScrollTop(!0);
-	      if (0 > f && 0 >= py) return b.noticeCursor();
-	      if (f > b.page.maxh && py >= b.page.maxh) return (b.checkContentSize(), b.noticeCursor());
-	      b.doScrollTop(f);
-	    };
-	    this.doScrollLeftBy = function (c, g) {
-	      var f = 0,
-	          f = g ? Math.floor((b.scroll.x - c) * b.scrollratio.x) : (b.timer ? b.newscrollx : b.getScrollLeft(!0)) - c;
-	      if (b.bouncescroll) {
-	        var e = Math.round(b.view.w / 2);
-	        f < -e ? f = -e : f > b.page.maxw + e && (f = b.page.maxw + e);
-	      }
-	      b.cursorfreezed = !1;
-	      var px = b.getScrollLeft(!0);
-	      if (0 > f && 0 >= px || f > b.page.maxw && px >= b.page.maxw) return b.noticeCursor();
-	      b.doScrollLeft(f);
-	    };
-	    this.doScrollTo = function (c, g) {
-	      g && Math.round(c * b.scrollratio.y);
-	      b.cursorfreezed = !1;
-	      b.doScrollTop(c);
-	    };
-	    this.checkContentSize = function () {
-	      var c = b.getContentSize();
-	      (c.h != b.page.h || c.w != b.page.w) && b.resize(!1, c);
-	    };
-	    b.onscroll = function (c) {
-	      b.rail.drag || b.cursorfreezed || b.synched("scroll", function () {
-	        b.scroll.y = Math.round(b.getScrollTop() * (1 / b.scrollratio.y));
-	        b.railh && (b.scroll.x = Math.round(b.getScrollLeft() * (1 / b.scrollratio.x)));
-	        b.noticeCursor();
-	      });
-	    };
-	    b.bind(b.docscroll, "scroll", b.onscroll);
-	    this.doZoomIn = function (c) {
-	      if (!b.zoomactive) {
-	        b.zoomactive = !0;
-	        b.zoomrestore = {
-	          style: {}
-	        };
-	        var k = "position top left zIndex backgroundColor marginTop marginBottom marginLeft marginRight".split(" "),
-	            f = b.win[0].style,
-	            l;
-	        for (l in k) {
-	          var h = k[l];
-	          b.zoomrestore.style[h] = "undefined" != typeof f[h] ? f[h] : "";
-	        }
-	        b.zoomrestore.style.width = b.win.css("width");
-	        b.zoomrestore.style.height = b.win.css("height");
-	        b.zoomrestore.padding = {
-	          w: b.win.outerWidth() - b.win.width(),
-	          h: b.win.outerHeight() - b.win.height()
-	        };
-	        g.isios4 && (b.zoomrestore.scrollTop = e(window).scrollTop(), e(window).scrollTop(0));
-	        b.win.css({
-	          position: g.isios4 ? "absolute" : "fixed",
-	          top: 0,
-	          left: 0,
-	          "z-index": y + 100,
-	          margin: "0px"
-	        });
-	        k = b.win.css("backgroundColor");
-	        ("" == k || /transparent|rgba\(0, 0, 0, 0\)|rgba\(0,0,0,0\)/.test(k)) && b.win.css("backgroundColor", "#fff");
-	        b.rail.css({
-	          "z-index": y + 101
-	        });
-	        b.zoom.css({
-	          "z-index": y + 102
-	        });
-	        b.zoom.css("backgroundPosition", "0px -18px");
-	        b.resizeZoom();
-	        b.onzoomin && b.onzoomin.call(b);
-	        return b.cancelEvent(c);
-	      }
-	    };
-	    this.doZoomOut = function (c) {
-	      if (b.zoomactive) return (b.zoomactive = !1, b.win.css("margin", ""), b.win.css(b.zoomrestore.style), g.isios4 && e(window).scrollTop(b.zoomrestore.scrollTop), b.rail.css({
-	        "z-index": b.zindex
-	      }), b.zoom.css({
-	        "z-index": b.zindex
-	      }), b.zoomrestore = !1, b.zoom.css("backgroundPosition", "0px 0px"), b.onResize(), b.onzoomout && b.onzoomout.call(b), b.cancelEvent(c));
-	    };
-	    this.doZoom = function (c) {
-	      return b.zoomactive ? b.doZoomOut(c) : b.doZoomIn(c);
-	    };
-	    this.resizeZoom = function () {
-	      if (b.zoomactive) {
-	        var c = b.getScrollTop();
-	        b.win.css({
-	          width: e(window).width() - b.zoomrestore.padding.w + "px",
-	          height: e(window).height() - b.zoomrestore.padding.h + "px"
-	        });
-	        b.onResize();
-	        b.setScrollTop(Math.min(b.page.maxh, c));
-	      }
-	    };
-	    this.init();
-	    e.nicescroll.push(this);
-	  },
-	      J = function J(e) {
-	    var c = this;
-	    this.nc = e;
-	    this.steptime = this.lasttime = this.speedy = this.speedx = this.lasty = this.lastx = 0;
-	    this.snapy = this.snapx = !1;
-	    this.demuly = this.demulx = 0;
-	    this.lastscrolly = this.lastscrollx = -1;
-	    this.timer = this.chky = this.chkx = 0;
-	    this.time = function () {
-	      return +new Date();
-	    };
-	    this.reset = function (e, l) {
-	      c.stop();
-	      var h = c.time();
-	      c.steptime = 0;
-	      c.lasttime = h;
-	      c.speedx = 0;
-	      c.speedy = 0;
-	      c.lastx = e;
-	      c.lasty = l;
-	      c.lastscrollx = -1;
-	      c.lastscrolly = -1;
-	    };
-	    this.update = function (e, l) {
-	      var h = c.time();
-	      c.steptime = h - c.lasttime;
-	      c.lasttime = h;
-	      var h = l - c.lasty,
-	          t = e - c.lastx,
-	          b = c.nc.getScrollTop(),
-	          p = c.nc.getScrollLeft(),
-	          b = b + h,
-	          p = p + t;
-	      c.snapx = 0 > p || p > c.nc.page.maxw;
-	      c.snapy = 0 > b || b > c.nc.page.maxh;
-	      c.speedx = t;
-	      c.speedy = h;
-	      c.lastx = e;
-	      c.lasty = l;
-	    };
-	    this.stop = function () {
-	      c.nc.unsynched("domomentum2d");
-	      c.timer && clearTimeout(c.timer);
-	      c.timer = 0;
-	      c.lastscrollx = -1;
-	      c.lastscrolly = -1;
-	    };
-	    this.doSnapy = function (e, l) {
-	      var h = !1;
-	      0 > l ? (l = 0, h = !0) : l > c.nc.page.maxh && (l = c.nc.page.maxh, h = !0);
-	      0 > e ? (e = 0, h = !0) : e > c.nc.page.maxw && (e = c.nc.page.maxw, h = !0);
-	      h && c.nc.doScrollPos(e, l, c.nc.opt.snapbackspeed);
-	    };
-	    this.doMomentum = function (e) {
-	      var l = c.time(),
-	          h = e ? l + e : c.lasttime;
-	      e = c.nc.getScrollLeft();
-	      var t = c.nc.getScrollTop(),
-	          b = c.nc.page.maxh,
-	          p = c.nc.page.maxw;
-	      c.speedx = 0 < p ? Math.min(60, c.speedx) : 0;
-	      c.speedy = 0 < b ? Math.min(60, c.speedy) : 0;
-	      h = h && 60 >= l - h;
-	      if (0 > t || t > b || 0 > e || e > p) h = !1;
-	      e = c.speedx && h ? c.speedx : !1;
-	      if (c.speedy && h && c.speedy || e) {
-	        var g = Math.max(16, c.steptime);
-	        50 < g && (e = g / 50, c.speedx *= e, c.speedy *= e, g = 50);
-	        c.demulxy = 0;
-	        c.lastscrollx = c.nc.getScrollLeft();
-	        c.chkx = c.lastscrollx;
-	        c.lastscrolly = c.nc.getScrollTop();
-	        c.chky = c.lastscrolly;
-	        var s = c.lastscrollx,
-	            u = c.lastscrolly,
-	            d = function d() {
-	          var e = 600 < c.time() - l ? 0.04 : 0.02;
-	          if (c.speedx && (s = Math.floor(c.lastscrollx - c.speedx * (1 - c.demulxy)), c.lastscrollx = s, 0 > s || s > p)) e = 0.1;
-	          if (c.speedy && (u = Math.floor(c.lastscrolly - c.speedy * (1 - c.demulxy)), c.lastscrolly = u, 0 > u || u > b)) e = 0.1;
-	          c.demulxy = Math.min(1, c.demulxy + e);
-	          c.nc.synched("domomentum2d", function () {
-	            c.speedx && (c.nc.getScrollLeft() != c.chkx && c.stop(), c.chkx = s, c.nc.setScrollLeft(s));
-	            c.speedy && (c.nc.getScrollTop() != c.chky && c.stop(), c.chky = u, c.nc.setScrollTop(u));
-	            c.timer || (c.nc.hideCursor(), c.doSnapy(s, u));
-	          });
-	          1 > c.demulxy ? c.timer = setTimeout(d, g) : (c.stop(), c.nc.hideCursor(), c.doSnapy(s, u));
-	        };
-	        d();
-	      } else c.doSnapy(c.nc.getScrollLeft(), c.nc.getScrollTop());
-	    };
-	  },
-	      B = e.fn.scrollTop;
-	  e.cssHooks.pageYOffset = {
-	    get: function get(h, c, k) {
-	      return (c = e.data(h, "__nicescroll") || !1) && c.ishwscroll ? c.getScrollTop() : B.call(h);
-	    },
-	    set: function set(h, c) {
-	      var k = e.data(h, "__nicescroll") || !1;
-	      k && k.ishwscroll ? k.setScrollTop(parseInt(c)) : B.call(h, c);
-	      return this;
-	    }
-	  };
-	  e.fn.scrollTop = function (h) {
-	    if ("undefined" == typeof h) {
-	      var c = this[0] ? e.data(this[0], "__nicescroll") || !1 : !1;
-	      return c && c.ishwscroll ? c.getScrollTop() : B.call(this);
-	    }
-	    return this.each(function () {
-	      var c = e.data(this, "__nicescroll") || !1;
-	      c && c.ishwscroll ? c.setScrollTop(parseInt(h)) : B.call(e(this), h);
-	    });
-	  };
-	  var C = e.fn.scrollLeft;
-	  e.cssHooks.pageXOffset = {
-	    get: function get(h, c, k) {
-	      return (c = e.data(h, "__nicescroll") || !1) && c.ishwscroll ? c.getScrollLeft() : C.call(h);
-	    },
-	    set: function set(h, c) {
-	      var k = e.data(h, "__nicescroll") || !1;
-	      k && k.ishwscroll ? k.setScrollLeft(parseInt(c)) : C.call(h, c);
-	      return this;
-	    }
-	  };
-	  e.fn.scrollLeft = function (h) {
-	    if ("undefined" == typeof h) {
-	      var c = this[0] ? e.data(this[0], "__nicescroll") || !1 : !1;
-	      return c && c.ishwscroll ? c.getScrollLeft() : C.call(this);
-	    }
-	    return this.each(function () {
-	      var c = e.data(this, "__nicescroll") || !1;
-	      c && c.ishwscroll ? c.setScrollLeft(parseInt(h)) : C.call(e(this), h);
-	    });
-	  };
-	  var D = function D(h) {
-	    var c = this;
-	    this.length = 0;
-	    this.name = "nicescrollarray";
-	    this.each = function (e) {
-	      for (var h = 0, k = 0; h < c.length; h++) e.call(c[h], k++);
-	      return c;
-	    };
-	    this.push = function (e) {
-	      c[c.length] = e;
-	      c.length++;
-	    };
-	    this.eq = function (e) {
-	      return c[e];
-	    };
-	    if (h) for (a = 0; a < h.length; a++) {
-	      var k = e.data(h[a], "__nicescroll") || !1;
-	      k && (this[this.length] = k, this.length++);
-	    }
-	    return this;
-	  };
-	  (function (e, c, k) {
-	    for (var l = 0; l < c.length; l++) k(e, c[l]);
-	  })(D.prototype, "show hide toggle onResize resize remove stop doScrollPos".split(" "), function (e, c) {
-	    e[c] = function () {
-	      var e = arguments;
-	      return this.each(function () {
-	        this[c].apply(this, e);
-	      });
-	    };
-	  });
-	  e.fn.getNiceScroll = function (h) {
-	    return "undefined" == typeof h ? new D(this) : this[h] && e.data(this[h], "__nicescroll") || !1;
-	  };
-	  e.extend(e.expr[":"], {
-	    nicescroll: function nicescroll(h) {
-	      return e.data(h, "__nicescroll") ? !0 : !1;
-	    }
-	  });
-	  e.fn.niceScroll = function (h, c) {
-	    "undefined" == typeof c && ("object" == typeof h && !("jquery" in h)) && (c = h, h = !1);
-	    var k = new D();
-	    "undefined" == typeof c && (c = {});
-	    h && (c.doc = e(h), c.win = e(this));
-	    var l = !("doc" in c);
-	    !l && !("win" in c) && (c.win = e(this));
-	    this.each(function () {
-	      var h = e(this).data("__nicescroll") || !1;
-	      h || (c.doc = l ? e(this) : c.doc, h = new Q(c, e(this)), e(this).data("__nicescroll", h));
-	      k.push(h);
-	    });
-	    return 1 == k.length ? k[0] : k;
-	  };
-	  window.NiceScroll = {
-	    getjQuery: function getjQuery() {
-	      return e;
-	    }
-	  };
-	  e.nicescroll || (e.nicescroll = new D(), e.nicescroll.options = I);
-	})(jQuery);
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
-
 	/* WEBPACK VAR INJECTION */(function(jQuery, $) {/** Notify.js - v0.3.1 - 2014/02/06
 	 * http://notifyjs.com/
 	 * Copyright (c) 2014 Jaime Pillora - MIT
@@ -28557,7 +26625,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(3)))
 
 /***/ },
-/* 46 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(jQuery) {/*
@@ -28586,7 +26654,7 @@
 	 */
 	'use strict';
 	
-	var _Object$keys = __webpack_require__(47)['default'];
+	var _Object$keys = __webpack_require__(46)['default'];
 	
 	(function ($, undefined) {
 	
@@ -30133,7 +28201,7 @@
 	                s,
 	                o,
 	                u,
-	                a = "function" === 'function' && __webpack_require__(54),
+	                a = "function" === 'function' && __webpack_require__(53),
 	                f = 'object' == typeof JSON && JSON,
 	                l = 'object' == typeof exports && exports && !exports.nodeType && exports;l && f ? (l.stringify = f.stringify, l.parse = f.parse) : l = t.JSON = f || {};var c = new Date(-3509827334573292);try {
 	                c = -109252 == c.getUTCFullYear() && 0 === c.getUTCMonth() && 1 === c.getUTCDate() && 10 == c.getUTCHours() && 37 == c.getUTCMinutes() && 6 == c.getUTCSeconds() && 708 == c.getUTCMilliseconds();
@@ -30319,24 +28387,24 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(47), __esModule: true };
+
+/***/ },
 /* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(48), __esModule: true };
+	__webpack_require__(48);
+	module.exports = __webpack_require__(49).core.Object.keys;
 
 /***/ },
 /* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(49);
-	module.exports = __webpack_require__(50).core.Object.keys;
-
-/***/ },
-/* 49 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $        = __webpack_require__(50)
-	  , $def     = __webpack_require__(52)
+	var $        = __webpack_require__(49)
+	  , $def     = __webpack_require__(51)
 	  , isObject = $.isObject
 	  , toObject = $.toObject;
 	$.each.call(('freeze,seal,preventExtensions,isFrozen,isSealed,isExtensible,' +
@@ -30363,7 +28431,7 @@
 	    return fn(Object($.assertDefined(it)));
 	  } : ID == 8 ? function keys(it){
 	    return fn(toObject(it));
-	  } : __webpack_require__(53).get;
+	  } : __webpack_require__(52).get;
 	  try {
 	    fn('z');
 	  } catch(e){
@@ -30373,7 +28441,7 @@
 	});
 
 /***/ },
-/* 50 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
@@ -30425,7 +28493,7 @@
 	  return it;
 	}
 	
-	var $ = module.exports = __webpack_require__(51)({
+	var $ = module.exports = __webpack_require__(50)({
 	  g: global,
 	  core: core,
 	  html: global.document && document.documentElement,
@@ -30475,7 +28543,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 51 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function($){
@@ -30485,10 +28553,10 @@
 	};
 
 /***/ },
-/* 52 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $          = __webpack_require__(50)
+	var $          = __webpack_require__(49)
 	  , global     = $.g
 	  , core       = $.core
 	  , isFunction = $.isFunction;
@@ -30538,11 +28606,11 @@
 	module.exports = $def;
 
 /***/ },
-/* 53 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-	var $ = __webpack_require__(50)
+	var $ = __webpack_require__(49)
 	  , toString = {}.toString
 	  , getNames = $.getNames;
 	
@@ -30563,7 +28631,7 @@
 	};
 
 /***/ },
-/* 54 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -30571,7 +28639,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 55 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
@@ -30815,7 +28883,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 56 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(jQuery) {/*! Backstretch - v2.0.3 - 2012-11-30
@@ -30891,7 +28959,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 57 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
@@ -30995,19 +29063,20 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 58 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {'use strict';
 	
-	var _configJs = __webpack_require__(59);
-	
 	$(document).ready(function () {
+	  var host = location.hostname;
+	  if (!/beaconator/.test(location.hostname)) {
+	    host += ':3000';
+	  }
 	
 	  $('#add-event').on('submit', function (event) {
 	    event.preventDefault();
 	
-	    var host = _configJs.api.host + ':' + _configJs.api.port;
 	    var url = ['http:/', host, 'api', 'event'].join('/');
 	
 	    var payload = {};
@@ -31029,47 +29098,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 59 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	module.exports = {
-	  app: {
-	    name: 'Beaconator',
-	    url: 'http://localhost:3030'
-	  },
-	  db: {
-	    host: '127.0.0.1',
-	    port: '27017',
-	    name: 'beacon',
-	    un: 'fusionary',
-	    pw: 'noy-chev-ip'
-	  },
-	  api: {
-	    host: '127.0.0.1',
-	    port: '3000'
-	  },
-	  coreCreds: {
-	    id: 'core',
-	    key: 'EzKizjk24yvVZuWqfWS08wM8vtLsTtr50NfDYxexTuzauu9LvA8OwjoJQelCB9Dn',
-	    algorithm: 'sha256'
-	  },
-	  gui: {
-	    host: '0.0.0.0',
-	    port: '3030'
-	  },
-	  email: {
-	    service: 'Gmail',
-	    auth: {
-	      user: 'karl@fusionary.com',
-	      pass: 'yovgEe"cWVfHTN,b4jRBK'
-	    }
-	  }
-	};
-
-/***/ },
-/* 60 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($, jQuery) {'use strict';

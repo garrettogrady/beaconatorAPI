@@ -43,7 +43,6 @@ import './lib/jquery.ui.touch-punch.min';
 
 import './lib/jquery.dcjqaccordion.2.7';
 import './lib/jquery.scrollTo.min';
-import './lib/jquery.nicescroll';
 import './lib/jquery.notify';
 
 import './watable/jquery.watable';
