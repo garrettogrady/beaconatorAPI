@@ -28,15 +28,15 @@ var pm2 = module.exports = {
       console.log(data);
     });
   },
-  start: function start(type) {
-    type = type || 'start';
+  start: function start(action) {
+    action = action || 'start';
     var starts = {};
     var started = {};
 
     servers.forEach(function(server) {
       var cmd = [
         'pm2',
-        type,
+        action,
          __dirname + '/../servers/' + server + '/server.js',
         '--watch --name',
         '"' + config.app.name + ' ' + server.toUpperCase() + '"',

@@ -14,6 +14,7 @@ Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://g
 **In mongo CLI: **
 
 * Create "userAdmin" user:
+
 ```
 use admin
 db.createUser({user: 'admin',pwd: '[somePassword]', roles: [ { role: 'userAdminAnyDatabase', db: 'admin' } ] })
