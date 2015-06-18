@@ -15,7 +15,7 @@ src = src.map(function(file) {
   return path.join(srcDir, file);
 });
 
-gulp.task('build:css', msg, function(cb) {
+gulp.task('build:css', msg, function() {
 
   return gulp.src(src)
   .pipe(concat(destName))

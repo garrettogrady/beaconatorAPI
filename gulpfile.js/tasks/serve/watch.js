@@ -3,7 +3,7 @@ var config = require('config');
 var gulp = require('gulp');
 var browserSync = require('browser-sync');
 var watch = require('gulp-watch');
-var spawn = require('child_process').spawn;
+// var spawn = require('child_process').spawn;
 
 gulp.task('serve:watch', 'Watch files and perform actions on change', function() {
 
