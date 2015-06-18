@@ -10,9 +10,9 @@
     "url": "git@bitbucket.org:fusionary/beaconator-web-app.git"
   },
   "scripts": {
-    "start": "node ./bin/pm2 start",
-    "stop": "node ./bin/pm2 stop",
-    "restart": "node ./bin/pm2 restart",
+    "start": "pm2 start config.pm2.json",
+    "stop": "pm2 stop config.pm2.json",
+    "restart": "pm2 restart config.pm2.json",
     "test": "./node_modules/lab/bin/lab",
     "testCoverage": "./node_modules/lab/bin/lab -c"
   },

@@ -11,5 +11,6 @@ pids
 results
 npm-debug.log
 config.js
+config.pm2*
 config.old.js
 node_modules

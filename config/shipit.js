@@ -26,7 +26,8 @@ var config = {
         'node_modules',
       ],
       files: [
-        'config.js'
+        'config.js',
+        'config.pm2.js',
       ]
     },
     slack: {
