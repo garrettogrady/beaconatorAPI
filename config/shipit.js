@@ -18,12 +18,16 @@ var config = {
     ignores: [
       '.git',
       'node_modules',
+      'config.js',
     ],
     shared: {
       dirs: [
         'public/storage',
         'node_modules',
       ],
+      files: [
+        'config.js'
+      ]
     },
     slack: {
       webhookUrl: 'https://hooks.slack.com/services/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',
