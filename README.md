@@ -11,23 +11,24 @@ Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://g
 
 ### On Server
 
-* in mongo CLI: 
+**In mongo CLI: **
 
-if events collection does NOT exist:
-```bash
-$ use beacon
-$ db.createCollection('events', {capped: true, size: 5242880});
+* Create "userAdmin" user:
+```
+use admin
+db.createUser({user: 'admin',pwd: '[somePassword]', roles: [ { role: 'userAdminAnyDatabase', db: 'admin' } ] })
 ```
 
+* Create user for beacon db
 
-if events collection already exists, run
-  ```bash
-  $ use beacon
-  $ db.runCommand({convertToCapped: 'events', size: 5242880});
-  ```
+```
+mongo --port 27017 -u admin -p [somePassword] --authenticationDatabase admin
+
+db.createUser({user: "fusionary",pwd: "password-that-is-in-config.js",roles: [ { role: "readWrite", db: "beacon" } ]})
+```
 
 ## The Goal:
-Create a base boilerplate dashboard app, with seperate GUI and API server processes. Quick development of RESTful Resource api endpoints, out the box auth for both API and GUI, and realtime frontend communication.
+Create a base boilerplate dashboard app, with separate GUI and API server processes. Quick development of RESTful Resource api endpoints, out the box auth for both API and GUI, and realtime frontend communication.
 
 ## The Stack:
 **Node.js** - Because it's fast, easy to get started, and Javscript is awesome.
