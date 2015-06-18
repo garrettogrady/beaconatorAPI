@@ -14,6 +14,7 @@ var config = {
     keepReleases: 3,
     shallowClone: false,
     servers: util.format('%s@%s', user, server),
+
     ignores: [
       '.git',
       'node_modules',
@@ -21,7 +22,7 @@ var config = {
     shared: {
       dirs: [
         'public/storage',
-        'db',
+        'node_modules',
       ],
     },
     slack: {
@@ -52,8 +53,13 @@ module.exports.init = function(shipit) {
   shipit.initConfig(config);
 
   utils.registerTask(shipit, 'build', function() {
-    return shipit.local('NODE_ENV=development npm install && gulp build', {
+    return shipit.local('NODE_ENV=development npm install', {
       cwd: shipit.config.workspace
+    })
+    .then(function() {
+      return shipit.local('gulp build', {
+        cwd: shipit.config.workspace
+      });
     });
   });
 
