@@ -63,8 +63,18 @@ module.exports.init = function(shipit) {
     });
   });
 
+
   shipit.on('fetched', function() {
     utils.runTask(shipit, 'build');
+  });
+
+  utils.registerTask(shipit, 'npmInstall', function() {
+    var cwd = path.join(config.development.deployTo, 'current');
+    return shipit.remote('cd ' + cwd + ' && sudo npm install');
+  });
+
+  shipit.on('published', function() {
+    utils.runTask(shipit, 'npmInstall');
   });
 
 };
