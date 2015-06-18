@@ -70,7 +70,7 @@ module.exports.init = function(shipit) {
 
   utils.registerTask(shipit, 'npmInstall', function() {
     var cwd = path.join(config.development.deployTo, 'current');
-    return shipit.remote('cd ' + cwd + ' && sudo npm install');
+    return shipit.remote('cd ' + cwd + ' && NODE_ENV=production npm install');
   });
 
   shipit.on('published', function() {
