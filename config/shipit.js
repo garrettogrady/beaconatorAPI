@@ -49,8 +49,9 @@ var config = {
 module.exports.config = config;
 module.exports.init = function(shipit) {
   require('shipit-fusionary/node_modules/shipit-deploy')(shipit);
-  require('shipit-fusionary/node_modules/shipit-shared')(shipit);
-  require('shipit-fusionary/node_modules/shipit-db')(shipit);
+
+  // Using newer shipit-shared because shipit-fusionary still has older shipit-shared as dependency
+  require('shipit-shared')(shipit);
   require('shipit-fusionary/node_modules/shipit-assets')(shipit);
   require('shipit-fusionary/node_modules/shipit-ssh')(shipit);
   require('shipit-fusionary')(shipit);
