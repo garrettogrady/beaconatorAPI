@@ -1,11 +1,13 @@
-import {api} from '../../../config.js';
 
 $(document).ready(function() {
+  var host = location.hostname;
+  if (!/beaconator/.test(location.hostname)) {
+    host += ':3000';
+  }
 
   $('#add-event').on('submit', function(event) {
     event.preventDefault();
 
-    var host = api.host + ':' + api.port;
     var url = ['http:/', host, 'api', 'event'].join('/');
 
     var payload = {};
