@@ -8,34 +8,53 @@ var viewsPath = path.resolve(__dirname, '../views') + '/';
 // Used for base routes, such as the default index/root path, 404 error pages, and others.
 module.exports = {
   index: {
-    handler: function(request, reply){
+    handler: function(request, reply) {
       var scripts = '';
       var page = 'dashboard';
-
-      var markdown = fs.readFileSync(__dirname+'/../../../README.md', {encoding: 'utf8'});
 
       // Render the view with the custom greeting
       reply.view('index', {
         title: config.app.name + ' Dashboard',
         scripts: scripts,
-        page: page,
-        text: marked(markdown)
+        page: page
       });
     },
-    app: {
-      name: 'index'
-    },
+    id: 'index',
     auth: {
       strategy: 'session'
     }
   },
 
+  readme: {
+    handler: function(request, reply) {
+      var scripts = '';
+      var page = 'readme';
+
+      var markdown = fs.readFileSync(__dirname + '/../../../README.md', {encoding: 'utf8'});
+
+      // Render the view with the custom greeting
+      reply.view('index', {
+        title: 'Readme: ' + config.app.name + ' Dashboard',
+        scripts: scripts,
+        page: page,
+        text: marked(markdown)
+      });
+    },
+    id: 'readme',
+    auth: {
+      strategy: 'session'
+    }
+  },
   users: function(db) {
     return {
+      id: 'users',
+      auth: {
+        strategy: 'session'
+      },
       handler: function(request, reply) {
         var userCollection = db.collection('users');
         var page = 'users';
-        console.log(viewsPath + page + '.html');
+
         userCollection
         .find()
         .sort({lname: 1})
@@ -54,13 +73,16 @@ module.exports = {
             }).code(404);
           }
         });
-      }
+      },
     };
   },
 
   events: function(db) {
     return {
-
+      id: 'events',
+      auth: {
+        strategy: 'session'
+      },
       handler: function(request, reply) {
         if (request.query) {
           console.log(request.query);
@@ -97,6 +119,11 @@ module.exports = {
   },
 
   page: {
+    id: 'page',
+
+    auth: {
+      strategy: 'session'
+    },
     handler: function(request, reply) {
       var page = request.params.path;
       var title = page.replace(/\-+/g, ' ');
@@ -115,10 +142,5 @@ module.exports = {
         }).code(404);
       }
     },
-    id: 'page',
-
-    auth: {
-      strategy: 'session'
-    }
   }
 };

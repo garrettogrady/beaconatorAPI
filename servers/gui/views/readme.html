@@ -1,0 +1,18 @@
+{% extends './layouts/default.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<!--main content start-->
+<section id="main-content">
+  <section class="wrapper site-min-height">
+    <div class="row">
+      <div class="col-lg-12">
+        <p>{% autoescape false %}{{ text }}{% endautoescape %}</p>
+      </div>
+    </div>
+  </section>
+</section><!-- /MAIN CONTENT -->
+<!--main content end-->
+{% endblock %}
+{% block scripts %}{% autoescape false %}{{ scripts }}{% endautoescape %}{% endblock %}

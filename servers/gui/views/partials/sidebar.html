@@ -15,6 +15,12 @@
       </a>
     </li>
     <li>
+      <a class="{% if page === 'readme' %} active {% endif %}" href="/readme">
+        <i class="fa fa-book"></i>
+        <span>Readme</span>
+      </a>
+    </li>
+    <li>
       <a class="{% if page === 'users' %} active {% endif %}" href="/users">
         <i class="fa fa-user"></i>
         <span>Users</span>
@@ -36,7 +42,7 @@
 
     <li class="sub-menu">
       <a class="{% if page === 'blank' %}active{% endif %}" href="javascript:;" >
-        <i class="fa fa-book"></i>
+        <i class="fa fa-info-circle"></i>
         <span>Miscellaneous</span>
       </a>
       <ul class="sub">

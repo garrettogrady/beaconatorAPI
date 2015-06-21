@@ -19,6 +19,12 @@ module.exports = function(server, db) {
 
     {
       method: 'GET',
+      path: '/readme',
+      config: controller.base.readme
+    },
+
+    {
+      method: 'GET',
       path: '/events',
       config: controller.base.events(db)
     },

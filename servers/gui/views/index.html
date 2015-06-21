@@ -3,16 +3,17 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<!--main content start-->
 <section id="main-content">
   <section class="wrapper site-min-height">
-    <div class="row">
-      <div class="col-lg-12">
-        <p>{% autoescape false %}{{ text }}{% endautoescape %}</p>
-      </div>
-    </div>
+    <h1>Beaconator</h1>
+    <p>
+      This is the dashboard for the beaconator project.
+    </p>
+    <ul>
+      <li><a href="/users">Users</a></li>
+      <li><a href="/events">Events</a></li>
+    </ul>
   </section>
-</section><!-- /MAIN CONTENT -->
-<!--main content end-->
+</section>
+
 {% endblock %}
-{% block scripts %}{% autoescape false %}{{ scripts }}{% endautoescape %}{% endblock %}
