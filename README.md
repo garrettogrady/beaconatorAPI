@@ -1,5 +1,5 @@
-Beaconator
-==========
+# Beaconator Readme
+
 
 Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://github.com/smaxwellstewart/hapi-dash), which is based on [Hapi Ninja](https://github.com/poeticninja/hapi-ninja).
 
@@ -9,7 +9,19 @@ Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://g
 * /servers/api/server.js & /servers/gui/config/plugins.js : set up process monitoring with `good` module?
 * /servers/gui/auth/index.js : generate jwtSecret & forgotSecret?
 
-### On Server
+## Local Setup
+
+On the command line from the project's root directory:
+
+* Run `npm install`
+* Run `npm run config` and answer the prompts that follow. This will create two new unsourced files in the project's root: config.js and config.pm2.json
+* Update config.js with proper user name/passwords on the wiki
+
+
+## Local Development
+* Run `npm start` to start the Hapi server and Mongodb server
+* Run `gulp serve` to 
+## Server Setup
 
 **In mongo CLI: **
 
@@ -29,7 +41,7 @@ db.createUser({user: "fusionary",pwd: "password-that-is-in-config.js",roles: [ {
 ```
 
 ## The Goal:
-Create a base boilerplate dashboard app, with separate GUI and API server processes. Quick development of RESTful Resource api endpoints, out the box auth for both API and GUI, and realtime frontend communication.
+Create a base boilerplate dashboard app, with separate GUI and API server processes. Quick development of RESTful Resource api endpoints, out the box auth for the GUI, and realtime frontend communication.
 
 ## The Stack:
 **Node.js** - Because it's fast, easy to get started, and Javscript is awesome.
@@ -51,9 +63,6 @@ Create a base boilerplate dashboard app, with separate GUI and API server proces
 
 **Gulp** - A task runner for your assets, and can do a lot more. The performance is amazing and it is easy to get started.
 [http://gulpjs.com/](http://gulpjs.com/)
-
-**CSS Framework** - None. Choose your own CSS preprocessor and CSS framework.
-
 
 ### Requirements:
 
