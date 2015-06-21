@@ -1,11 +1,8 @@
 var promise = require('bluebird');
 var fs = promise.promisifyAll(require('fs'));
-var prompt = require('prompt');
-
-
-// Remove annoying 'prompt:''
-prompt.message = '';
-prompt.delimiter = '';
+var chalk = require('chalk');
+var inquirer = require('bluebird-inquirer');
+var mg = require('nodemailer-mailgun-transport');
 
 var apiGenKey = function(length) {
   // Just produces random string using these chars
@@ -19,100 +16,194 @@ var apiGenKey = function(length) {
 };
 
 
-
-
-var messages = {
-  app: 'Configuring Basic App Info...\n'.green,
-  db: 'Configuring MongoDB Connection...\n'.green,
-  api: 'Configuring API Server...\n'.green,
-  gui: 'Configuring GUI Server...\n'.green,
-  email: 'Configuring Email app uses...\n'.green,
+var headings = {
+  app: chalk.green('Configuring Basic App Info...\n'),
+  db: chalk.green('Configuring MongoDB Connection...\n'),
+  api: chalk.green('Configuring API Server...\n'),
+  gui: chalk.green('Configuring GUI Server...\n'),
+  email: chalk.green('Configuring Email app uses...\n'),
 };
 
 // Define what we want entered
-var schema = {
-  properties: {
-    appName: {
-      description: messages.app + 'App Name:'.blue,
-      default: 'Beaconator'
-    },
-    appUrl: {
-      description: 'App Url:'.blue,
-      default: 'http://localhost:3030',
-      before: function removeLastSlash (url) {
-          if (url.substring(url.length-1) === '/')
-          {
-              url = url.substring(0, url.length-1);
-          }
+var questions = [
+  {
+    name: 'appName',
+    message: headings.app + 'App Name:',
+    default: 'Beaconator'
+  },
+  {
+    name: 'appUrl',
+    message: 'App Url:',
+    default: 'http://localhost:3030',
+    filter: function removeLastSlash(url) {
+      return url.replace(/\/$/, '');
+    }
+  },
+  {
+    name: 'apiHost',
+    message: headings.api + 'API host:',
+    default: '127.0.0.1'
+  },
+  {
+    name: 'apiPort',
+    message: 'API port:',
+    default: '3000'
+  },
+  {
+    name: 'apiCoreId',
+    message: 'API Core ID:',
+    default: 'core'
+  },
+  {
+    name: 'apiCorePass',
+    message: 'API Core Password:',
+    default: 'random string',
+    filter: function(value) {
+      if(value === 'random string') {
+        value = apiGenKey(64);
+      }
+      return value;
+    }
+  },
+  {
+    name: 'guiHost',
+    message:  headings.gui + 'GUI host:',
+    default: '0.0.0.0'
+  },
+  {
+    name: 'guiPort',
+    message: 'GUI port:',
+    default: '3030'
+  },
+  {
+    name: 'dbHost',
+    message: headings.db + 'Mongo host:',
+    default: '127.0.0.1'
+  },
+  {
+    name: 'dbPort',
+    message: 'Mongo port:',
+    default: '27017'
+  },
+  {
+    name: 'dbName',
+    message: 'Mongo db name:',
+    default: 'beacon'
+  },
+  {
+    name: 'dbUn',
+    message: 'Mongo db username (optional):',
+    default: ''
+  },
+  {
+    name: 'dbPw',
+    message: 'Mongo db password (optional):',
+    default: ''
+  },
+  {
+    name: 'mailService',
+    message: headings.email + 'Email service:',
+    default: 0,
+    type: 'list',
+    choices: [
+      'Mailgun',
+      'Gmail'
+    ]
+  },
+  {
+    name: 'mailEmail',
+    message: function(answers) {
+      var msg = 'Email address';
+      if (answers.mailService === 'Mailgun') {
+        return  msg + ' [see wiki]:';
+      }
 
-          return url;
+      return msg + ':';
+    },
+    validate: function(text) {
+      return !!text;
+    },
+    default: function(answers) {
+      if (answers.mailService === 'Mailgun') {
+        return 'accounts+' + answers.appName.toLowerCase() + '@fusionary.com';
       }
-    },
-    apiHost: {
-      description: messages.api + 'API host:'.blue,
-      default: '127.0.0.1'
-    },
-    apiPort: {
-      description: 'API port:'.blue,
-      default: '3000'
-    },
-    apiCoreId: {
-      description: 'API Core ID:'.blue,
-      default: 'core'
-    },
-    apiCorePass: {
-      description: 'API Core Password:'.blue,
-      default: 'random string',
-      before: function(value) {
-        if(value === 'random string') {
-          value = apiGenKey(64);
-        }
-        return value;
-      }
-    },
-    guiHost: {
-      description:  messages.gui + 'GUI host:'.blue,
-      default: '0.0.0.0'
-    },
-    guiPort: {
-      description: 'GUI port:'.blue,
-      default: '3030'
-    },
-    dbHost: {
-      description: messages.db + 'Mongo host:'.blue,
-      default: '127.0.0.1'
-    },
-    dbPort: {
-      description: 'Mongo port:'.blue,
-      default: '27017'
-    },
-    dbName: {
-      description: 'Mongo db name:'.blue,
-      default: 'beacon'
-    },
-    dbUn: {
-      description: 'Mongo db username (optional):'.blue,
-      default: ''
-    },
-    dbPw: {
-      description: 'Mongo db password (optional):'.blue,
-      default: ''
-    },
-    mailService: {
-      description: messages.email + 'Email service:'.blue,
-      default: 'Mailgun'
-    },
-    mailEmail: {
-      description: 'Email address:'.blue,
-      required: true
-    },
-    mailPass: {
-      description: 'Email password:'.blue,
-      required: true,
-      message: 'Password is required',
-      hidden: true
-    },
+
+      return '';
+    }
+  },
+  {
+    name: 'mailPass',
+    type: 'password',
+    message: 'Email password:',
+    when: function(answers) {
+      return answers.mailService === 'Gmail';
+    }
+  },
+  {
+    name: 'mailgunApiKey',
+    message: 'Mailgun API Key [see wiki]',
+    when: function(answers) {
+      return answers.mailService === 'Mailgun';
+    }
+  },
+  {
+    name: 'mailgunDomain',
+    message: 'Mailgun Domain [see wiki]',
+    when: function(answers) {
+      return answers.mailService === 'Mailgun';
+    }
   }
+
+];
+
+var buildConfig = function buildConfig(result) {
+  var config = {
+    app: {
+      name: result.appName,
+      url: result.appUrl
+    },
+    db: {
+      host: result.dbHost,
+      port: result.dbPort,
+      name: result.dbName,
+      un: result.dbUn,
+      pw: result.dbPw
+    },
+    api: {
+      host: result.apiHost,
+      port: result.apiPort
+    },
+    coreCreds: {
+      id: result.apiCoreId,
+      key: result.apiCorePass,
+      algorithm: 'sha256'
+    },
+    gui: {
+      host: result.guiHost,
+      port: result.guiPort
+    },
+    email: {
+      service: result.mailService,
+      auth: {
+        user: result.mailEmail,
+      }
+    }
+  };
+
+  if (result.mailService === 'Mailgun') {
+    config.mailgun = mg({
+      auth: {
+        'api_key': result.mailgunApiKey,
+        domain: result.mailgunDomain
+      }
+    });
+  }
+
+  if (result.mailService === 'Gmail') {
+    config.email.auth.pass = result.mailPass;
+  }
+
+  return config;
 };
 
 var copyPm2 = function copyPm2() {
@@ -139,13 +230,13 @@ var copyPm2 = function copyPm2() {
 
     // If config.pm2.json already exists, do not overwrite it.
     if (stats[1].isFile()) {
-      console.log('Skpping copy. The file'.yellow, pm2.config.file.cyan, 'already exists.'.yellow);
+      console.log(chalk.yellow('Skipping copy to'), chalk.cyan(pm2.config.file) + chalk.yellow('. File already exists.'));
       return false;
     }
   })
   .catch(function(err) {
     if (err.path === pm2.example.path) {
-      return console.log('Can\'t copy file.' + pm2.example.file + 'does not exist'.red);
+      return console.log(chalk.red('Can\'t copy file: ' + pm2.example.file + 'does not exist'));
     }
 
     fs.readFileAsync(pm2.example.path, {encoding: 'utf8'})
@@ -153,111 +244,72 @@ var copyPm2 = function copyPm2() {
       return fs.writeFileAsync(pm2.config.path, content);
     })
     .then(function() {
-      console.log('Copied'.green, pm2.example.file.cyan, 'to'.green, pm2.config.file.cyan);
+
+      var msg = [
+        chalk.green('Copied'),
+        chalk.cyan(pm2.example.file),
+        chalk.green('to'),
+        chalk.cyan(pm2.config.file)
+      ].join(' ');
+      console.log(msg);
     });
 
   });
 };
 
+var ask = inquirer.prompt(questions)
+.then(function (result) {
 
-//
-// Start the prompt
-//
-prompt.start();
-
-
-prompt.get(schema, function (err, result) {
-  if (err) {
-    console.log('prompt error');
-    console.log(err);
-  }
   //
   // Log the results.
   //
-  if (result) {
-    var config = {
-      app: {
-        name: result.appName,
-        url: result.appUrl
-      },
-      db: {
-        host: result.dbHost,
-        port: result.dbPort,
-        name: result.dbName,
-        un: result.dbUn,
-        pw: result.dbPw
-      },
-      api: {
-        host: result.apiHost,
-        port: result.apiPort
-      },
-      coreCreds: {
-        id: result.apiCoreId,
-        key: result.apiCorePass,
-        algorithm: 'sha256'
-      },
-      gui: {
-        host: result.guiHost,
-        port: result.guiPort
-      },
-      email: {
-        service: result.mailService,
-        auth: {
-          user: result.mailEmail,
-          pass: result.mailPass
-        }
-      }
-    };
-
-
-    // Copy
-    // Save config info to config.js
-    var content = 'module.exports = ' + JSON.stringify(config, null, 2);
-    var configPath = __dirname + '/../config.js';
-    fs.statAsync(configPath)
-    .then(function(stat) {
-
-      // config.js exists, so rename before writing to it.
-      if (stat && stat.isFile()) {
-        return fs.renameAsync(configPath, __dirname + '/../config.old.js');
-      }
-
-    })
-    .then(function(obj, b) {
-      // console.log('Backed up old config to config.old.js');
-      console.log('after rename. a:');
-      console.log(obj);
-      console.log('b');
-      console.log(b);
-
-      return fs.writeFileAsync(configPath, content);
-    })
-    .then(function(err) {
-      console.log('Saved configuration: '.green);
-      console.log(config);
-      copyPm2();
-    })
-    .catch(function(err) {
-
-      // config.js does not exist yet, so create it.
-      if (err.path === configPath) {
-        return fs.writeFileAsync(configPath, content)
-        .then(function() {
-          console.log('Saved configuration: '.green);
-          console.log(config);
-          copyPm2();
-        });
-      }
-
-      console.log('Error adding config.js:');
-      console.log(err);
-      console.log('Consider adding this file manually.');
-    });
-
-
-  } else {
-    console.log('\nAborted configuration!');
+  if (!result) {
+    return console.log('\nAborted configuration!');
   }
 
+  var config = buildConfig(result);
+
+  // Copy
+  // Save config info to config.js
+  var content = '/* jshint ignore: start */\nmodule.exports = ' + JSON.stringify(config, null, 2);
+  var configPath = __dirname + '/../config.js';
+  fs.statAsync(configPath)
+  .then(function(stat) {
+
+    // config.js exists, so rename before writing to it.
+    if (stat && stat.isFile()) {
+      return fs.renameAsync(configPath, __dirname + '/../config.old.js');
+    }
+
+  })
+  .then(function() {
+    console.log(chalk.yellow('Backed up old config to config.old.js'));
+    return fs.writeFileAsync(configPath, content);
+  })
+  .then(function() {
+    console.log(chalk.green('Saved configuration to'), chalk.cyan('config.js:'));
+    console.log(config);
+    copyPm2();
+  })
+  .catch(function(err) {
+
+    // config.js does not exist yet, so create it.
+    if (err.path === configPath) {
+      return fs.writeFileAsync(configPath, content)
+      .then(function() {
+        console.log(chalk.green('Saved configuration: '));
+        console.log(config);
+        copyPm2();
+      });
+    }
+
+    console.log('Error adding config.js:');
+    console.log(err);
+    console.log('Consider adding this file manually.');
+  });
+
+})
+.catch(function(err) {
+  console.log(err);
 });
 

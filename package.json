@@ -13,6 +13,7 @@
     "start": "pm2 start config.pm2.json",
     "stop": "pm2 stop config.pm2.json",
     "restart": "pm2 restart config.pm2.json",
+    "config": "node ./bin/configure.js",
     "test": "./node_modules/lab/bin/lab",
     "testCoverage": "./node_modules/lab/bin/lab -c"
   },
@@ -39,6 +40,7 @@
     "marked": "^0.3.3",
     "mongodb": "^2.0.33",
     "nodemailer": "^1.3.4",
+    "nodemailer-mailgun-transport": "^1.0.0",
     "prompt": "^0.2.14",
     "request": "^2.57.0",
     "require-directory": "^2.1.1",
