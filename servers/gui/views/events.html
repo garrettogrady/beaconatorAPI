@@ -2,16 +2,38 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block styles %}{% autoescape false %}
+  <link rel="stylesheet" href="js/watable/watable.css" type="text/css" />
+{% endautoescape %}{% endblock %}
+
 {% block content %}
 <section id="main-content">
   <section class="wrapper site-min-height">
     <h1>{{ title }}</h1>
-    <pre>
-      {{ events | json(2) }}
-    </pre>
+
+    <div class="content-panel">
+      <div id="table-events" style="width:95%;margin:0 auto;"></div>
+    </div>
+    <script>
+    {% autoescape false %}
+    FM.table = {
+      columns: [
+      ],
+      rows: {{ events | json(2) }}
+    }
+    {% endautoescape %}
+    </script>
     {% for event in events %}
         <div>
-          {{ event.email }} {{ event.beaconName }} {{ event.eventAction }} at {{ event.created.toString() }}
+          <a href="mailto:{{ event.email }}">
+            {{ event.user.fname }} {{ event.user.lname }}
+          </a>
+          {% if (event.eventAction === 'enter') %}
+            arrived at {{ event.beaconName }}
+          {% else %}
+            left the building
+          {% endif %}
+          at {{ event.created.toString() }}
         </div>
 
     {% endfor %}
