@@ -99,12 +99,23 @@ module.exports = {
           // title += ' - ' + config.app.name + ' Dashboard';
           // title = title.slice(0,1).toUpperCase() + title.slice(1);
 
+          var events = docs.map(function(event) {
+            return {
+              fname: event.user.fname,
+              lname: event.user.lname,
+              eventAction: event.eventAction,
+              date: +event.created,
+              beaconName: event.beaconName,
+              email: event.email,
+              created: event.created
+            };
+          });
           if (fs.existsSync(viewsPath + page + '.html')) {
             reply.view(page, {
               title: title,
               scripts: '',
               page: page,
-              events: docs
+              events: events
             });
           } else {
             reply.view('404', {

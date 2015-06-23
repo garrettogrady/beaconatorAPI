@@ -8,6 +8,8 @@ module.exports = {
       'css/vendor/bootstrap.css',
       'css/vendor/font-awesome/css/font-awesome.css',
       'css/vendor/datepicker.css',
+      'css/vendor/ui-core.css',
+      'css/vendor/ui-datepicker.css',
       'css/vendor/notify.css',
       // 'js/fullcalendar/bootstrap-fullcalendar.css',
       'css/vendor/style.css',

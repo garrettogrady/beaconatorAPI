@@ -76,7 +76,8 @@ $(document).ready( function() {
               console.log('pagesize changed');//data.event holds teh original event
               console.log(data);              //data.pageSize holds the new pagesize
             }
-        }).data('WATable');  //This step reaches into the html data property to get the actual WATable object. Important if you want a reference to it as we want here.
+        })
+        .data('WATable');  //This step reaches into the html data property to get the actual WATable object. Important if you want a reference to it as we want here.
 
         //Generate some data
         var data = getData();
