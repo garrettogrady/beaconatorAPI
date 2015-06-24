@@ -14,3 +14,4 @@ config.js
 config.pm2.json
 config.old.js
 node_modules
+config/local.yml

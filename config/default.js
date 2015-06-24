@@ -26,8 +26,9 @@ var defaults = {
   },
 };
 
+console.log(bs.getEnv());
+console.log('devmode?', defaults.devMode);
 defaults.paths.srcAssets = defaults.paths.src;
 defaults.paths.destAssets = defaults.paths.dest;
-
 
 module.exports = defaults;

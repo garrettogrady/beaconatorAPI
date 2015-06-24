@@ -66,6 +66,7 @@ module.exports = defer(function(config) {
   };
 
   if (config.devMode) {
+    console.log('************** DEV MODE *******************');
     webpackConfig.devtool = 'sourcemap';
     webpackConfig.debug = true;
   } else {

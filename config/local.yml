@@ -1,6 +1,0 @@
-devMode: true
-browserSync:
-  port: 8080
-  server: false
-  proxy:
-    target: 'http://localhost:3030'
