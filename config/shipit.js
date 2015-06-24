@@ -57,12 +57,11 @@ module.exports.init = function(shipit) {
       cwd: shipit.config.workspace
     })
     .then(function() {
-      return shipit.local('gulp build', {
+      return shipit.local('NODE_ENV=production gulp build', {
         cwd: shipit.config.workspace
       });
     });
   });
-
 
   shipit.on('fetched', function() {
     utils.runTask(shipit, 'build');
@@ -70,6 +69,7 @@ module.exports.init = function(shipit) {
 
   utils.registerTask(shipit, 'npmInstall', function() {
     var cwd = path.join(config.development.deployTo, 'current');
+
     return shipit.remote('cd ' + cwd + ' && NODE_ENV=production npm install');
   });
 
