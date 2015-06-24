@@ -50,7 +50,6 @@ var CRUD = {
   }
 };
 
-
 exports.register = function(server, options, next) {
 
   // Add db to our config
@@ -88,7 +87,7 @@ exports.register = function(server, options, next) {
 
       if (update) {
         userCollection.update({
-          _id: user._id
+          '_id': user._id
         }, {
           $set: {
             location: location,
