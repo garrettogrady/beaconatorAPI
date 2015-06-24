@@ -1,6 +1,7 @@
 
 $(document).ready(function() {
   var host = location.hostname;
+
   if (!/beaconator/.test(location.hostname)) {
     host += ':3000';
   }
@@ -38,13 +39,13 @@ $(document).ready(function() {
   }
 
   var table = $('#table-events').WATable({
-    //Prints some debug info to console
+    // Prints some debug info to console
     debug: true,
     pageSize: 25,
     filter: true,
     sorting: true,
     sortEmptyLast: true,
-    pageSizes: [10,25,50,100],
+    pageSizes: [10, 25, 50, 100],
     hidePagerOnEmpty: true,
     checkboxes: true,
     checkAllToggle: true,
@@ -53,62 +54,82 @@ $(document).ready(function() {
       string: {
         // filterTooltip: "Giggedi..."    // Set false to remove.
         filterTooltip: false,
-        placeHolder: 'filter...'    //What to say in placeholder filter fields. Set false for empty.
+        // What to say in placeholder filter fields. Set false for empty.
+        placeHolder: 'filter...'
       },
       number: {
-        decimals: 1   //Sets decimal precision for float types
+        decimals: 1   // Sets decimal precision for float types
       },
       bool: {
-        //filterTooltip: false
+        // filterTooltip: false
       },
       date: {
-        utc: false,            // Show time as universal time, ie without timezones.
-        format: 'MM/dd/yyyy, hh:mm tt',   // See all possible formats at http://arshaw.com/xdate/#Formatting.
-        datePicker: true,      // Requires "Datepicker for Bootstrap" plugin (http://www.eyecon.ro/bootstrap-datepicker).
+        // Show time as universal time, ie without timezones.
+        utc: false,
+        // See all possible formats at http:// arshaw.com/xdate/#Formatting.
+        format: 'MM/dd/yyyy, hh:mm tt',
+        // Requires "Datepicker for Bootstrap" plugin (http:// www.eyecon.ro/bootstrap-datepicker).
+        datePicker: true,
         placeHolder: false
       }
     },
-    actions: {                // This generates a button where you can add elements.
-      filter: true,         // If true, the filter fields can be toggled visible and hidden.
-      columnPicker: true,   // if true, the columnPicker can be toggled visible and hidden.
-      custom: [             // Add any other elements here. Here is a refresh and export example.
-        // $('<a href="#" class="refresh"><span class="glyphicon glyphicon-refresh"></span>&nbsp;Refresh</a>'),
-        // $('<a href="#" class="export_all"><span class="glyphicon glyphicon-share"></span>&nbsp;Export all rows</a>'),
-        // $('<a href="#" class="export_checked"><span class="glyphicon glyphicon-share"></span>&nbsp;Export checked rows</a>'),
-        // $('<a href="#" class="export_filtered"><span class="glyphicon glyphicon-share"></span>&nbsp;Export filtered rows</a>')
+    // This generates a button where you can add elements.
+    actions: {
+      // If true, the filter fields can be toggled visible and hidden.
+      filter: true,
+      // if true, the columnPicker can be toggled visible and hidden.
+      columnPicker: true,
+
+      // Add any other elements here. Here is a refresh and export example.
+      custom: [
       ]
     },
-    tableCreated: function(data) {    //Fires when the table is created / recreated. Use it if you want to manipulate the table in any way.
-        console.log('table created'); //data.table holds the html table element.
-        console.log(data);            //'this' keyword also holds the html table element.
+    // Fires when table is created/recreated. Use it if you want to manipulate the table in any way.
+    tableCreated: function(data) {
+        // data.table holds the html table element.
+        console.log('table created');
+        // 'this' keyword also holds the html table element.
+        console.log(data);
       },
-    rowClicked: function(data) {      //Fires when a row is clicked (Note. You need a column with the 'unique' property).
-      console.log('row clicked');   //data.event holds the original jQuery event.
-      console.log(data);            //data.row holds the underlying row you supplied.
-                                    //data.column holds the underlying column you supplied.
-      //data.checked is true if row is checked.
-      //'this' keyword holds the clicked element.
-      if ( $(this).hasClass('userId') ) {
+    // Fires when a row is clicked (Note. You need a column with the 'unique' property).
+    rowClicked: function(data) {
+      // data.event holds the original jQuery event.
+      console.log('row clicked');
+      // data.row holds the underlying row you supplied.
+      console.log(data);
+      // data.column holds the underlying column you supplied.
+      // data.checked is true if row is checked.
+      // 'this' keyword holds the clicked element.
+      if ($(this).hasClass('userId')) {
         data.event.preventDefault();
         alert('You clicked userId: ' + data.row.userId);
       }
     },
-    columnClicked: function(data) {    //Fires when a column is clicked
-      console.log('column clicked');  //data.event holds the original jQuery event
-      console.log(data);              //data.column holds the underlying column you supplied
-                                      //data.descending is true when sorted descending (duh)
+
+    // Fires when a column is clicked
+    columnClicked: function(data) {
+      // data.event holds the original jQuery event
+      console.log('column clicked');
+      // data.column holds the underlying column you supplied
+      console.log(data);
+      // data.descending is true when sorted descending (duh)
     },
-    pageChanged: function(data) {      //Fires when manually changing page
-      console.log('page changed');    //data.event holds the original jQuery event
-      console.log(data);              //data.page holds the new page index
+    // Fires when manually changing page
+    pageChanged: function(data) {
+      // data.event holds the original jQuery event
+      console.log('page changed');
+      // data.page holds the new page index
+      console.log(data);
     },
-    pageSizeChanged: function(data) {  //Fires when manually changing pagesize
-      console.log('pagesize changed');//data.event holds teh original event
-      console.log(data);              //data.pageSize holds the new pagesize
+    // Fires when manually changing pagesize
+    pageSizeChanged: function(data) {
+      // data.event holds teh original event
+      console.log('pagesize changed');
+      // data.pageSize holds the new pagesize
+      console.log(data);
     }
   })
   .data('WATable');
-
 
   console.log(table);
   table.setData(FM.table);

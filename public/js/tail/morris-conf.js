@@ -1,8 +1,8 @@
-var Script = function () {
+var Script = function() {
 
-    //morris chart
+  //morris chart
 
-    $(function () {
+  $(function() {
       // data stolen from http://howmanyleft.co.uk/vehicle/jaguar_'e'_type
       var tax_data = [
            {"period": "2011 Q3", "licensed": 3407, "sorned": 660},
@@ -21,7 +21,7 @@ var Script = function () {
         xkey: 'period',
         ykeys: ['licensed', 'sorned'],
         labels: ['Licensed', 'Off the road'],
-        lineColors:['#4ECDC4','#ed5565']
+        lineColors: ['#4ECDC4', '#ed5565']
       });
 
       Morris.Donut({
@@ -32,8 +32,10 @@ var Script = function () {
           {label: 'Custard', value: 25 },
           {label: 'Sugar', value: 10 }
         ],
-          colors: ['#3498db', '#2980b9', '#34495e'],
-        formatter: function (y) { return y + "%" }
+        colors: ['#3498db', '#2980b9', '#34495e'],
+        formatter: function(y) {
+          return y + "%"
+        }
       });
 
       Morris.Area({
@@ -51,15 +53,15 @@ var Script = function () {
           {period: '2012 Q2', iphone: 8432, ipad: 5713, itouch: 1791}
         ],
 
-          xkey: 'period',
-          ykeys: ['iphone', 'ipad', 'itouch'],
-          labels: ['iPhone', 'iPad', 'iPod Touch'],
-          hideHover: 'auto',
-          lineWidth: 1,
-          pointSize: 5,
-          lineColors: ['#4a8bc2', '#ff6c60', '#a9d86e'],
-          fillOpacity: 0.5,
-          smooth: true
+        xkey: 'period',
+        ykeys: ['iphone', 'ipad', 'itouch'],
+        labels: ['iPhone', 'iPad', 'iPod Touch'],
+        hideHover: 'auto',
+        lineWidth: 1,
+        pointSize: 5,
+        lineColors: ['#4a8bc2', '#ff6c60', '#a9d86e'],
+        fillOpacity: 0.5,
+        smooth: true
       });
 
       Morris.Bar({
@@ -95,13 +97,10 @@ var Script = function () {
         ]
       });
 
-      $('.code-example').each(function (index, el) {
+      $('.code-example').each(function(index, el) {
         eval($(el).text());
       });
     });
 
 }();
-
-
-
 

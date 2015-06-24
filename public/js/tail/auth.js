@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(document).ready(function() {
 
   if (!FM.isAuth) {
     return;
@@ -7,7 +7,7 @@ $( document ).ready(function() {
   $.backstretch('/img/login-bg.jpg', {speed: 500});
 
   // LOGIN
-  $('#login').submit(function (e) {
+  $('#login').submit(function(e) {
     e.preventDefault();
 
     var payload = {
@@ -15,9 +15,10 @@ $( document ).ready(function() {
       password: $('#password').val()
     };
 
-    $.post('/login', payload).done(function (result) {
+    $.post('/login', payload).done(function(result) {
       console.log(result);
-      if(result.error) {
+
+      if (result.error) {
         $.notify(result.details, 'error');
       } else {
         window.location.href = '/';
@@ -26,7 +27,7 @@ $( document ).ready(function() {
   });
 
   // REGISTER
-  $('#register').submit(function (e) {
+  $('#register').submit(function(e) {
     e.preventDefault();
 
     var url = '/register';
@@ -39,14 +40,15 @@ $( document ).ready(function() {
       password2: $('#password2').val()
     };
 
-    $.post(url, payload).done(function (result) {
+    $.post(url, payload).done(function(result) {
       console.log(result);
-      if(result.error) {
+
+      if (result.error) {
 
         $.notify(result.details, 'error');
       } else {
         $.notify(result.details, 'success');
-        setTimeout(function(){
+        setTimeout(function() {
           window.location.href = '/';
         }, 3000);
 
@@ -54,7 +56,7 @@ $( document ).ready(function() {
     });
   });
 
-  $('#forgot-btn').click(function (e) {
+  $('#forgot-btn').click(function(e) {
     e.preventDefault();
 
     var payload = {
@@ -62,9 +64,10 @@ $( document ).ready(function() {
     };
     console.log(payload);
 
-    $.post('/forgot', payload).done(function (result) {
+    $.post('/forgot', payload).done(function(result) {
       console.log(result);
-      if(!result.error) {
+
+      if (!result.error) {
         $.notify('You have been sent a password reset email.', 'success');
       } else {
         $.notify(result.details, 'error');
@@ -72,7 +75,7 @@ $( document ).ready(function() {
     });
   });
 
-  $('#reset').submit(function (e) {
+  $('#reset').submit(function(e) {
     e.preventDefault();
 
     var payload = {
@@ -82,11 +85,12 @@ $( document ).ready(function() {
       token: $('#forgotToken').val()
     };
     console.log('Attempting password reset...', payload);
-    $.post('/reset', payload).done(function (result) {
+    $.post('/reset', payload).done(function(result) {
       console.log(result);
-      if(!result.error) {
+
+      if (!result.error) {
         $.notify('Password reset successfully. Redirecting to login...', 'success');
-        setTimeout(function(){
+        setTimeout(function() {
           window.location.href = '/login';
         }, 3000);
       } else {
