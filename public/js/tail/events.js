@@ -40,7 +40,7 @@ $(document).ready(function() {
 
   var table = $('#table-events').WATable({
     // Prints some debug info to console
-    debug: true,
+    debug: false,
     pageSize: 25,
     filter: true,
     sorting: true,
@@ -131,7 +131,35 @@ $(document).ready(function() {
   })
   .data('WATable');
 
-  console.log(table);
+  FM.table = FM.table || {};
+  FM.table.cols = {
+    fname: {
+      index: 1,
+      friendly: 'First Name',
+      type: 'string'
+    },
+    lname: {
+      index: 2,
+      friendly: 'Last Name',
+      type: 'string'
+    },
+    eventAction: {
+      index: 3,
+      friendly: 'Action',
+      type: 'string'
+    },
+    beaconName: {
+      index: 4,
+      friendly: 'Beacon',
+      type: 'string'
+    },
+    date: {
+      index: 5,
+      friendly: 'Date',
+      type: 'date'
+    }
+  };
+
   table.setData(FM.table);
 
 })();

@@ -15,45 +15,10 @@
       <div id="table-events" style="width:95%;margin:0 auto;"></div>
     </div>
 
-    {% for event in events %}
-      <div>
-        <a href="mailto:{{ event.email }}">
-          {{ event.fname }} {{ event.lname }}
-        </a>
-        {% if (event.eventAction === 'enter') %}
-          arrived at {{ event.beaconName }}
-        {% else %}
-          left the building
-        {% endif %}
-        at {{ event.created.toString() }}
-      </div>
-
-    {% endfor %}
     <script>
     {% autoescape false %}
     FM.table = {
-      cols: {
-        fname: {
-          index: 1,
-          friendly: 'First Name',
-          type: 'string'
-        },
-        lname: {
-          index: 2,
-          friendly: 'Last Name',
-          type: 'string'
-        },
-        eventAction: {
-          index: 3,
-          friendly: 'Action',
-          type: 'string'
-        },
-        date: {
-          index: 4,
-          friendly: 'Date',
-          type: 'date'
-        }
-      },
+      cols: {},
       rows: {{ events | json(2) }}
     }
     {% endautoescape %}
