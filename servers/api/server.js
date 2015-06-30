@@ -128,9 +128,11 @@ apiServer.register([
     if (err) {
       throw err;
     }
+
     apiServer.auth.strategy('core', 'hawk', {
       getCredentialsFunc: getCoreCredentials
     });
+
     apiServer.auth.strategy('web', 'hawk', {
       getCredentialsFunc: getCredentials
     });
@@ -152,10 +154,10 @@ apiServer.register([
     }
   }
 ], function(err) {
-    if (err) {
-      throw err;
-    }
-  });
+  if (err) {
+    throw err;
+  }
+});
 
 if (!module.parent) {
   apiServer.start(function() {

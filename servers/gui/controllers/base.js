@@ -30,7 +30,9 @@ module.exports = {
       var scripts = '';
       var page = 'readme';
 
-      var markdown = fs.readFileSync(__dirname + '/../../../README.md', {encoding: 'utf8'});
+      var markdown = fs.readFileSync(__dirname + '/../../../README.md', {
+        encoding: 'utf8'
+      });
 
       // Render the view with the custom greeting
       reply.view('index', {
@@ -56,23 +58,25 @@ module.exports = {
         var page = 'users';
 
         userCollection
-        .find()
-        .sort({lname: 1})
-        .toArray(function(err, docs) {
+          .find()
+          .sort({
+            lname: 1
+          })
+          .toArray(function(err, docs) {
 
-          if (fs.existsSync(viewsPath + page + '.html')) {
-            reply.view(page, {
-              title: 'Users',
-              scripts: '',
-              page: page,
-              users: docs
-            });
-          } else {
-            reply.view('404', {
-              title: 'page not found'
-            }).code(404);
-          }
-        });
+            if (fs.existsSync(viewsPath + page + '.html')) {
+              reply.view(page, {
+                title: 'Users',
+                scripts: '',
+                page: page,
+                users: docs
+              });
+            } else {
+              reply.view('404', {
+                title: 'page not found'
+              }).code(404);
+            }
+          });
       },
     };
   },
@@ -89,42 +93,45 @@ module.exports = {
         }
 
         var collection = db
-        .collection('events')
-        .find(request.query || {})
-        .sort({$natural : -1})
-        .toArray(function(err, docs) {
+          .collection('events')
+          .find(request.query || {})
+          .sort({
+            $natural: -1
+          })
+          .toArray(function(err, docs) {
 
-          var page = 'events';
-          var title = 'Events';
-          // title += ' - ' + config.app.name + ' Dashboard';
-          // title = title.slice(0,1).toUpperCase() + title.slice(1);
+            var page = 'events';
+            var title = 'Events';
+            // title += ' - ' + config.app.name + ' Dashboard';
+            // title = title.slice(0,1).toUpperCase() + title.slice(1);
 
-          var events = docs.map(function(event) {
-            return {
-              fname: event.user.fname,
-              lname: event.user.lname,
-              eventAction: event.eventAction,
-              date: +event.created,
-              beaconName: event.beaconName,
-              email: event.email,
-              created: event.created
-            };
-          });
-          if (fs.existsSync(viewsPath + page + '.html')) {
-            reply.view(page, {
-              title: title,
-              scripts: '',
-              page: page,
-              events: events
+            var events = docs.map(function(event) {
+              return {
+                fname: event.user.fname,
+                lname: event.user.lname,
+                eventAction: event.eventAction,
+                date: +event.created,
+                beaconName: event.beaconName,
+                email: event.email,
+                created: event.created
+              };
             });
-          } else {
-            reply.view('404', {
-              title: 'page not found'
-            }).code(404);
-          }
 
-          // return reply(docs).type('application/json');
-        });
+            if (fs.existsSync(viewsPath + page + '.html')) {
+              reply.view(page, {
+                title: title,
+                scripts: '',
+                page: page,
+                events: events
+              });
+            } else {
+              reply.view('404', {
+                title: 'page not found'
+              }).code(404);
+            }
+
+            // return reply(docs).type('application/json');
+          });
       }
     };
   },
@@ -139,7 +146,7 @@ module.exports = {
       var page = request.params.path;
       var title = page.replace(/\-+/g, ' ');
       title += ' - ' + config.app.name + ' Dashboard';
-      title = title.slice(0,1).toUpperCase() + title.slice(1);
+      title = title.slice(0, 1).toUpperCase() + title.slice(1);
 
       if (fs.existsSync(viewsPath + page + '.html')) {
         reply.view(page, {

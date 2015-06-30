@@ -1,3 +1,6 @@
+// jscs:disable maximumLineLength
+// jscs:disable disallowDanglingUnderscores
+
 /**
  * Created by kidtronnix on 20/05/14.
  */
@@ -25,17 +28,21 @@ exports.register = function(plugin, options, next) {
       var url = 'http://' + options.apiIP + opts.url;
       var requestOptions = {
         // json: true,
-        headers: { 'content-type':'application/json'}
+        headers: {
+          'content-type': 'application/json'
+        }
       };
 
-      console.log(url);
+      // console.log(url);
       // Add payload
       if (opts.payload) {
         requestOptions.payload = JSON.stringify(opts.payload);
       }
 
       // Add auth
-      var header = Hawk.client.header(url, opts.method, { credentials: opts.credentials });
+      var header = Hawk.client.header(url, opts.method, {
+        credentials: opts.credentials
+      });
       requestOptions.headers.Authorization = header.field;
 
       // Make call
@@ -75,74 +82,88 @@ exports.register = function(plugin, options, next) {
         });
 
         // We got everything we need to create a new user
-        Joi.validate(uDeets, validSchema, function (err, value) {
+        Joi.validate(uDeets, validSchema, function(err, value) {
           if (err !== null) {
-            next({error: true, details: 'Incorrect email'}).type('application/json');
+            next({
+              error: true,
+              details: 'Incorrect email'
+            }).type('application/json');
           } else {
             var collection = db.collection('users');
-            collection.findOne({email: uDeets.email}, function(err, user) {
-              if (err) {
-                throw err;
-              }
+            collection.findOne({
+              email: uDeets.email
+            }, function(err, user) {
+                if (err) {
+                  throw err;
+                }
 
-              // Check we have a user
-              if (user) {
+                // Check we have a user
+                if (user) {
 
-                delete user.password;
+                  delete user.password;
 
-                // Generate a forgot access token and email it to them
-                var token = Jwt.sign(user, forgotSecret, { expiresInMinutes: 60 });
+                  // Generate a forgot access token and email it to them
+                  var token = Jwt.sign(user, forgotSecret, {
+                    expiresInMinutes: 60
+                  });
 
-                var opts = {
-                  payload: JSON.stringify({forgotToken: token}),
-                  headers:   { 'content-type':'application/json'}
-                };
+                  var opts = {
+                    payload: JSON.stringify({
+                      forgotToken: token
+                    }),
+                    headers: {
+                      'content-type': 'application/json'
+                    }
+                  };
 
+                  API.send({
+                    method: 'PUT',
+                    url: '/api/user/' + user._id,
+                    payload: {
+                      forgotToken: token
+                    },
+                    credentials: options.coreCreds,
+                    callback: function(err, res, payload) {
 
-                API.send({
-                  method: 'PUT',
-                  url: '/api/user/' + user._id,
-                  payload: {
-                    forgotToken: token
-                  },
-                  credentials: options.coreCreds,
-                  callback: function (err, res, payload) {
+                      // Update user to be
+                      var link = options.app.url + '/reset/' + token;
 
-                    // Update user to be
-                    var link = options.app.url + '/reset/' + token;
+                      // setup e-mail data with unicode symbols
+                      var mailOptions = {
+                        from: from, // sender address
+                        to: user.email, // list of receivers
+                        subject: 'Reset Password', // Subject line
+                        text: 'Hi ' + user.fname + ',\nHere is your password reset link:\n\n' + link + '\n\nThis token will expire in 1 hour.\n\nThe Team', // plaintext body
+                        html: '<p>Hi ' + user.fname + ',</br>Click the link below to reset your password:</p><a href="' + link + '"><h3>Reset Password</h3></a><p>This token will expire in 1 hour.</p><p>The Team</p>' // html body
+                      };
 
-                    // setup e-mail data with unicode symbols
-                    var mailOptions = {
-                      from: from, // sender address
-                      to: user.email, // list of receivers
-                      subject: 'Reset Password', // Subject line
-                      text: 'Hi ' + user.fname + ',\nHere is your password reset link:\n\n'+link+'\n\nThis token will expire in 1 hour.\n\nThe Team', // plaintext body
-                      html: '<p>Hi ' + user.fname + ',</br>Click the link below to reset your password:</p><a href="'+link+'"><h3>Reset Password</h3></a><p>This token will expire in 1 hour.</p><p>The Team</p>' // html body
-                    };
+                      // send mail with defined transport object
+                      transporter.sendMail(mailOptions, function(error, response) {
+                        if (error) {
+                          console.log(error);
+                        } else {
+                          console.log('Password reset message sent: ' + response.message);
+                        }
 
-                    // send mail with defined transport object
-                    transporter.sendMail(mailOptions, function(error, response) {
-                      if (error) {
-                        console.log(error);
-                      } else {
-                        console.log('Password reset message sent: ' + response.message);
-                      }
+                        // if you don't want to use this transport object anymore, uncomment following line
+                        // smtpTransport.close(); // shut down the connection pool, no more messages
+                      });
 
-                    // if you don't want to use this transport object anymore, uncomment following line
-                    //smtpTransport.close(); // shut down the connection pool, no more messages
-                    });
+                      next({
+                        error: false,
+                        token: token
+                      });
+                    }
+                  });
 
-                    next({error: false, token: token});
-
-                  }
-                });
-
-
-              } else {
-                // Throw error if we didn't find an email
-                next({error: true, details: 'Incorrect email'}).type('application/json');
-              }
-            });
+                } else {
+                  // Throw error if we didn't find an email
+                  next({
+                    error: true,
+                    details: 'Incorrect email'
+                  }).type('application/json');
+                }
+              });
           }
         });
       }
@@ -165,78 +186,94 @@ exports.register = function(plugin, options, next) {
         });
 
         // We got everything we need to create a new user
-        Joi.validate(newUser, validSchema, {abortEarly: false}, function (err, value) {
-          if (err !== null) {
-            console.log(err);
+        Joi.validate(newUser, validSchema, {
+          abortEarly: false
+        }, function(err, value) {
+            if (err !== null) {
+              console.log(err);
 
-            var message = '';
-            for(var i = 0; i < err.details.length; i++) {
-              var _message = err.details[i].message;
-              if (err.details[i].path === 'password2') {
-                message += 'Passwords must match. ';
-              } else {
-                message += _message.substr(0, 1).toUpperCase() + _message.substr(1) +'. ';
+              var message = '';
+
+              for (var i = 0; i < err.details.length; i++) {
+                var msg = err.details[i].message;
+
+                if (err.details[i].path === 'password2') {
+                  message += 'Passwords must match. ';
+                } else {
+                  message += msg.substr(0, 1).toUpperCase() + msg.substr(1) + '. ';
+                }
               }
+
+              return next({
+                error: true,
+                details: message
+              }).type('application/json');
+            } else {
+              delete newUser.password2;
+
+              API.send({
+                method: 'POST',
+                url: '/api/user',
+                payload: newUser,
+                credentials: options.coreCreds,
+                callback: function(err, res, payload) {
+                  if (err) {
+                    throw err;
+                  }
+
+                  var response;
+
+                  if (!payload) {
+                    response = {
+                      error: true,
+                      message: ['No payload:', typeof payload, payload].join(' ')
+                    };
+                  } else if (typeof payload === 'string') {
+                    response = JSON.parse(payload);
+                  } else {
+                    response = payload;
+                  }
+
+                  if (response.error) {
+                    return next({
+                      error: true,
+                      details: 'Error registering. ' + (response.message || '')
+                    }).type('application/json');
+                  } else {
+
+                    var token = Jwt.sign({
+                      id: response._id
+                    }, forgotSecret);
+                    var link = options.app.url + '/activate/' + token;
+
+                    // setup e-mail data with unicode symbols
+                    var mailOptions = {
+                      from: from, // sender address
+                      to: response.email, // list of receivers
+                      subject: 'Activate your Account', // Subject line
+                      text: 'Hi ' + response.fname + ',\nThank you for registering. Use the following link to activate your account:\n\n' + link + '\n\nThanks for your cooperation.\n\nThe Team', // plaintext body
+                      html: '<p>Hi ' + response.fname + ',</p><p>Thank you for registering. Please click the following link to activate your account:</p><a href="' + link + '"><h3>Activate account</h3></a><p>Thanks for your cooperation.</p><p>The Team</p>' // html body
+                    };
+
+                    // send mail with defined transport object
+                    // send mail with defined transport object
+                    transporter.sendMail(mailOptions, function(error, info) {
+                      if (error) {
+                        console.log(error);
+                      } else {
+                        console.log('Message sent: ' + info.response);
+                      }
+                    });
+
+                    return next({
+                      error: false,
+                      details: 'Success! An activation email has been sent to you.'
+                    }).type('application/json');
+                  }
+                }
+              });
             }
-
-            return next({error: true, details: message}).type('application/json');
-          } else {
-            delete newUser.password2;
-
-            API.send({
-              method: 'POST',
-              url: '/api/user',
-              payload: newUser,
-              credentials: options.coreCreds,
-              callback: function(err, res, payload) {
-                if (err) {
-                  throw err;
-                }
-
-                var response;
-
-                if (!payload) {
-                  response = {
-                    error: true,
-                    message: ['No payload:', typeof payload, payload].join(' ')
-                  };
-                } else if (typeof payload === 'string') {
-                  response = JSON.parse(payload);
-                } else {
-                  response = payload;
-                }
-
-                if (response.error) {
-                  return next({error: true, details: 'Error registering. ' + (response.message || '')}).type('application/json');
-                } else {
-
-                  var token = Jwt.sign({id:response._id}, forgotSecret);
-                  var link = options.app.url+'/activate/'+token;
-
-                  // setup e-mail data with unicode symbols
-                  var mailOptions = {
-                    from: from, // sender address
-                    to: response.email, // list of receivers
-                    subject: 'Activate your Account', // Subject line
-                    text: 'Hi ' + response.fname + ',\nThank you for registering. Use the following link to activate your account:\n\n'+link+'\n\nThanks for your cooperation.\n\nThe Team', // plaintext body
-                    html: '<p>Hi ' + response.fname + ',</p><p>Thank you for registering. Please click the following link to activate your account:</p><a href="'+link+'"><h3>Activate account</h3></a><p>Thanks for your cooperation.</p><p>The Team</p>' // html body
-                  };
-
-                  // send mail with defined transport object
-                  // send mail with defined transport object
-                  transporter.sendMail(mailOptions, function(error, info){
-                    if (error){
-                      console.log(error);
-                    }else{
-                      console.log('Message sent: ' + info.response);
-                    }
-                  });
-                  return next({error: false, details: 'Success! An activation email has been sent to you.'}).type('application/json');
-                }
-              }
-            });
-          }
-        });
+          });
       }
     };
   };
@@ -254,61 +291,82 @@ exports.register = function(plugin, options, next) {
           token: Joi.string().required()
         });
 
-        Joi.validate(changePass, validSchema,{abortEarly: false}, function (err, value) {
-          if (err !== null) {
-            var message = '';
-            for(var i=0; i < err.details.length; i++) {
-              var _message = err.details[i].message;
-              if (err.details[i].path === 'password2') {
-                message += 'Passwords must match. ';
-              } else {
-                message += _message.substr(0, 1).toUpperCase() + _message.substr(1) +'. ';
-              }
-            }
+        Joi.validate(changePass, validSchema, {
+          abortEarly: false
+        }, function(err, value) {
+            if (err !== null) {
+              var message = '';
 
-            return next({error: true, details: message}).type('application/json');
-          } else {
+              for (var i = 0; i < err.details.length; i++) {
+                var msg = err.details[i].message;
 
-            var collection = db.collection('users');
-            collection.findOne({email: changePass.email}, function(err, user) {
-              if (err) {
-                throw err;
+                if (err.details[i].path === 'password2') {
+                  message += 'Passwords must match. ';
+                } else {
+                  message += msg.substr(0, 1).toUpperCase() + msg.substr(1) + '. ';
+                }
               }
 
-              // We are only going to change if we
-              // 1. have a user
-              // 2. we have the same token in DB
-              // 3. Token is valid and not expired
-              if (user && (user.forgotToken === changePass.token)) {
-                Jwt.verify(user.forgotToken, forgotSecret, function(err, decoded) {
+              return next({
+                error: true,
+                details: message
+              }).type('application/json');
+            } else {
+
+              var collection = db.collection('users');
+              collection.findOne({
+                email: changePass.email
+              }, function(err, user) {
                   if (err) {
-                    next({error: true, details: 'Incorrect Token'});
                     throw err;
-                  } else {
-                    var payload = {password: changePass.password, forgotToken: false};
+                  }
 
-                    console.log(payload);
+                  // We are only going to change if we
+                  // 1. have a user
+                  // 2. we have the same token in DB
+                  // 3. Token is valid and not expired
+                  if (user && (user.forgotToken === changePass.token)) {
+                    Jwt.verify(user.forgotToken, forgotSecret, function(err, decoded) {
+                      if (err) {
+                        next({
+                          error: true,
+                          details: 'Incorrect Token'
+                        });
+                        throw err;
+                      } else {
+                        var payload = {
+                          password: changePass.password,
+                          forgotToken: false
+                        };
 
-                    API.send({
-                      method: 'PUT',
-                      url: '/api/user/'+user._id,
-                      payload: payload,
-                      credentials: options.coreCreds,
-                      callback: function(err, res, payload) {
-                        if (err) {
-                          throw err;
-                        }
-                        next({error: false, details: 'Changed Password'});
+                        console.log(payload);
+
+                        API.send({
+                          method: 'PUT',
+                          url: '/api/user/' + user._id,
+                          payload: payload,
+                          credentials: options.coreCreds,
+                          callback: function(err, res, payload) {
+                            if (err) {
+                              throw err;
+                            }
+                            next({
+                              error: false,
+                              details: 'Changed Password'
+                            });
+                          }
+                        });
                       }
+                    });
+                  } else {
+                    next({
+                      error: true,
+                      details: 'Incorrect Token'
                     });
                   }
                 });
-              } else {
-                next({error: true, details: 'Incorrect Token'});
-              }
-            });
-          }
-        });
+            }
+          });
       }
     };
   };
@@ -319,57 +377,73 @@ exports.register = function(plugin, options, next) {
       return reply.redirect('/');
     }
 
-    var message = '', error = true;
+    var message = '';
+    var error = true;
     var account = null;
 
     if (!request.payload.email || !request.payload.password) {
       message = 'Missing username or password';
-      return reply({error: true, details: message});
+
+      return reply({
+        error: true,
+        details: message
+      });
     } else {
       var collection = db.collection('users');
 
-      collection.findOne({email: request.payload.email}, function(err, user) {
-        if (err) {
-          throw err;
-        }
+      collection.findOne({
+        email: request.payload.email
+      }, function(err, user) {
+          if (err) {
+            throw err;
+          }
 
-        // Check we have a user and correct password
-        if (!user || !Bcrypt.compareSync(request.payload.password, user.password) ) {
-          message = 'Invalid email or password';
-        } else if (!user.activated) {
-          message = 'Activate your account. Check your email.';
-        } else {
-          request.auth.session.set({
-            id: user._id,
-            password: request.payload.password
+          // Check we have a user and correct password
+          if (!user || !Bcrypt.compareSync(request.payload.password, user.password)) {
+            message = 'Invalid email or password';
+          } else if (!user.activated) {
+            message = 'Activate your account. Check your email.';
+          } else {
+            request.auth.session.set({
+              id: user._id,
+              password: request.payload.password
+            });
+            error = false;
+            message = 'Successfully authenticated!';
+          }
+
+          return reply({
+            error: error,
+            details: message
           });
-          error = false;
-          message = 'Successfully authenticated!';
-        }
-
-        return reply({error: error, details: message});
-      });
+        });
     }
   };
 
   var logout = function logout(request, reply) {
 
     request.auth.session.clear();
+
     return reply.redirect('/login');
   };
 
-  var activate = function (request, reply) {
+  var activate = function(request, reply) {
 
     Jwt.verify(request.params.token, forgotSecret, function(err, decoded) {
       if (err) {
-        next({error: true, details: 'Incorrect Token!'});
+        next({
+          error: true,
+          details: 'Incorrect Token!'
+        });
         throw err;
       } else {
 
         API.send({
           method: 'PUT',
-          url: '/api/user/'+decoded.id,
-          payload: {activated: true},
+          url: '/api/user/' + decoded.id,
+          payload: {
+            activated: true
+          },
           credentials: options.coreCreds,
           callback: function(err, res, payload) {
             if (err) {
@@ -403,108 +477,108 @@ exports.register = function(plugin, options, next) {
     }
   });
 
-    // Logs out user
-    plugin.route({
-      method: 'GET',
-      path: '/logout',
-      config: {
-        handler: logout,
-        auth: 'session'
+  // Logs out user
+  plugin.route({
+    method: 'GET',
+    path: '/logout',
+    config: {
+      handler: logout,
+      auth: 'session'
+    }
+  });
+
+  // Handles new user activation
+  plugin.route({
+    path: '/activate/{token}',
+    method: 'GET',
+    config: {
+      handler: activate
+    }
+  });
+
+  // Handles forgot password
+  plugin.route({
+    path: '/forgot',
+    method: 'POST',
+    config: forgot()
+  });
+
+  // Handles reset attempt
+  plugin.route({
+    path: '/reset',
+    method: 'POST',
+    config: resetPass()
+  });
+
+  // Handles registration attempt
+  plugin.route({
+    path: '/register',
+    method: 'POST',
+    config: register()
+  });
+
+  // FRONTEND FORM ROUTES
+  plugin.route({
+    path: '/register',
+    method: 'GET',
+    config: {
+      handler: function(request, reply) {
+        return reply.view('register', {
+          title: config.app.name + ' - Register'
+        });
       }
-    });
+    }
+  });
 
-
-    // Handles new user activation
-    plugin.route({
-      path: '/activate/{token}',
-      method: 'GET',
-      config: {
-        handler: activate
+  plugin.route({
+    path: '/reset/{token}',
+    method: 'GET',
+    config: {
+      handler: function(request, reply) {
+        return reply.view('reset', {
+          title: config.app.name + ' - Reset Password',
+          token: request.params.token
+        });
       }
-    });
+    }
+  });
 
-    // Handles forgot password
-    plugin.route({
-      path: '/forgot',
-      method: 'POST',
-      config: forgot()
-    });
+  plugin.route({
+    path: '/login/{activated?}',
+    method: 'GET',
+    config: {
+      handler: function(request, reply) {
+        if (request.auth.isAuthenticated) {
+          return reply.redirect('/');
+        }
+        var scripts = '';
 
-    // Handles reset attempt
-    plugin.route({
-      path: '/reset',
-      method: 'POST',
-      config: resetPass()
-    });
+        if (request.params.activated) {
+          scripts += '<script>$( document ).ready(function() { ';
+          scripts += '$.notify("Activated account!", "success");});</script>';
+        }
 
-    // Handles registration attempt
-    plugin.route({
-      path: '/register',
-      method: 'POST',
-      config: register()
-    });
-
-    // FRONTEND FORM ROUTES
-    plugin.route({
-      path: '/register',
-      method: 'GET',
-      config: {
-        handler: function (request, reply) {
-          return reply.view('register', {
-            title: config.app.name + ' - Register'
-          });
+        reply.view('login', {
+          title: config.app.name + ' - Login',
+          scripts: scripts
+        });
+      },
+      app: {
+        name: 'login'
+      },
+      auth: {
+        mode: 'try',
+        strategy: 'session'
+      },
+      plugins: {
+        'hapi-auth-cookie': {
+          redirectTo: false
         }
       }
-    });
+    }
+  });
 
-    plugin.route({
-      path: '/reset/{token}',
-      method: 'GET',
-      config: {
-        handler: function(request, reply) {
-          return reply.view('reset', {
-            title: config.app.name + ' - Reset Password',
-            token: request.params.token
-          });
-        }
-      }
-    });
-
-    plugin.route({
-      path: '/login/{activated?}',
-      method: 'GET',
-      config: {
-        handler: function(request, reply){
-          if (request.auth.isAuthenticated) {
-            return reply.redirect('/');
-          }
-          var scripts = '';
-
-          if (request.params.activated) {
-            scripts += '<script>$( document ).ready(function() { $.notify("Activated account!", "success");})</script>';
-          }
-
-          reply.view('login', {
-            title: config.app.name + ' - Login',
-            scripts: scripts
-          });
-        },
-        app: {
-          name: 'login'
-        },
-        auth: {
-          mode: 'try',
-          strategy: 'session'
-        },
-        plugins: {
-          'hapi-auth-cookie': {
-            redirectTo: false
-          }
-        }
-      }
-    });
-
-    next();
+  next();
 };
 
 exports.register.attributes = require('./package.json');
