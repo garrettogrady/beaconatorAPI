@@ -73,9 +73,12 @@ exports.register = function(server, options, next) {
     next(apiKey);
   };
 
+  var userUrl = 'http://' + config.api.host + ':' + config.api.port;
+  userUrl += '/api/user';
+
   var apiAuth = function apiAuth(request, next) {
-    // console.log(config.coreCreds);
-    var header = Hawk.client.header('/api/user', 'GET', {
+    console.log(config.coreCreds);
+    var header = Hawk.client.header(userUrl, 'GET', {
       credentials: config.coreCreds
     });
 
@@ -91,7 +94,10 @@ exports.register = function(server, options, next) {
     config: {
       auth: 'core',
       pre: [
-        { method: apiGenKey, assign: 'apiGenKey' }
+        {
+          method: apiGenKey,
+          assign: 'apiGenKey'
+        }
       ],
       handler: User.create
     }
@@ -119,7 +125,29 @@ exports.register = function(server, options, next) {
     config: {
       // auth: 'core',
       cors: true,
-      handler: User.find,
+
+      // Don't use toothache module here so we can modify reply
+      handler: function(request, reply) {
+        var find = request.query || {};
+        var db = options.db;
+
+        return db
+        .collection(CRUD.collection)
+        .find(find)
+        .sort({
+          '_id': 1
+        })
+        .toArray(function(err, docs) {
+
+          // iOS app wants the array of users to be wrapped in object with
+          // key of "items"
+          var users = {
+            items: docs
+          };
+
+          return reply(users).type('application/json');
+        });
+      },
       // pre: [
       //   { method: apiAuth, assign: 'apiAuth' }
       // ],
