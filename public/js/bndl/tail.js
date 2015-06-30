@@ -29110,7 +29110,7 @@
 	
 	  var table = $('#table-events').WATable({
 	    // Prints some debug info to console
-	    debug: true,
+	    debug: false,
 	    pageSize: 25,
 	    filter: true,
 	    sorting: true,
