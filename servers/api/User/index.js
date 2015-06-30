@@ -2,8 +2,11 @@
  * Created by kidtronnix on 20/05/14.
  */
 
- // Packages for validation
+var Hawk = require('hawk');
+
+// Packages for validation
 var Joi = require('joi');
+var config = require('../../../config');
 
 // Internal config stuff
 var CRUD = {
@@ -42,7 +45,6 @@ var CRUD = {
   }
 };
 
-
 exports.register = function(server, options, next) {
 
   // Add db to our config
@@ -56,9 +58,11 @@ exports.register = function(server, options, next) {
       // Just produces random string using these chars
       var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
       var result = '';
+
       for (var i = length; i > 0; --i) {
         result += chars[Math.round(Math.random() * (chars.length - 1))];
       }
+
       return result;
     };
 
@@ -67,6 +71,17 @@ exports.register = function(server, options, next) {
     // Add to payload and return
     request.payload.apiToken = apiKey;
     next(apiKey);
+  };
+
+  var apiAuth = function apiAuth(request, next) {
+    // console.log(config.coreCreds);
+    var header = Hawk.client.header('/api/user', 'GET', {
+      credentials: config.coreCreds
+    });
+
+    console.log(header.field);
+    request.headers.Authorization = header.field;
+    next(request.headers);
   };
 
   // Create
@@ -102,9 +117,13 @@ exports.register = function(server, options, next) {
     path: '/api/user',
     method: 'GET',
     config: {
-      auth: 'core',
-      handler: User.find
-    }
+      // auth: 'core',
+      cors: true,
+      handler: User.find,
+      // pre: [
+      //   { method: apiAuth, assign: 'apiAuth' }
+      // ],
+    },
   });
 
   // Update
