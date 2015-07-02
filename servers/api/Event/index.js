@@ -60,27 +60,27 @@ exports.register = function(server, options, next) {
   var Event = require('toothache')(CRUD);
 
   var getUser = function(request, next) {
-    var email = request.payload.email;
-
-    // We don't want to store email in events collections.
-    delete request.payload.email;
+    request.payload.email = request.payload.email.trim().toLowerCase();
 
     // Store user as an embedded document
-    var userCollection = options.db
+    var userCollection = CRUD.db
     .collection('users');
 
     userCollection.findOne({
-      email: email
+      email: request.payload.email
     }, function(err, user) {
       if (err) {
         throw err;
       }
 
-      var action = request.payload.eventAction;
+      if (!user) {
+        throw new Error({Error: 'No user could be found for email: ' + request.payload.email});
+      }
+
       user.location = request.payload.beaconName;
       user.locationUpdated = new Date();
 
-      if (action === 'exit') {
+      if (request.payload.eventAction === 'exit') {
         user.location = 'away';
       }
 

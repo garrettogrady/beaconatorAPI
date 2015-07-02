@@ -153,8 +153,13 @@ $(document).ready(function() {
       friendly: 'Beacon',
       type: 'string'
     },
-    date: {
+    location: {
       index: 5,
+      friendly: 'Location',
+      type: 'string'
+    },
+    date: {
+      index: 6,
       friendly: 'Date',
       type: 'date'
     }

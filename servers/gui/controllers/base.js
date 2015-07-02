@@ -116,7 +116,8 @@ module.exports = {
               date: +event.created,
               beaconName: event.beaconName,
               email: event.email,
-              created: event.created
+              created: event.created,
+              location: event.user.location,
             };
           });
 
