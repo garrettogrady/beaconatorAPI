@@ -73,7 +73,9 @@ exports.register = function(server, options, next) {
     userCollection.findOne({
       email: request.payload.email
     }, function(err, user) {
-      var errMsg = 'No user could be found for email: ' + request.payload.email;
+      var date = new Date();
+      var errMsg = 'No user could be found...\nTimestamp:\n' + date.toString() + '\nPayload:\n';
+      errMsg += JSON.stringify(request.payload, null, 2);
 
       if (err) {
         throw err;
