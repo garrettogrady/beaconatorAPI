@@ -76,6 +76,7 @@ exports.register = function(server, options, next) {
   var userUrl = 'http://' + config.api.host + ':' + config.api.port;
   userUrl += '/api/user';
 
+  // NOT BEING USED
   var apiAuth = function apiAuth(request, next) {
     console.log(config.coreCreds);
     var header = Hawk.client.header(userUrl, 'GET', {
@@ -129,9 +130,8 @@ exports.register = function(server, options, next) {
       // Don't use toothache module here so we can modify reply
       handler: function(request, reply) {
         var find = request.query || {};
-        var db = options.db;
 
-        return db
+        return CRUD.db
         .collection(CRUD.collection)
         .find(find)
         .sort({

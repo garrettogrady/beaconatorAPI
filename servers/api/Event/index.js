@@ -1,3 +1,4 @@
+// jscs:disable disallowDanglingUnderscores
 /**
  * Created by kidtronnix on 20/05/14.
  */
@@ -74,27 +75,23 @@ exports.register = function(server, options, next) {
       if (err) {
         throw err;
       }
+
       var action = request.payload.eventAction;
-      var location = request.payload.beaconName;
-      var update = false;
+      user.location = request.payload.beaconName;
+      user.locationUpdated = new Date();
 
-      if (action === 'enter') {
-        update = true;
-      } else if (request.payload.eventType === 'office') {
-        update = true;
-        location = 'away';
+      if (action === 'exit') {
+        user.location = 'away';
       }
 
-      if (update) {
-        userCollection.update({
-          '_id': user._id
-        }, {
-          $set: {
-            location: location,
-            locationUpdated: new Date()
-          }
-        });
-      }
+      userCollection.update({
+        '_id': user._id
+      }, {
+        $set: {
+          location: user.location,
+          locationUpdated: user.locationUpdated
+        }
+      });
 
       request.payload.user = user;
 
