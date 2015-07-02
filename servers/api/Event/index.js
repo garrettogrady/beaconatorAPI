@@ -19,8 +19,10 @@ var CRUD = {
       beaconId: Joi.number().integer(),
       beaconName: Joi.string(),
 
-      // either enter or leave
+      // either enter or exit
       eventAction: Joi.string(),
+
+      email: Joi.string().email(),
 
       // either beacon or office
       eventType: Joi.string(),
@@ -38,8 +40,10 @@ var CRUD = {
       beaconId: Joi.number().integer(),
       beaconName: Joi.string(),
 
-      // either enter or leave
+      // either enter or exit
       eventAction: Joi.string(),
+
+      email: Joi.string().email(),
 
       // either beacon or office
       eventType: Joi.string(),
@@ -69,12 +73,14 @@ exports.register = function(server, options, next) {
     userCollection.findOne({
       email: request.payload.email
     }, function(err, user) {
+      var errMsg = 'No user could be found for email: ' + request.payload.email;
+
       if (err) {
         throw err;
       }
 
       if (!user) {
-        throw new Error({Error: 'No user could be found for email: ' + request.payload.email});
+        throw new Error(errMsg);
       }
 
       user.location = request.payload.beaconName;
