@@ -1,6 +1,6 @@
 {
   "name": "beaconator",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "server",
   "engines": {
     "node": ">=0.10.0"
