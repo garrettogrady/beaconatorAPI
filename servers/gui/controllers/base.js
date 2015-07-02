@@ -88,8 +88,11 @@ module.exports = {
         strategy: 'session'
       },
       handler: function(request, reply) {
-        if (request.query) {
-          console.log(request.query);
+        var qs = JSON.stringify(request.query || {}, null, 2);
+
+        if (qs !== '{}') {
+          console.log('Request query:');
+          console.log(qs);
         }
 
         var collection = db

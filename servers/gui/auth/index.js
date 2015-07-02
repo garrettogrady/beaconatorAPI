@@ -140,6 +140,7 @@ exports.register = function(plugin, options, next) {
                       // send mail with defined transport object
                       transporter.sendMail(mailOptions, function(error, response) {
                         if (error) {
+                          console.log('Error');
                           console.log(error);
                         } else {
                           console.log('Password reset message sent: ' + response.message);
@@ -190,6 +191,7 @@ exports.register = function(plugin, options, next) {
           abortEarly: false
         }, function(err, value) {
             if (err !== null) {
+              console.log('Error');
               console.log(err);
 
               var message = '';
@@ -259,6 +261,7 @@ exports.register = function(plugin, options, next) {
                     // send mail with defined transport object
                     transporter.sendMail(mailOptions, function(error, info) {
                       if (error) {
+                        console.log('Error');
                         console.log(error);
                       } else {
                         console.log('Message sent: ' + info.response);

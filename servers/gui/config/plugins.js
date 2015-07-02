@@ -17,10 +17,12 @@ module.exports = function(server, config) {
 
     if (e) {
       cb(connected);
+      console.log('Error');
       console.log(e);
     } else if (config.db.un && config.db.pw) {
-      db.authenticate(config.db.un, config.db.pw, function(err, result){
+      db.authenticate(config.db.un, config.db.pw, function(err, result) {
         if (err) {
+          console.log('Error');
           console.log(err);
         } else {
           connected = true;
