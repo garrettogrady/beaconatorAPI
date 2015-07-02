@@ -58,25 +58,25 @@ module.exports = {
         var page = 'users';
 
         userCollection
-          .find()
-          .sort({
-            lname: 1
-          })
-          .toArray(function(err, docs) {
+        .find()
+        .sort({
+          lname: 1
+        })
+        .toArray(function(err, docs) {
 
-            if (fs.existsSync(viewsPath + page + '.html')) {
-              reply.view(page, {
-                title: 'Users',
-                scripts: '',
-                page: page,
-                users: docs
-              });
-            } else {
-              reply.view('404', {
-                title: 'page not found'
-              }).code(404);
-            }
-          });
+          if (fs.existsSync(viewsPath + page + '.html')) {
+            reply.view(page, {
+              title: 'Users',
+              scripts: '',
+              page: page,
+              users: docs
+            });
+          } else {
+            reply.view('404', {
+              title: 'page not found'
+            }).code(404);
+          }
+        });
       },
     };
   },
