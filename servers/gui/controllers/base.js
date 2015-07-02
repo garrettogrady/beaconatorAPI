@@ -35,7 +35,7 @@ module.exports = {
       });
 
       // Render the view with the custom greeting
-      reply.view('index', {
+      reply.view('readme', {
         title: 'Readme: ' + config.app.name + ' Dashboard',
         scripts: scripts,
         page: page,
