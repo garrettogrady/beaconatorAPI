@@ -1,16 +1,22 @@
+
 $(document).ready(function() {
   var TYPING_TIMER_LENGTH = 400;
 
-  var socket = io.connect('http://localhost:3030');
-  // Initialize varibles
-  var $window = $(window);
-  var $usernameInput = $('input#username'); // Input for username
-  var $messages = $('.messages'); // Messages area
+  var socket, $window, $usernameInput, $messages, $users, $sendMessage, $join, $participants;
   var $inputMessage = $('input#message'); // Input message input box
-  var $users = $('.chat-available-user');
-  var $sendMessage = $('#sendMessage');
-  var $join = $('#join');
-  var $participants = $('.noUsers');
+
+  if (!$inputMessage.length) {
+    return;
+  }
+
+  socket = io.connect('http://localhost:3030');
+  $window = $(window);
+  $usernameInput = $('input#username');
+  $messages = $('.messages');
+  $sendMessage = $('#sendMessage');
+  $join = $('#join');
+  $users = $('.chat-available-user');
+  $participants = $('.noUsers');
 
   // Prompt for setting a username
   var username;
@@ -19,17 +25,18 @@ $(document).ready(function() {
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
 
-  function addParticipantsMessage(data) {
+  var addParticipantsMessage = function addParticipantsMessage(data) {
     var message = '';
+
     if (data.numUsers === 1) {
       message += 'there is 1 participant';
     } else {
       message += 'there are ' + data.numUsers + ' participants';
     }
     log(message);
-  }
+  };
 
-  function addChatMessage(data) {
+  var addChatMessage = function addChatMessage(data) {
 
     var ts = new Date();
 
@@ -44,19 +51,19 @@ $(document).ready(function() {
     $el.append($third);
 
     addMessageElement($el);
-  }
+  };
 
-  function addChatTyping(data) {
+  var addChatTyping = function addChatTyping(data) {
     var $user = $('*[data-user="' + data.username + '"]');
     $user.find('small').text(' typing');
-  }
+  };
 
-  function removeChatTyping(data) {
+  var removeChatTyping = function removeChatTyping(data) {
     var $user = $('*[data-user="' + data.username + '"]');
     $user.find('small').text('');
-  }
+  };
 
-  function sendMessage() {
+  var sendMessage = function sendMessage() {
     var message = $inputMessage.val();
     // Prevent markup from being injected into the message
     message = cleanInput(message);
@@ -70,9 +77,9 @@ $(document).ready(function() {
       // tell server to execute 'new message' and send along one parameter
       socket.emit('new message', message);
     }
-  }
+  };
 
-  function setUsername() {
+  var setUsername = function setUsername() {
     username = cleanInput($usernameInput.val().trim());
 
     // If the username is valid
@@ -80,9 +87,9 @@ $(document).ready(function() {
       // Tell the server your username
       socket.emit('add user', username);
     }
-  }
+  };
 
-  function updateTyping() {
+  var updateTyping = function updateTyping() {
 
     if (connected) {
       if (!typing) {
@@ -93,20 +100,21 @@ $(document).ready(function() {
       setTimeout(function() {
         var typingTimer = (new Date()).getTime();
         var timeDiff = typingTimer - lastTypingTime;
+
         if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
           socket.emit('stop typing');
           typing = false;
         }
       }, TYPING_TIMER_LENGTH);
     }
-  }
+  };
 
-  function addMessageElement(el) {
+  var addMessageElement = function addMessageElement(el) {
     var $el = $(el);
     $messages.append($el);
-  }
+  };
 
-  function log(message) {
+  var log = function log(message) {
     var ts = new Date();
 
     var time = ts.toTimeString().substring(0, 5);
@@ -120,11 +128,11 @@ $(document).ready(function() {
     $el.append($third);
 
     addMessageElement($el);
-  }
+  };
 
-  function cleanInput(input) {
+  var cleanInput = function cleanInput(input) {
     return $('<div/>').text(input).text();
-  }
+  };
 
   // Keyboard events
   $window.keydown(function(event) {
@@ -155,8 +163,6 @@ $(document).ready(function() {
 
   // Click events
 
-
-
   // Socket events
 
   // Whenever the server emits 'login', log the login message
@@ -185,7 +191,8 @@ $(document).ready(function() {
     $users.html('');
     var userCounter = 0;
     $.each(data, function(index, value) {
-      $li = $('<li>').html('<span data-user="' + value + '"><strong>' + value + '</strong><small></small></span>');
+      var html = `<span data-user="${value}"><strong>${value}</strong><small></small></span>`;
+      var $li = $('<li>').html(html);
       $users.append($li);
       userCounter++;
     });

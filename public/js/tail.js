@@ -51,5 +51,5 @@ import './watable/demo.watable';
 import './lib/jquery.backstretch.min';
 import './tail/auth';
 import './tail/events';
-
+import './chat';
 import './tail/common-scripts';
