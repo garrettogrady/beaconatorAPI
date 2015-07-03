@@ -85,30 +85,30 @@ var getCredentials = function(id, callback) {
   } else {
 
     var collection = db
-      .collection('users')
-      .findOne({
-        '_id': objectId(id)
-      }, function(err, user) {
-          if (err) {
-            throw err;
-          }
+    .collection('users')
+    .findOne({
+      '_id': objectId(id)
+    }, function(err, user) {
+      if (err) {
+        throw err;
+      }
 
-          var credentials = null;
+      var credentials = null;
 
-          if (user) {
-            console.log('Web auth lookup: ' + id + ' >> valid as ' + user.access);
+      if (user) {
+        console.log('Web auth lookup: ' + id + ' >> valid as ' + user.access);
 
-            credentials = {
-              key: user.apiToken,
-              access: user.access,
-              algorithm: 'sha256'
-            };
-          } else {
-            console.log('Web auth lookup: ' + id + ' >> invalid');
-          }
+        credentials = {
+          key: user.apiToken,
+          access: user.access,
+          algorithm: 'sha256'
+        };
+      } else {
+        console.log('Web auth lookup: ' + id + ' >> invalid');
+      }
 
-          return callback(null, credentials);
-        });
+      return callback(null, credentials);
+    });
   }
 };
 

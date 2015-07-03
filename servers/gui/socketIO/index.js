@@ -8,13 +8,15 @@ var numUsers = 0;
 
 exports.register = function(server, options, next) {
   // this is the hapi specific binding
-  io = socketIO.listen(server.listener, {log: false});
+  io = socketIO.listen(server.listener, {
+    log: false
+  });
 
-  io.on('connection', function (socket) {
+  io.on('connection', function(socket) {
     var addedUser = false;
     socket.emit('users', usernames);
     // when the client emits 'new message', this listens and executes
-    socket.on('new message', function (data) {
+    socket.on('new message', function(data) {
       // we tell the client to execute 'new message'
       socket.broadcast.emit('new message', {
         username: socket.username,
@@ -23,7 +25,7 @@ exports.register = function(server, options, next) {
     });
 
     // when the client emits 'add user', this listens and executes
-    socket.on('add user', function (username) {
+    socket.on('add user', function(username) {
       // we store the username in the socket session for this client
       socket.username = username;
       // add the client's username to the global list
@@ -44,21 +46,21 @@ exports.register = function(server, options, next) {
     });
 
     // when the client emits 'typing', we broadcast it to others
-    socket.on('typing', function () {
+    socket.on('typing', function() {
       socket.broadcast.emit('typing', {
         username: socket.username
       });
     });
 
     // when the client emits 'stop typing', we broadcast it to others
-    socket.on('stop typing', function () {
+    socket.on('stop typing', function() {
       socket.broadcast.emit('stop typing', {
         username: socket.username
       });
     });
 
     // when the user disconnects.. perform this
-    socket.on('disconnect', function () {
+    socket.on('disconnect', function() {
       // remove the username from global usernames list
       if (addedUser) {
         delete usernames[socket.username];
