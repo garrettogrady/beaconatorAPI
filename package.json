@@ -63,6 +63,7 @@
     "config": "^1.14.0",
     "core-js": "^0.9.14",
     "del": "^1.2.0",
+    "extend": "^3.0.0",
     "favicons": "^3.1.1",
     "fusionary-fed": "^4.5.1",
     "git-rev": "^0.2.1",

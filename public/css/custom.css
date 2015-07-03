@@ -9,3 +9,7 @@
 .is-error {
   background-color: #fcc;
 }
+
+.row ul li {
+  list-style-type: disc;
+}

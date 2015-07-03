@@ -9179,3 +9179,7 @@ ul.chat-available-user li a:hover{color:#68dff0}
 .is-error {
   background-color: #fcc;
 }
+
+.row ul li {
+  list-style-type: disc;
+}
