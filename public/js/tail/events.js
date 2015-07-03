@@ -1,15 +1,37 @@
+var apiHost = 'http://' + location.hostname;
+var guiHost = apiHost;
+
+if (!/beaconator/.test(location.hostname)) {
+  apiHost += ':3000';
+
+  if (location.port) {
+    guiHost += ':' + location.port;
+  }
+}
 
 $(document).ready(function() {
-  var host = location.hostname;
+  var lastClass, delayedRemove;
 
-  if (!/beaconator/.test(location.hostname)) {
-    host += ':3000';
-  }
+  var flashClass = function flashClass($el, className) {
+    var rmClass = function() {
+      $el.removeClass(className);
+      lastClass = null;
+    };
 
+    if (lastClass === className) {
+      clearTimeout(delayedRemove);
+    } else {
+      $el.addClass(className);
+    }
+
+    delayedRemove = setTimeout(rmClass, 6000);
+  };
+
+  // ADD EVENT
   $('#add-event').on('submit', function(event) {
     event.preventDefault();
-
-    var url = ['http:/', host, 'api', 'event'].join('/');
+    var $form = $(this);
+    var url = [apiHost, 'api', 'event'].join('/');
 
     var payload = {};
 
@@ -23,14 +45,16 @@ $(document).ready(function() {
     })
     .then(function(json) {
       console.log(json);
+      flashClass($form, 'is-success');
     }, function(err) {
       console.log(err.responseText);
-
+      flashClass($form, 'is-error');
     });
 
   });
 });
 
+// DISPLAY EVENTS
 (function() {
   'use strict';
 

@@ -3,7 +3,6 @@
  * Created by kidtronnix on 20/05/14.
  */
 
- // Packages for validation
 var Joi = require('joi');
 var ObjectId = require('mongodb').ObjectID;
 
@@ -98,6 +97,10 @@ exports.register = function(server, options, next) {
         $set: {
           location: user.location,
           locationUpdated: user.locationUpdated
+        }
+      }, function(err) {
+        if (err) {
+          throw err;
         }
       });
 

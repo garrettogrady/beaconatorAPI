@@ -1,3 +1,11 @@
 .content-panel {
   margin-bottom: 1em;
 }
+
+.is-success {
+  background-color: #cfc;
+}
+
+.is-error {
+  background-color: #fcc;
+}
