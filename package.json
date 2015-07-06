@@ -18,7 +18,7 @@
     "testCoverage": "./node_modules/lab/bin/lab -c"
   },
   "projectType": "plain",
-  "private": "true",
+  "private": true,
   "dependencies": {
     "bcryptjs": "^2.1.0",
     "boom": "^2.7.2",
