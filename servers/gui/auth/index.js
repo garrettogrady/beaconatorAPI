@@ -14,14 +14,20 @@ var request = require('request');
 var Hawk = require('hawk');
 var extend = require('extend');
 var config = require('../../../config');
+var mg = require('nodemailer-mailgun-transport');
 
 var jwtSecret = 'MY super secure server side secret';
-var forgotSecret = 'MY super secure different server side secret';
+var forgotSecret = 'CIshIEhInxN6OgGbtGi6IWNwils3tEGL';
 
 exports.register = function(plugin, options, next) {
 
   // Setup things from config
-  var transporter = Nodemailer.createTransport(options.email);
+
+  var transportOpts = config.email.service === 'Mailgun' ?
+    mg(config[config.email.service]) :
+    config[config.email.service];
+
+  var transporter = Nodemailer.createTransport(transportOpts);
 
   var API = {
     send: function(opts) {
@@ -257,7 +263,6 @@ exports.register = function(plugin, options, next) {
                       html: '<p>Hi ' + response.fname + ',</p><p>Thank you for registering. Please click the following link to activate your account:</p><a href="' + link + '"><h3>Activate account</h3></a><p>Thanks for your cooperation.</p><p>The Team</p>' // html body
                     };
 
-                    // send mail with defined transport object
                     // send mail with defined transport object
                     transporter.sendMail(mailOptions, function(error, info) {
                       if (error) {

@@ -5,9 +5,7 @@ Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://g
 
 ## TODO:
 
-* /servers/gui/config/plugins.js : change server.auth.strategy settings for hapi-auth-cookie
 * /servers/api/server.js & /servers/gui/config/plugins.js : set up process monitoring with `good` module?
-* /servers/gui/auth/index.js : generate jwtSecret & forgotSecret?
 
 ## Local Setup
 

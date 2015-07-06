@@ -36,6 +36,21 @@ module.exports = function(server, config) {
 
   });
 
+  // Options to pass into the 'Good' plugin
+  var goodOptions = {
+    reporters: [
+      {
+        reporter: require('good-console'),
+        events: { log: '*', response: '*' }
+      }
+    ]
+  };
+
+  // The Assets Configuration Options
+  var assetOptions = require('../../../assets');
+
+  // Use hapi-auth-cookie to keep logged in users logged in.
+  // If not logged in, punt them to /login
   server.register(require('hapi-auth-cookie'), function(err) {
     if (err) {
       throw err;
@@ -43,29 +58,19 @@ module.exports = function(server, config) {
 
     // Define auth strategy
     server.auth.strategy('session', 'cookie', {
-      password: 'secret',
-      cookie: 'sid-example',
+      password: '7TWvAWaPNhbY5lt',
+      cookie: 'beacon-sid',
       redirectTo: '/login',
       isSecure: false
     });
   });
 
-  // Options to pass into the 'Good' plugin
-  var goodOptions = {
-    // TODO: cf. https://github.com/hapijs/good
-  };
-
-  // The Assets Configuration Options
-  var assetOptions = require('../../../assets');
-
   // Register plugins
   server.register([
-
-    // TODO: RE-ENABLE THIS?
-    // {
-    //   register: require('good'),
-    //   options: goodOptions
-    // },
+    {
+      register: require('good'),
+      options: goodOptions
+    },
     {
       register: require('hapi-assets'),
       options: assetOptions

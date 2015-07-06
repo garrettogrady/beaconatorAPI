@@ -2,19 +2,18 @@ var promise = require('bluebird');
 var fs = promise.promisifyAll(require('fs'));
 var chalk = require('chalk');
 var inquirer = require('bluebird-inquirer');
-var mg = require('nodemailer-mailgun-transport');
 
 var apiGenKey = function(length) {
   // Just produces random string using these chars
   var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   var result = '';
+
   for (var i = length; i > 0; --i) {
     result += chars[Math.round(Math.random() * (chars.length - 1))];
   }
 
   return result;
 };
-
 
 var headings = {
   app: chalk.green('Configuring Basic App Info...\n'),
@@ -59,9 +58,10 @@ var questions = [
     message: 'API Core Password:',
     default: 'random string',
     filter: function(value) {
-      if(value === 'random string') {
+      if (value === 'random string') {
         value = apiGenKey(64);
       }
+
       return value;
     }
   },
@@ -114,8 +114,9 @@ var questions = [
     name: 'mailEmail',
     message: function(answers) {
       var msg = 'Email address';
+
       if (answers.mailService === 'Mailgun') {
-        return  msg + ' [see wiki]:';
+        return msg + ' [see wiki]:';
       }
 
       return msg + ':';
@@ -191,16 +192,18 @@ var buildConfig = function buildConfig(result) {
   };
 
   if (result.mailService === 'Mailgun') {
-    config.mailgun = mg({
+    config.Mailgun = {
+      service: result.mailService,
       auth: {
         'api_key': result.mailgunApiKey,
-        domain: result.mailgunDomain
+        domain: result.mailgunDomain,
       }
-    });
+    };
   }
 
   if (result.mailService === 'Gmail') {
     config.email.auth.pass = result.mailPass;
+    config.Gmail = config.email;
   }
 
   return config;
@@ -229,8 +232,15 @@ var copyPm2 = function copyPm2() {
     }
 
     // If config.pm2.json already exists, do not overwrite it.
+    var msg = [
+      chalk.yellow('Skipping copy to'),
+      chalk.cyan(pm2.config.file + '.'),
+      chalk.yellow('File already exists.'),
+    ].join(' ');
+
     if (stats[1].isFile()) {
-      console.log(chalk.yellow('Skipping copy to'), chalk.cyan(pm2.config.file) + chalk.yellow('. File already exists.'));
+      console.log(msg);
+
       return false;
     }
   })
@@ -258,7 +268,7 @@ var copyPm2 = function copyPm2() {
 };
 
 var ask = inquirer.prompt(questions)
-.then(function (result) {
+.then(function(result) {
 
   //
   // Log the results.
@@ -271,8 +281,14 @@ var ask = inquirer.prompt(questions)
 
   // Copy
   // Save config info to config.js
-  var content = '/* jshint ignore: start */\nmodule.exports = ' + JSON.stringify(config, null, 2);
+  var content = [
+    '/* jshint ignore: start */',
+    '/* jscs: disable */',
+    'module.exports = ' + JSON.stringify(config, null, 2),
+    '',
+  ].join('\n');
   var configPath = __dirname + '/../config.js';
+
   fs.statAsync(configPath)
   .then(function(stat) {
 
@@ -284,6 +300,7 @@ var ask = inquirer.prompt(questions)
   })
   .then(function() {
     console.log(chalk.yellow('Backed up old config to config.old.js'));
+
     return fs.writeFileAsync(configPath, content);
   })
   .then(function() {

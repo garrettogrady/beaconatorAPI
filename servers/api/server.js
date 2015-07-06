@@ -112,18 +112,24 @@ var getCredentials = function(id, callback) {
   }
 };
 
+// TODO: do this some other time?
 var goodOptions = {
-  // TODO: do this some other time?
+  reporters: [
+    {
+      reporter: require('good-console'),
+      events: { log: '*', response: '*' }
+    }
+  ]
 };
 
 apiServer.register([
   {
     register: require('hapi-auth-hawk')
   },
-  // {
-  //   plugin: require('good'),
-  //   options: goodOptions
-  // }
+  {
+    register: require('good'),
+    options: goodOptions
+  }
 ], function(err) {
     if (err) {
       throw err;
