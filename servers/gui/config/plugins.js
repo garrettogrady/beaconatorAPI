@@ -41,7 +41,10 @@ module.exports = function(server, config) {
     reporters: [
       {
         reporter: require('good-console'),
-        events: { log: '*', response: '*' }
+        events: { log: '*', response: '*' },
+        config: {
+          format: 'YYYYMMDD, hh:mm:ss a'
+        },
       }
     ]
   };

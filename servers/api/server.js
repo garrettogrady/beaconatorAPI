@@ -114,10 +114,14 @@ var getCredentials = function(id, callback) {
 
 // TODO: do this some other time?
 var goodOptions = {
+  responsePayload: true,
   reporters: [
     {
       reporter: require('good-console'),
-      events: { log: '*', response: '*' }
+      events: { log: '*', response: '*' },
+      config: {
+        format: 'YYYYMMDD, hh:mm:ss a Z'
+      }
     }
   ]
 };
