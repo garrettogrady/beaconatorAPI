@@ -234,7 +234,28 @@ exports.register = function(server, options, next) {
       // auth: 'core',
       cors: true,
 
-      handler: Event.find
+      // handler: Event.find
+      // Don't use toothache module here so we can modify reply
+      handler: function(request, reply) {
+        var find = request.query || {};
+
+        return CRUD.db
+        .collection(CRUD.collection)
+        .find(find)
+        .sort({
+          '_id': -1
+        })
+        .toArray(function(err, docs) {
+
+          // iOS app wants the array of events to be wrapped in object with
+          // key of "items"
+          var events = {
+            items: docs
+          };
+
+          return reply(events).type('application/json');
+        });
+      },
     }
   });
 
