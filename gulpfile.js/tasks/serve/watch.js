@@ -16,8 +16,8 @@ gulp.task('serve:watch', 'Watch files and perform actions on change', function()
     '!' + path.join(config.get('paths.dest'), 'js/head.js'),
     path.join(config.get('paths.dest'), '{fonts|img|json}/**/*.*'),
   ], function() {
-    browserSync.reload();
-  });
+      browserSync.reload();
+    });
 
   watch([
     path.join(config.get('paths.root'), 'servers', '**/*.js'),
@@ -27,41 +27,41 @@ gulp.task('serve:watch', 'Watch files and perform actions on change', function()
         browserSync.reload();
       }, 1200);
 
-    // var npmRun = spawn('npm', ['run', 'restart']);
+      // var npmRun = spawn('npm', ['run', 'restart']);
 
-    // npmRun.stdout.on('data', function(data) {
-    //   console.log(data.toString());
-    // });
+      // npmRun.stdout.on('data', function(data) {
+      //   console.log(data.toString());
+      // });
 
-    // npmRun.stderr.on('data', function(data) {
-    //   console.log('stderr: ' + data.toString());
-    // });
+      // npmRun.stderr.on('data', function(data) {
+      //   console.log('stderr: ' + data.toString());
+      // });
 
-    // npmRun.on('close', function(code) {
-    //   setTimeout(function() {
-    //     browserSync.reload();
-    //   }, 200);
+      // npmRun.on('close', function(code) {
+      //   setTimeout(function() {
+      //     browserSync.reload();
+      //   }, 200);
 
-    // });
-  });
+      // });
+    });
 
   watch([
     path.join(config.get('paths.dest'), 'css/*.css'),
     '!' + path.join(config.get('paths.dest'), 'css/styles.css'),
   ], function() {
-    gulp.start('build:css');
-  });
+      gulp.start('build:css');
+    });
 
   watch([
     path.join(config.get('paths.src'), 'img/**/*'),
-    path.join('!', config.get('paths.src'), 'img/sprites/**/*')
+    path.join('!' + config.get('paths.src'), 'img/sprites/**/*')
   ], function() {
-    gulp.start('build:img:optimize');
-  });
+      gulp.start('build:img:optimize');
+    });
 
   watch([
     path.join(config.get('paths.src'), 'img/sprites/*.svg/*.svg')
   ], function() {
-    gulp.start('build:img:svg-sprite');
-  });
+      gulp.start('build:img:svg-sprite');
+    });
 });

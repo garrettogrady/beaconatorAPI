@@ -51,6 +51,11 @@ module.exports = function(server, db) {
     },
     {
       method: 'GET',
+      path: '/storage/{path*}',
+      config: controller.assets.storage
+    },
+    {
+      method: 'GET',
       path: '/css/{path*}',
       config: controller.assets.css
     },

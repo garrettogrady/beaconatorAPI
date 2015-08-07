@@ -6,7 +6,7 @@ var dest     = path.join(config.get('paths.dest'), 'img');
 
 var src = [
   path.join(config.get('paths.srcAssets'), 'img/**/*'),
-  path.join('!', config.get('paths.srcAssets'), 'img/sprites/**/*')
+  path.join('!' + config.get('paths.srcAssets'), 'img/sprites/**/*')
 ];
 
 gulp.task('build:img:optimize', 'Optimize images into destination directory', function() {
