@@ -73,8 +73,22 @@ module.exports.init = function(shipit) {
     return shipit.remote('cd ' + cwd + ' && NODE_ENV=production npm install && npm run restart');
   });
 
+  utils.registerTask(shipit, 'mongodump', function() {
+    var date = new Date();
+    var stamps = ['getFullYear', 'getMonth', 'getDate'].map(function(meth) {
+      var stamp = meth === 'getMonth' ? date[meth]() + 1 : date[meth]();
+
+      return stamp < 10 ? '0' + stamp : '' + stamp;
+    });
+
+    var cwd = path.join(config.development.deployTo, 'db/', stamps.join(''));
+
+    return shipit.remote('mkdir -p ' + cwd + ' && cd ' + cwd + ' && mongodump');
+  });
+
   shipit.on('published', function() {
     utils.runTask(shipit, 'npmInstall');
+    utils.runTask(shipit, 'mongodump');
   });
 
 };
