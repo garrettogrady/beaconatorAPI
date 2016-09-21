@@ -1,7 +1,7 @@
 # Beaconator Readme
 
 
-Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://github.com/smaxwellstewart/hapi-dash), which is based on [Hapi Ninja](https://github.com/poeticninja/hapi-ninja).
+Hapi Web and API Server, with frontend dashboard. Based on [Hapi Dash](https://github.com/smaxwellstewart/hapi-dash), which is based on [Hapi Ninja](https://github.com/poeticninja/hapi-ninja). Was built for the BeaconApp to track iBeacon loactions sent from iPhones.
 
 ## TODO:
 
@@ -58,10 +58,6 @@ db.createUser({user: "fusionary",pwd: "password-that-is-in-config.js",roles: [ {
 ** Notice the `run` after `npm` there.** That's because "restart" isn't one of the default npm scripts.
 
 --------------------------------------
-
-## Authentication
-
-There is separate authentication for the different servers in the app. Once a user registers they will be created with a random API token. This is used to access the API.
 
 ### API
 
